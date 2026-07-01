@@ -10,6 +10,7 @@ import {
   Boxes,
   Menu,
   X,
+  BookOpen,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { cn } from '../lib/utils';
@@ -20,6 +21,7 @@ const NAV = [
   { to: '/analytics', label: 'Analytics', icon: BarChart3, testid: 'nav-analytics' },
   { to: '/history', label: 'Search History', icon: History, testid: 'nav-history' },
   { to: '/settings', label: 'Settings', icon: Settings, testid: 'nav-settings' },
+  { to: '/walkthrough', label: 'Walkthrough', icon: BookOpen, testid: 'nav-walkthrough' },
 ];
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
