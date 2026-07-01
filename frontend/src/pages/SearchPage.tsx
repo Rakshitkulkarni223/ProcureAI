@@ -216,6 +216,9 @@ export function SearchPage() {
   const removeRow = (i: number) => setBasketRows((rows) => (rows.length > 1 ? rows.filter((_, idx) => idx !== i) : rows));
 
   const categoryIcon = categories.find((c) => c.slug === category)?.icon;
+  const categoryExamples = EXAMPLES[category] ?? ['Nike Shoes', 'UltraBook Laptop', 'Basmati Rice'];
+  const searchPlaceholder = `e.g. ${categoryExamples.join(', ')}…`;
+  const basketPlaceholder = (i: number) => `Item ${i + 1} — e.g. ${categoryExamples[0]}`;
 
   return (
     <div className="space-y-7">
@@ -343,7 +346,7 @@ export function SearchPage() {
                     data-testid="search-input"
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
-                    placeholder="e.g. Nike Shoes, UltraBook Laptop, Basmati Rice…"
+                    placeholder={searchPlaceholder}
                     className="h-12 w-full rounded-md border border-line bg-surface pl-11 pr-4 text-sm text-ink placeholder:text-muted/70 focus:border-ink focus:outline-none focus:ring-2 focus:ring-ink/10"
                   />
                 </div>
@@ -382,7 +385,7 @@ export function SearchPage() {
                         data-testid={`basket-item-input-${i}`}
                         value={row.query}
                         onChange={(e) => updateRow(i, { query: e.target.value })}
-                        placeholder={`Item ${i + 1} — e.g. Basmati Rice`}
+                        placeholder={basketPlaceholder(i)}
                         className="h-11 w-full rounded-md border border-line bg-surface pl-9 pr-3 text-sm text-ink placeholder:text-muted/70 focus:border-ink focus:outline-none"
                       />
                     </div>
