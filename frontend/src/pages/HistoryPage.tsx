@@ -82,7 +82,11 @@ export function HistoryPage() {
         <Card>
           <CardBody className="p-0">
             {loading && items.length > 0 && (
-              <div className="border-b border-line px-5 py-2 text-center text-xs text-muted">Refreshing…</div>
+              <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/60">
+                <span className="inline-flex items-center gap-2 rounded-full border border-line bg-white px-4 py-2 text-xs font-medium text-muted shadow-sm">
+                  <RotateCw size={14} className="animate-spin" /> Refreshing…
+                </span>
+              </div>
             )}
             <div className="divide-y divide-line" data-testid="history-list">
               {items.map((h) => (
