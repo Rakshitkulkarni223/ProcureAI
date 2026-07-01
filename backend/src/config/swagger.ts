@@ -25,6 +25,13 @@ export const openApiSpec = {
     '/suppliers/{id}': { patch: { tags: ['Catalog'], summary: 'Enable/disable a supplier' } },
     '/search': { post: { tags: ['Search'], summary: 'Search enabled suppliers in parallel; compare + recommend' } },
     '/recommendations': { post: { tags: ['Search'], summary: 'Run the AI decision engine over a result set' } },
+    '/basket/optimize': {
+      post: {
+        tags: ['Basket'],
+        summary: 'Split-cart optimization: optimal supplier per item to maximize savings',
+      },
+    },
+    '/basket/history': { get: { tags: ['Basket'], summary: 'List optimized basket history' } },
     '/preferences': {
       get: { tags: ['Preferences'], summary: 'Get user preferences' },
       put: { tags: ['Preferences'], summary: 'Update preferences' },

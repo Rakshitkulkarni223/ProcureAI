@@ -41,3 +41,18 @@ export const preferenceSchema = z.object({
   weightProfile: z.enum(['balanced', 'startup', 'hospital', 'restaurant']).optional(),
   businessType: z.string().optional(),
 });
+
+export const basketSchema = z.object({
+  category: z.string().min(1, 'Category is required'),
+  suppliers: z.array(z.string()).optional().default([]),
+  items: z
+    .array(
+      z.object({
+        query: z.string().min(1, 'Item name is required'),
+        quantity: z.number().int().positive().max(999).optional(),
+      }),
+    )
+    .min(1, 'Add at least one item to your basket'),
+  weightProfile: z.enum(['balanced', 'startup', 'hospital', 'restaurant']).optional(),
+  consolidationPenalty: z.number().min(0).max(100000).optional(),
+});

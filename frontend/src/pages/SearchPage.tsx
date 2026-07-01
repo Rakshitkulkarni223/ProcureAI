@@ -1,15 +1,35 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { Search, Zap, Store, CheckCheck, Square, Sparkles } from 'lucide-react';
-import type { Category, SearchResponse, SortOption, Supplier, WeightProfile, WeightProfileKey } from '../types';
+import {
+  Search,
+  Zap,
+  Store,
+  CheckCheck,
+  Square,
+  Sparkles,
+  ShoppingBasket,
+  Plus,
+  Trash2,
+  Split,
+  Truck,
+} from 'lucide-react';
+import type {
+  BasketOptimizeResponse,
+  Category,
+  SearchResponse,
+  SortOption,
+  Supplier,
+  WeightProfile,
+  WeightProfileKey,
+} from '../types';
 import { api, apiError } from '../lib/api';
 import { Card, CardBody } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { Switch } from '../components/ui/Switch';
-import { Badge } from '../components/ui/Badge';
 import { WeightProfileSelector } from '../components/WeightProfileSelector';
 import { RecommendationCard } from '../components/RecommendationCard';
 import { ComparisonResults } from '../components/ComparisonResults';
+import { BasketResults } from '../components/BasketResults';
 import { getIcon } from '../lib/icons';
 import { cn } from '../lib/utils';
 
@@ -24,6 +44,25 @@ const EXAMPLES: Record<string, string[]> = {
   industrial: ['Power Drill', 'Safety Helmets', 'Wrench Set'],
 };
 
+const BASKET_PRESETS: Record<string, { query: string; quantity: number }[]> = {
+  grocery: [
+    { query: 'Basmati Rice', quantity: 1 },
+    { query: 'Cooking Oil', quantity: 2 },
+    { query: 'Fresh Vegetables', quantity: 3 },
+  ],
+  office: [
+    { query: 'A4 Copier Paper', quantity: 2 },
+    { query: 'Ballpoint Pens', quantity: 1 },
+    { query: 'Inkjet Printer', quantity: 1 },
+  ],
+};
+
+type Mode = 'single' | 'basket';
+interface BasketRow {
+  query: string;
+  quantity: number;
+}
+
 export function SearchPage() {
   const location = useLocation();
   const preset = location.state as { category?: string; query?: string } | null;
@@ -33,12 +72,23 @@ export function SearchPage() {
   const [category, setCategory] = useState('');
   const [suppliers, setSuppliers] = useState<Supplier[]>([]);
   const [selected, setSelected] = useState<Set<string>>(new Set());
-  const [query, setQuery] = useState(preset?.query || '');
   const [weightProfile, setWeightProfile] = useState<WeightProfileKey>('balanced');
   const [sortPref, setSortPref] = useState<SortOption>('lowest_price');
+  const [error, setError] = useState('');
+
+  const [mode, setMode] = useState<Mode>('single');
+
+  // Single search
+  const [query, setQuery] = useState(preset?.query || '');
   const [result, setResult] = useState<SearchResponse | null>(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+
+  // Basket
+  const [basketRows, setBasketRows] = useState<BasketRow[]>([{ query: '', quantity: 1 }]);
+  const [penalty, setPenalty] = useState(0);
+  const [basketResult, setBasketResult] = useState<BasketOptimizeResponse | null>(null);
+  const [basketLoading, setBasketLoading] = useState(false);
+
   const autoRan = useRef(false);
 
   useEffect(() => {
@@ -64,7 +114,6 @@ export function SearchPage() {
       .catch((e) => setError(apiError(e)));
   }, [category]);
 
-  // Auto-run a preset search coming from Dashboard / History
   useEffect(() => {
     if (autoRan.current) return;
     if (preset?.query && suppliers.length) {
@@ -86,13 +135,15 @@ export function SearchPage() {
     });
   };
 
+  const activeSuppliers = () => (selected.size ? [...selected] : suppliers.map((s) => s.name));
+
   const runSearch = async (overrideQuery?: string, overrideSuppliers?: string[]) => {
     const q = (overrideQuery ?? query).trim();
     if (!q) {
       setError('Enter a product to search for.');
       return;
     }
-    const names = overrideSuppliers ?? (selected.size ? [...selected] : suppliers.map((s) => s.name));
+    const names = overrideSuppliers ?? activeSuppliers();
     if (!names.length) {
       setError('Select at least one supplier.');
       return;
@@ -100,13 +151,7 @@ export function SearchPage() {
     setLoading(true);
     setError('');
     try {
-      const res = await api.search({
-        category,
-        suppliers: names,
-        query: q,
-        weightProfile,
-        sortBy: sortPref,
-      });
+      const res = await api.search({ category, suppliers: names, query: q, weightProfile, sortBy: sortPref });
       setResult(res);
     } catch (e) {
       setError(apiError(e));
@@ -115,21 +160,96 @@ export function SearchPage() {
     }
   };
 
+  const runOptimize = async () => {
+    const items = basketRows
+      .filter((r) => r.query.trim())
+      .map((r) => ({ query: r.query.trim(), quantity: Math.max(1, r.quantity || 1) }));
+    if (!items.length) {
+      setError('Add at least one item to your basket.');
+      return;
+    }
+    const names = activeSuppliers();
+    if (!names.length) {
+      setError('Select at least one supplier.');
+      return;
+    }
+    setBasketLoading(true);
+    setError('');
+    try {
+      const res = await api.basketOptimize({
+        category,
+        suppliers: names,
+        items,
+        weightProfile,
+        consolidationPenalty: penalty || 0,
+      });
+      setBasketResult(res);
+    } catch (e) {
+      setError(apiError(e));
+    } finally {
+      setBasketLoading(false);
+    }
+  };
+
   const onProfileChange = (p: WeightProfileKey) => {
     setWeightProfile(p);
-    if (result) runSearch(result.query, result.results.map((r) => r.provider));
+    if (mode === 'single' && result) runSearch(result.query, result.results.map((r) => r.provider));
+    if (mode === 'basket' && basketResult) setTimeout(runOptimize, 0);
   };
+
+  const switchMode = (m: Mode) => {
+    setMode(m);
+    setError('');
+  };
+
+  const setCat = (slug: string) => {
+    setCategory(slug);
+    setResult(null);
+    setBasketResult(null);
+    if (BASKET_PRESETS[slug]) setBasketRows(BASKET_PRESETS[slug]);
+    else setBasketRows([{ query: '', quantity: 1 }]);
+  };
+
+  const updateRow = (i: number, patch: Partial<BasketRow>) =>
+    setBasketRows((rows) => rows.map((r, idx) => (idx === i ? { ...r, ...patch } : r)));
+  const addRow = () => setBasketRows((rows) => [...rows, { query: '', quantity: 1 }]);
+  const removeRow = (i: number) => setBasketRows((rows) => (rows.length > 1 ? rows.filter((_, idx) => idx !== i) : rows));
 
   const categoryIcon = categories.find((c) => c.slug === category)?.icon;
 
   return (
     <div className="space-y-7">
-      <div>
-        <div className="label-eyebrow">Procurement</div>
-        <h1 className="mt-1 font-display text-3xl font-bold tracking-tight text-ink">Search &amp; Compare</h1>
-        <p className="mt-1 text-sm text-muted">
-          Pick a category and suppliers, then search once to compare every source.
-        </p>
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <div className="label-eyebrow">Procurement</div>
+          <h1 className="mt-1 font-display text-3xl font-bold tracking-tight text-ink">Search &amp; Compare</h1>
+          <p className="mt-1 text-sm text-muted">
+            Compare one product, or optimise a whole basket across multiple suppliers.
+          </p>
+        </div>
+        {/* Mode toggle */}
+        <div className="inline-flex rounded-md border border-line bg-surface p-1" data-testid="mode-toggle">
+          <button
+            data-testid="mode-single"
+            onClick={() => switchMode('single')}
+            className={cn(
+              'inline-flex items-center gap-2 rounded-md px-3.5 py-2 text-sm font-medium transition-colors',
+              mode === 'single' ? 'bg-ink text-white' : 'text-muted hover:text-ink',
+            )}
+          >
+            <Search size={15} /> Single Search
+          </button>
+          <button
+            data-testid="mode-basket"
+            onClick={() => switchMode('basket')}
+            className={cn(
+              'inline-flex items-center gap-2 rounded-md px-3.5 py-2 text-sm font-medium transition-colors',
+              mode === 'basket' ? 'bg-ink text-white' : 'text-muted hover:text-ink',
+            )}
+          >
+            <ShoppingBasket size={15} /> Basket Optimiser
+          </button>
+        </div>
       </div>
 
       {/* Search panel */}
@@ -146,11 +266,7 @@ export function SearchPage() {
                   <button
                     key={c.slug}
                     data-testid={`category-${c.slug}`}
-                    onClick={() => {
-                      setQuery('');
-                      setCategory(c.slug);
-                      setResult(null);
-                    }}
+                    onClick={() => setCat(c.slug)}
                     className={cn(
                       'inline-flex items-center gap-2 rounded-md border px-3 py-2 text-sm font-medium transition-colors duration-200',
                       active ? 'border-ink bg-ink text-white' : 'border-line bg-surface text-ink-soft hover:border-ink/40',
@@ -210,47 +326,116 @@ export function SearchPage() {
             </div>
           </div>
 
-          {/* Query + AI profile */}
-          <div>
-            <div className="label-eyebrow mb-2.5">3 · What do you need?</div>
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                runSearch();
-              }}
-              className="flex flex-col gap-3 sm:flex-row"
-            >
-              <div className="relative flex-1">
-                <Search size={17} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-muted" />
-                <input
-                  data-testid="search-input"
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  placeholder="e.g. Nike Shoes, UltraBook Laptop, Basmati Rice…"
-                  className="h-12 w-full rounded-md border border-line bg-surface pl-11 pr-4 text-sm text-ink placeholder:text-muted/70 focus:border-ink focus:outline-none focus:ring-2 focus:ring-ink/10"
-                />
+          {/* Query (single) OR Basket rows */}
+          {mode === 'single' ? (
+            <div>
+              <div className="label-eyebrow mb-2.5">3 · What do you need?</div>
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  runSearch();
+                }}
+                className="flex flex-col gap-3 sm:flex-row"
+              >
+                <div className="relative flex-1">
+                  <Search size={17} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-muted" />
+                  <input
+                    data-testid="search-input"
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                    placeholder="e.g. Nike Shoes, UltraBook Laptop, Basmati Rice…"
+                    className="h-12 w-full rounded-md border border-line bg-surface pl-11 pr-4 text-sm text-ink placeholder:text-muted/70 focus:border-ink focus:outline-none focus:ring-2 focus:ring-ink/10"
+                  />
+                </div>
+                <Button type="submit" size="lg" variant="accent" loading={loading} data-testid="search-submit-button">
+                  <Sparkles size={16} /> Search &amp; Compare
+                </Button>
+              </form>
+              <div className="mt-3 flex flex-wrap items-center gap-2">
+                <span className="text-xs text-muted">Try:</span>
+                {(EXAMPLES[category] || []).map((ex) => (
+                  <button
+                    key={ex}
+                    data-testid={`example-${ex}`}
+                    onClick={() => {
+                      setQuery(ex);
+                      runSearch(ex);
+                    }}
+                    className="rounded-full border border-line bg-surface px-2.5 py-1 text-xs text-muted transition-colors hover:border-ink/40 hover:text-ink"
+                  >
+                    {ex}
+                  </button>
+                ))}
               </div>
-              <Button type="submit" size="lg" variant="accent" loading={loading} data-testid="search-submit-button">
-                <Sparkles size={16} /> Search &amp; Compare
-              </Button>
-            </form>
-            <div className="mt-3 flex flex-wrap items-center gap-2">
-              <span className="text-xs text-muted">Try:</span>
-              {(EXAMPLES[category] || []).map((ex) => (
-                <button
-                  key={ex}
-                  data-testid={`example-${ex}`}
-                  onClick={() => {
-                    setQuery(ex);
-                    runSearch(ex);
-                  }}
-                  className="rounded-full border border-line bg-surface px-2.5 py-1 text-xs text-muted transition-colors hover:border-ink/40 hover:text-ink"
-                >
-                  {ex}
-                </button>
-              ))}
             </div>
-          </div>
+          ) : (
+            <div>
+              <div className="label-eyebrow mb-2.5 flex items-center gap-1.5">
+                <ShoppingBasket size={12} /> 3 · Your shopping list
+              </div>
+              <div className="space-y-2" data-testid="basket-rows">
+                {basketRows.map((row, i) => (
+                  <div key={i} className="flex items-center gap-2">
+                    <div className="relative flex-1">
+                      <Search size={15} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
+                      <input
+                        data-testid={`basket-item-input-${i}`}
+                        value={row.query}
+                        onChange={(e) => updateRow(i, { query: e.target.value })}
+                        placeholder={`Item ${i + 1} — e.g. Basmati Rice`}
+                        className="h-11 w-full rounded-md border border-line bg-surface pl-9 pr-3 text-sm text-ink placeholder:text-muted/70 focus:border-ink focus:outline-none"
+                      />
+                    </div>
+                    <input
+                      data-testid={`basket-item-qty-${i}`}
+                      type="number"
+                      min={1}
+                      value={row.quantity}
+                      onChange={(e) => updateRow(i, { quantity: parseInt(e.target.value || '1', 10) })}
+                      className="h-11 w-16 rounded-md border border-line bg-surface px-2 text-center text-sm text-ink focus:border-ink focus:outline-none"
+                    />
+                    <button
+                      data-testid={`basket-remove-${i}`}
+                      onClick={() => removeRow(i)}
+                      disabled={basketRows.length <= 1}
+                      className="flex h-11 w-11 items-center justify-center rounded-md border border-line text-muted transition-colors hover:border-danger/40 hover:text-danger disabled:opacity-40"
+                    >
+                      <Trash2 size={15} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
+                <button
+                  data-testid="basket-add-item"
+                  onClick={addRow}
+                  className="inline-flex items-center gap-1.5 rounded-md border border-dashed border-line px-3 py-2 text-sm font-medium text-muted transition-colors hover:border-ink/40 hover:text-ink"
+                >
+                  <Plus size={15} /> Add item
+                </button>
+                <label className="flex items-center gap-2 text-xs text-muted" title="Delivery/handling cost added per distinct supplier">
+                  <Truck size={13} /> Delivery cost / supplier (₹)
+                  <input
+                    data-testid="basket-penalty-input"
+                    type="number"
+                    min={0}
+                    value={penalty}
+                    onChange={(e) => setPenalty(Math.max(0, parseInt(e.target.value || '0', 10)))}
+                    className="h-9 w-20 rounded-md border border-line bg-surface px-2 text-center text-sm text-ink focus:border-ink focus:outline-none"
+                  />
+                </label>
+                <Button
+                  size="lg"
+                  variant="accent"
+                  loading={basketLoading}
+                  onClick={runOptimize}
+                  data-testid="basket-optimize-button"
+                >
+                  <Split size={16} /> Optimise Basket
+                </Button>
+              </div>
+            </div>
+          )}
 
           {/* Weight profile */}
           <div>
@@ -269,54 +454,76 @@ export function SearchPage() {
       </Card>
 
       {/* Results */}
-      {loading && <SearchLoader />}
-
-      {!loading && result && result.results.length > 0 && (
-        <div className="space-y-6 animate-fade-up">
-          {result.recommendation && (
-            <RecommendationCard rec={result.recommendation} supplierColors={supplierColors} />
+      {mode === 'single' ? (
+        <>
+          {loading && <SearchLoader />}
+          {!loading && result && result.results.length > 0 && (
+            <div className="space-y-6 animate-fade-up">
+              {result.recommendation && (
+                <RecommendationCard rec={result.recommendation} supplierColors={supplierColors} />
+              )}
+              <ComparisonResults
+                products={result.results}
+                recommendedSupplier={result.recommendation?.supplier}
+                supplierColors={supplierColors}
+                categoryIcon={categoryIcon}
+                initialSort={sortPref}
+              />
+            </div>
           )}
-          <ComparisonResults
-            products={result.results}
-            recommendedSupplier={result.recommendation?.supplier}
-            supplierColors={supplierColors}
-            categoryIcon={categoryIcon}
-            initialSort={sortPref}
-          />
-        </div>
-      )}
-
-      {!loading && result && result.results.length === 0 && (
-        <Card>
-          <CardBody className="py-12 text-center text-muted">No results found. Try another query or supplier set.</CardBody>
-        </Card>
-      )}
-
-      {!loading && !result && (
-        <Card>
-          <CardBody className="flex flex-col items-center gap-3 py-14 text-center">
-            <span className="flex h-12 w-12 items-center justify-center rounded-md bg-accent-soft text-accent">
-              <Search size={22} />
-            </span>
-            <h3 className="font-display text-lg font-semibold text-ink">Run your first comparison</h3>
-            <p className="max-w-md text-sm text-muted">
-              ProcureAI queries every selected supplier in parallel, normalizes the results, and returns an
-              explainable recommendation with quantified savings.
-            </p>
-          </CardBody>
-        </Card>
+          {!loading && result && result.results.length === 0 && (
+            <Card>
+              <CardBody className="py-12 text-center text-muted">No results found. Try another query or supplier set.</CardBody>
+            </Card>
+          )}
+          {!loading && !result && <EmptyState mode="single" />}
+        </>
+      ) : (
+        <>
+          {basketLoading && <SearchLoader basket />}
+          {!basketLoading && basketResult && <BasketResults result={basketResult} supplierColors={supplierColors} />}
+          {!basketLoading && !basketResult && <EmptyState mode="basket" />}
+        </>
       )}
     </div>
   );
 }
 
-function SearchLoader() {
-  const lines = [
-    'Resolving enabled provider adapters…',
-    'Querying suppliers in parallel (Promise.allSettled)…',
-    'Normalizing products to common schema…',
-    'Scoring suppliers with weighted decision engine…',
-  ];
+function EmptyState({ mode }: { mode: Mode }) {
+  const basket = mode === 'basket';
+  return (
+    <Card>
+      <CardBody className="flex flex-col items-center gap-3 py-14 text-center">
+        <span className="flex h-12 w-12 items-center justify-center rounded-md bg-accent-soft text-accent">
+          {basket ? <ShoppingBasket size={22} /> : <Search size={22} />}
+        </span>
+        <h3 className="font-display text-lg font-semibold text-ink">
+          {basket ? 'Build your procurement basket' : 'Run your first comparison'}
+        </h3>
+        <p className="max-w-md text-sm text-muted">
+          {basket
+            ? 'Add several items and ProcureAI finds the optimal supplier for each — maximising total savings and telling you exactly what to buy where.'
+            : 'ProcureAI queries every selected supplier in parallel, normalizes the results, and returns an explainable recommendation with quantified savings.'}
+        </p>
+      </CardBody>
+    </Card>
+  );
+}
+
+function SearchLoader({ basket }: { basket?: boolean }) {
+  const lines = basket
+    ? [
+        'Fetching every item across suppliers in parallel…',
+        'Scoring each item × supplier with the weighted engine…',
+        'Comparing split-optimal vs single-supplier baseline…',
+        'Balancing item savings against delivery consolidation…',
+      ]
+    : [
+        'Resolving enabled provider adapters…',
+        'Querying suppliers in parallel (Promise.allSettled)…',
+        'Normalizing products to common schema…',
+        'Scoring suppliers with weighted decision engine…',
+      ];
   return (
     <Card data-testid="search-loader">
       <CardBody className="font-mono text-xs text-muted">
@@ -324,7 +531,7 @@ function SearchLoader() {
           <div className="h-full w-1/3 bg-accent animate-scan" />
         </div>
         {lines.map((l, i) => (
-          <div key={i} className="flex items-center gap-2 py-0.5" style={{ animationDelay: `${i * 120}ms` }}>
+          <div key={i} className="flex items-center gap-2 py-0.5">
             <span className="text-success">▸</span> {l}
           </div>
         ))}

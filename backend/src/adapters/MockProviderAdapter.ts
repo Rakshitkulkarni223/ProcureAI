@@ -25,10 +25,10 @@ export class MockProviderAdapter implements ProviderAdapter {
     await new Promise((r) => setTimeout(r, 40 + Math.random() * 120));
 
     const tpl = CatalogResolver.resolve(category, query);
-    const rng = new SeededRandom(`${this.name}::${tpl.id}::${query.toLowerCase()}`);
+    const rng = new SeededRandom(`${query.toLowerCase().trim()}#${tpl.id}#${this.name}`);
     const p = this.profile;
 
-    const priceJitter = rng.range(0.94, 1.06);
+    const priceJitter = rng.range(0.8, 1.2);
     const price = Math.round((tpl.basePrice * p.priceFactor * priceJitter) / 10) * 10;
 
     const discount = clamp(Math.round(p.discountBias + rng.range(-6, 8)), 0, 70);

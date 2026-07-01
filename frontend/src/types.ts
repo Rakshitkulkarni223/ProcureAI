@@ -129,3 +129,54 @@ export interface Insight {
   text: string;
   tone: 'success' | 'info' | 'warning';
 }
+
+// ---- Split-Cart / Multi-Supplier Basket ----
+export interface BasketItemResult {
+  query: string;
+  supplier: string | null;
+  title: string;
+  image: string;
+  price: number;
+  quantity: number;
+  lineTotal: number;
+  deliveryDays: number;
+  availability: boolean;
+  reasons: string[];
+}
+
+export interface BasketSupplierGroup {
+  items: string[];
+  subtotal: number;
+  eta: string;
+}
+
+export interface BasketOptimizeResponse {
+  category: string;
+  weightProfile: WeightProfileKey;
+  recommendedPlan: 'split' | 'consolidate';
+  items: BasketItemResult[];
+  groupedBySupplier: Record<string, BasketSupplierGroup>;
+  splitTotal: number;
+  baseline: { supplier: string | null; total: number };
+  estimatedSavings: number;
+  supplierCount: number;
+  estimatedDelivery: string;
+  confidence: number;
+  unfulfillable: string[];
+  consolidationPenalty: number;
+}
+
+export interface BasketHistoryEntry {
+  id: string;
+  category: string;
+  suppliers: string[];
+  itemCount: number;
+  items: { query: string; quantity: number; supplier: string; price: number }[];
+  splitTotal: number;
+  baselineTotal: number;
+  estimatedSavings: number;
+  supplierCount: number;
+  recommendedPlan: 'split' | 'consolidate';
+  weightProfile: string;
+  createdAt: string;
+}

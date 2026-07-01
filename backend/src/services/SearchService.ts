@@ -25,22 +25,7 @@ export class SearchService {
     if (!suppliers.length) suppliers = validForCategory;
     if (!suppliers.length) throw new ApiError(400, `Unknown category: ${category}`);
 
-    const adapters = suppliers
-      .map((name) => ProviderFactory.create(name))
-      .filter((a): a is NonNullable<typeof a> => a !== null);
-
-    const settled = await Promise.allSettled(
-      adapters.map((a) => a.search(query, category)),
-    );
-
-    const products: Product[] = [];
-    settled.forEach((result, idx) => {
-      if (result.status === 'fulfilled') {
-        products.push(...result.value);
-      } else {
-        logger.warn(`Provider "${adapters[idx].name}" failed`, result.reason);
-      }
-    });
+    const products = await SearchService.gather(query, category, suppliers);
 
     const results = ComparisonService.apply(products, req.sortBy, req.filters);
     const recommendation = RecommendationService.recommend(results, req.weightProfile);
@@ -79,18 +64,29 @@ export class SearchService {
     const enabled = suppliers.filter((s) => validForCategory.includes(s));
     const list = enabled.length ? enabled : validForCategory;
 
-    const adapters = list
+    const products = await SearchService.gather(query, category, list);
+
+    const results = ComparisonService.apply(products, 'lowest_price');
+    const recommendation = RecommendationService.recommend(results, 'balanced');
+    return { query, category, count: results.length, results, recommendation };
+  }
+
+  /**
+   * Query every supplier's adapter in parallel and collect normalized products.
+   * Individual provider failures are tolerated (Promise.allSettled). Shared by
+   * search, preview and the basket optimizer.
+   */
+  static async gather(query: string, category: string, suppliers: string[]): Promise<Product[]> {
+    const adapters = suppliers
       .map((name) => ProviderFactory.create(name))
       .filter((a): a is NonNullable<typeof a> => a !== null);
 
     const settled = await Promise.allSettled(adapters.map((a) => a.search(query, category)));
     const products: Product[] = [];
-    settled.forEach((r) => {
+    settled.forEach((r, idx) => {
       if (r.status === 'fulfilled') products.push(...r.value);
+      else logger.warn(`Provider "${adapters[idx].name}" failed`, r.reason);
     });
-
-    const results = ComparisonService.apply(products, 'lowest_price');
-    const recommendation = RecommendationService.recommend(results, 'balanced');
-    return { query, category, count: results.length, results, recommendation };
+    return products;
   }
 }

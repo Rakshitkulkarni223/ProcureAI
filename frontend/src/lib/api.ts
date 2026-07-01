@@ -1,5 +1,7 @@
 import axios from 'axios';
 import type {
+  BasketHistoryEntry,
+  BasketOptimizeResponse,
   Category,
   DashboardSummary,
   HistoryEntry,
@@ -75,6 +77,16 @@ export const api = {
     filters?: Record<string, unknown>;
     weightProfile?: string;
   }) => unwrap<SearchResponse>(API.post('/search', body)),
+
+  // Split-cart / basket optimization
+  basketOptimize: (body: {
+    category: string;
+    suppliers: string[];
+    items: { query: string; quantity?: number }[];
+    weightProfile?: string;
+    consolidationPenalty?: number;
+  }) => unwrap<BasketOptimizeResponse>(API.post('/basket/optimize', body)),
+  basketHistory: () => unwrap<BasketHistoryEntry[]>(API.get('/basket/history')),
 
   // Preferences
   preferences: () => unwrap<Preferences>(API.get('/preferences')),

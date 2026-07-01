@@ -87,3 +87,44 @@ export interface WeightProfile {
     returnPolicy: number;
   };
 }
+
+// ---- Split-Cart / Multi-Supplier Basket ----
+export interface BasketItemInput {
+  query: string;
+  quantity?: number;
+}
+
+export interface BasketItemResult {
+  query: string;
+  supplier: string | null;
+  title: string;
+  image: string;
+  price: number;
+  quantity: number;
+  lineTotal: number;
+  deliveryDays: number;
+  availability: boolean;
+  reasons: string[];
+}
+
+export interface BasketSupplierGroup {
+  items: string[];
+  subtotal: number;
+  eta: string;
+}
+
+export interface BasketOptimizeResponse {
+  category: string;
+  weightProfile: WeightProfileKey;
+  recommendedPlan: 'split' | 'consolidate';
+  items: BasketItemResult[];
+  groupedBySupplier: Record<string, BasketSupplierGroup>;
+  splitTotal: number;
+  baseline: { supplier: string | null; total: number };
+  estimatedSavings: number;
+  supplierCount: number;
+  estimatedDelivery: string;
+  confidence: number;
+  unfulfillable: string[];
+  consolidationPenalty: number;
+}
