@@ -23,15 +23,19 @@ procurement sources from a single dashboard.
 - Compiled build: `yarn build` -> `dist/`; production runs `node dist/app.js`.
 
 ## Changelog
-- 2026-07-04: **Fixed production deployment failure (P0).** Root cause: production
-  K8s only runs `server.py` (Uvicorn); the custom `node-backend` supervisor program
-  is preview-only, so Node never booted in prod -> 503 on `/health`. Fix in
-  `server.py`: (1) native `GET /health` -> 200 `{"status":"ok"}` (declared before
-  proxy catch-all, not proxied); (2) non-blocking background-thread bootstrap that
-  spawns `node dist/app.js` only when :8002 isn't already served (skips in preview,
-  spawns in prod), running `yarn install` only if `node_modules` is missing, passing
-  `os.environ` (prod `MONGO_URL`). Validated: `/health` 200, proxied login OK,
-  standalone `node dist/app.js` connects+seeds+serves.
+- 2026-07-04: **Fixed production 503 "Backend service is starting" (P0).** In prod,
+  `node_modules` is gitignored (absent) so the Node backend couldn't start via
+  runtime install. Fix: added esbuild `yarn bundle` -> single self-contained
+  `dist/server.bundle.js` (no node_modules needed at runtime). `server.py` now spawns
+  `node dist/server.bundle.js` in a background thread with a watchdog (auto-restart on
+  crash), only when :8002 isn't already served (skips in preview). Also added native
+  `/health` + `/api/health` (200). `env.ts` dotenv path -> `process.cwd()`. Swagger
+  setup wrapped in try/catch. Validated: production spawn path (curl) + testing_agent
+  9/9 backend pass, no 503. NOTE: re-run `yarn bundle` after any backend code change
+  before deploying.
+- 2026-07-04: Fixed `.gitignore` deployment blockers (unignored `.env`* and
+  `package*.json`; ignored `memory/test_credentials.md`). deployment_agent: pass.
+- 2026-07-04: Initial deployment fix — native `/health` + FastAPI bootstrap of Node.
 
 ## Upcoming / Backlog
 - P1: Multi-product results grouping

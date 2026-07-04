@@ -84,8 +84,14 @@ def _bootstrap_node() -> None:
             print("[bootstrap] dist not found, falling back to `npx tsx src/app.ts`.")
             cmd = ["npx", "tsx", "src/app.ts"]
 
-    print(f"[bootstrap] Starting Node backend: {' '.join(cmd)}")
-    subprocess.Popen(cmd, cwd=NODE_DIR, env=child_env)
+    # Watchdog: keep the Node backend alive; if it exits/crashes, restart it so
+    # the proxy does not get stuck returning 503 in production.
+    while True:
+        print(f"[bootstrap] Starting Node backend: {' '.join(cmd)}")
+        proc = subprocess.Popen(cmd, cwd=NODE_DIR, env=child_env)
+        proc.wait()
+        print(f"[bootstrap] Node backend exited (code={proc.returncode}); restarting in 3s...")
+        time.sleep(3)
 
 
 @app.on_event("startup")
@@ -100,6 +106,11 @@ async def _startup():
 
 @app.get("/health")
 async def health_check():
+    return JSONResponse({"status": "ok"}, status_code=200)
+
+
+@app.get("/api/health")
+async def api_health_check():
     return JSONResponse({"status": "ok"}, status_code=200)
 
 
