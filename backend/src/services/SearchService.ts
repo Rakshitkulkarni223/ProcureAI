@@ -30,20 +30,22 @@ export class SearchService {
     const results = ComparisonService.apply(products, req.sortBy, req.filters);
     const recommendation = RecommendationService.recommend(results, req.weightProfile);
 
-    // Persist search history (fire and forget — never block the response).
-    historyRepository
-      .create({
-        userId,
-        query: query.trim(),
-        category,
-        suppliers,
-        resultCount: results.length,
-        recommendedSupplier: recommendation?.supplier || '',
-        bestPrice: recommendation?.product.price || 0,
-        estimatedSavings: recommendation?.estimatedSavings || 0,
-        weightProfile: req.weightProfile || 'balanced',
-      })
-      .catch((e) => logger.error('Failed to persist search history', e));
+    // Persist search history only when results exist (fire and forget).
+    if (results.length > 0) {
+      historyRepository
+        .create({
+          userId,
+          query: query.trim(),
+          category,
+          suppliers,
+          resultCount: results.length,
+          recommendedSupplier: recommendation?.supplier || '',
+          bestPrice: recommendation?.product.price || 0,
+          estimatedSavings: recommendation?.estimatedSavings || 0,
+          weightProfile: req.weightProfile || 'balanced',
+        })
+        .catch((e) => logger.error('Failed to persist search history', e));
+    }
 
     return {
       query: query.trim(),

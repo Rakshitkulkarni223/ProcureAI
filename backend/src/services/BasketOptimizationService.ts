@@ -223,23 +223,24 @@ export class BasketOptimizationService {
 
     const plan = BasketOptimizationService.buildPlan(gathered, req.consolidationPenalty || 0, weightProfile);
 
-    basketHistoryRepository
-      .create({
-        userId,
-        category,
-        suppliers,
-        itemCount: items.length,
-        items: plan.items
-          .filter((i) => i.supplier)
-          .map((i) => ({ query: i.query, quantity: i.quantity, supplier: i.supplier, price: i.price })),
-        splitTotal: plan.splitTotal,
-        baselineTotal: plan.baseline.total,
-        estimatedSavings: plan.estimatedSavings,
-        supplierCount: plan.supplierCount,
-        recommendedPlan: plan.recommendedPlan,
-        weightProfile,
-      })
-      .catch((e) => logger.error('Failed to persist basket history', e));
+    const fulfilledItems = plan.items.filter((i) => i.supplier);
+    if (fulfilledItems.length > 0) {
+      basketHistoryRepository
+        .create({
+          userId,
+          category,
+          suppliers,
+          itemCount: items.length,
+          items: fulfilledItems.map((i) => ({ query: i.query, quantity: i.quantity, supplier: i.supplier, price: i.price })),
+          splitTotal: plan.splitTotal,
+          baselineTotal: plan.baseline.total,
+          estimatedSavings: plan.estimatedSavings,
+          supplierCount: plan.supplierCount,
+          recommendedPlan: plan.recommendedPlan,
+          weightProfile,
+        })
+        .catch((e) => logger.error('Failed to persist basket history', e));
+    }
 
     return { category, weightProfile, ...plan };
   }
