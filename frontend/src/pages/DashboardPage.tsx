@@ -117,42 +117,6 @@ export function DashboardPage() {
         ))}
       </div>
 
-      {/* Business Impact Summary */}
-      {impact && (
-        <Card className="border-green-500/20 bg-gradient-to-r from-green-50/40 to-emerald-50/20 dark:from-green-950/20 dark:to-emerald-950/10">
-          <CardBody>
-            <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
-              <div className="flex items-center gap-2">
-                <Gauge size={18} className="text-green-600" />
-                <h3 className="font-display text-base font-semibold tracking-tight text-ink">Business Impact</h3>
-              </div>
-              <button
-                onClick={() => navigate('/impact')}
-                className="inline-flex items-center gap-1.5 rounded-md bg-green-600 px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-green-700"
-              >
-                View Details <ArrowRight size={12} />
-              </button>
-            </div>
-            <div className="grid gap-3 grid-cols-2 sm:grid-cols-3 lg:grid-cols-6">
-              {[
-                { icon: PiggyBank, label: 'Total Saved', value: formatINR(impact.totalSavings), color: 'text-green-600' },
-                { icon: Clock, label: 'Hours Saved', value: `${impact.hoursSaved.toFixed(1)}h`, color: 'text-blue-600' },
-                { icon: ShoppingCart, label: 'Optimized', value: formatNumber(impact.optimizedPurchases), color: 'text-ink' },
-                { icon: Search, label: 'Compared', value: formatNumber(impact.productsCompared), color: 'text-ink' },
-                { icon: Zap, label: 'Efficiency', value: `${impact.efficiencyScore}/100`, color: 'text-amber-600' },
-                { icon: Target, label: 'AI Accuracy', value: `${impact.aiAccuracyPct.toFixed(0)}%`, color: 'text-violet-600' },
-              ].map((m) => (
-                <div key={m.label} className="rounded-lg border border-line bg-surface p-3 text-center">
-                  <m.icon size={15} className={`mx-auto ${m.color}`} />
-                  <div className={`mt-1.5 text-xl font-bold ${m.color}`}>{m.value}</div>
-                  <div className="mt-0.5 text-[11px] text-muted">{m.label}</div>
-                </div>
-              ))}
-            </div>
-          </CardBody>
-        </Card>
-      )}
-
       <div className="grid gap-6 lg:grid-cols-3">
         {/* Left: highlights + recent */}
         <div className="space-y-6 lg:col-span-2">
@@ -273,8 +237,42 @@ export function DashboardPage() {
           </Card>
         </div>
 
-        {/* Right: AI insights */}
+        {/* Right: AI insights + Business Impact */}
         <div className="space-y-4">
+          {/* Business Impact Summary */}
+          {impact && (
+            <Card className="border-green-500/30 bg-gradient-to-br from-green-50/50 to-emerald-50/30 dark:from-green-950/20 dark:to-emerald-950/10">
+              <CardHeader className="flex items-center justify-between border-green-500/20">
+                <div className="flex items-center gap-2">
+                  <Gauge size={15} className="text-green-600" />
+                  <h3 className="font-display text-base font-semibold tracking-tight text-green-700 dark:text-green-400">Business Impact</h3>
+                </div>
+              </CardHeader>
+              <CardBody className="space-y-3">
+                <div className="grid grid-cols-2 gap-2">
+                  {[
+                    { icon: PiggyBank, label: 'Total Saved', value: formatINR(impact.totalSavings), color: 'text-green-600' },
+                    { icon: Clock, label: 'Hours Saved', value: `${impact.hoursSaved.toFixed(1)}h`, color: 'text-blue-600' },
+                    { icon: Zap, label: 'Efficiency', value: `${impact.efficiencyScore}/100`, color: 'text-amber-600' },
+                    { icon: Target, label: 'AI Accuracy', value: `${impact.aiAccuracyPct.toFixed(0)}%`, color: 'text-violet-600' },
+                  ].map((m) => (
+                    <div key={m.label} className="rounded-lg border border-line bg-surface p-2.5 text-center">
+                      <m.icon size={14} className={`mx-auto ${m.color}`} />
+                      <div className={`mt-1 text-lg font-bold ${m.color}`}>{m.value}</div>
+                      <div className="text-[10px] text-muted">{m.label}</div>
+                    </div>
+                  ))}
+                </div>
+                <button
+                  onClick={() => navigate('/impact')}
+                  className="flex w-full items-center justify-center gap-2 rounded-md bg-green-600 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-green-700"
+                >
+                  View Full Business Impact <ArrowRight size={14} />
+                </button>
+              </CardBody>
+            </Card>
+          )}
+
           <Card className="border-accent/30 bg-accent-soft/30">
             <CardHeader className="flex items-center gap-2 border-accent/20">
               <Sparkles size={15} className="text-accent" />
