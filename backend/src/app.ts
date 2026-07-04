@@ -23,11 +23,15 @@ async function bootstrap() {
   app.use(express.json({ limit: '2mb' }));
   app.use(morgan('tiny'));
 
-  app.use(
-    '/api/docs',
-    ...(swaggerUi.serve as unknown as express.RequestHandler[]),
-    swaggerUi.setup(openApiSpec, { customSiteTitle: 'ProcureAI API Docs' }) as unknown as express.RequestHandler,
-  );
+  try {
+    app.use(
+      '/api/docs',
+      ...(swaggerUi.serve as unknown as express.RequestHandler[]),
+      swaggerUi.setup(openApiSpec, { customSiteTitle: 'ProcureAI API Docs' }) as unknown as express.RequestHandler,
+    );
+  } catch (err) {
+    logger.error('Swagger UI setup skipped', err);
+  }
   app.use('/api', routes);
 
   app.get('/', (_req, res) => res.json({ success: true, service: 'procureai-api', docs: '/api/docs' }));

@@ -61,23 +61,28 @@ def _bootstrap_node() -> None:
             return
         time.sleep(1)
 
-    node_modules = os.path.join(NODE_DIR, "node_modules")
-    if not os.path.isdir(node_modules):
-        print("[bootstrap] node_modules missing, running `yarn install`...")
-        subprocess.run(
-            ["yarn", "install", "--frozen-lockfile", "--production=false"],
-            cwd=NODE_DIR,
-            check=False,
-        )
-
     child_env = {**os.environ, "PORT": str(NODE_PORT), "NODE_ENV": "production"}
 
+    bundle_entry = os.path.join(NODE_DIR, "dist", "server.bundle.js")
     dist_entry = os.path.join(NODE_DIR, "dist", "app.js")
-    if os.path.isfile(dist_entry):
-        cmd = ["node", "dist/app.js"]
+
+    if os.path.isfile(bundle_entry):
+        # Self-contained esbuild bundle: no node_modules required at runtime.
+        cmd = ["node", "dist/server.bundle.js"]
     else:
-        print("[bootstrap] dist/app.js not found, falling back to `npx tsx src/app.ts`.")
-        cmd = ["npx", "tsx", "src/app.ts"]
+        # Non-bundled entrypoints need dependencies installed first.
+        if not os.path.isdir(os.path.join(NODE_DIR, "node_modules")):
+            print("[bootstrap] node_modules missing, running `yarn install`...")
+            subprocess.run(
+                ["yarn", "install", "--frozen-lockfile", "--production=false"],
+                cwd=NODE_DIR,
+                check=False,
+            )
+        if os.path.isfile(dist_entry):
+            cmd = ["node", "dist/app.js"]
+        else:
+            print("[bootstrap] dist not found, falling back to `npx tsx src/app.ts`.")
+            cmd = ["npx", "tsx", "src/app.ts"]
 
     print(f"[bootstrap] Starting Node backend: {' '.join(cmd)}")
     subprocess.Popen(cmd, cwd=NODE_DIR, env=child_env)

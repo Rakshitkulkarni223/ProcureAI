@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "tsx watch src/app.ts",
     "build": "tsc -p tsconfig.json",
+    "bundle": "esbuild src/app.ts --bundle --platform=node --target=node20 --format=cjs --outfile=dist/server.bundle.js",
     "start": "node dist/app.js",
     "typecheck": "tsc --noEmit",
     "test:unit": "tsx src/services/__tests__/basketOptimizer.test.ts"
@@ -29,6 +30,7 @@
     "@types/morgan": "^1.9.9",
     "@types/node": "^20.14.2",
     "@types/swagger-ui-express": "^4.1.6",
+    "esbuild": "^0.28.1",
     "tsx": "^4.15.5",
     "typescript": "^5.4.5"
   }
