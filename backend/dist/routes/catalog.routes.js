@@ -1,0 +1,11 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const CatalogController_1 = require("../controllers/CatalogController");
+const auth_1 = require("../middleware/auth");
+const router = (0, express_1.Router)();
+router.get('/categories', auth_1.authenticate, CatalogController_1.CatalogController.listCategories);
+router.get('/categories/:id/suppliers', auth_1.authenticate, CatalogController_1.CatalogController.suppliersForCategory);
+router.get('/suppliers', auth_1.authenticate, CatalogController_1.CatalogController.listSuppliers);
+router.patch('/suppliers/:id', auth_1.authenticate, CatalogController_1.CatalogController.toggleSupplier);
+exports.default = router;

@@ -1,0 +1,50 @@
+{
+    "electronics": [
+        { "id": "elec-laptop-ultrabook", "title": "UltraBook Pro 14 Laptop (16GB/512GB)", "brand": "Dell", "basePrice": 78000, "image": "https://images.pexels.com/photos/6968164/pexels-photo-6968164.jpeg", "keywords": ["laptop", "ultrabook", "notebook", "computer", "dell", "macbook"] },
+        { "id": "elec-laptop-air", "title": "ProBook Air 13 Slim Laptop", "brand": "HP", "basePrice": 65000, "image": "https://images.pexels.com/photos/8533587/pexels-photo-8533587.jpeg", "keywords": ["laptop", "probook", "hp", "notebook", "air", "computer"] },
+        { "id": "elec-phone-galaxy", "title": "Galaxy S Smartphone 5G (256GB)", "brand": "Samsung", "basePrice": 62000, "image": "https://images.pexels.com/photos/215581/pexels-photo-215581.jpeg", "keywords": ["phone", "smartphone", "mobile", "galaxy", "samsung", "5g", "android"] },
+        { "id": "elec-phone-iphone", "title": "iPhone Pro Smartphone (256GB)", "brand": "Apple", "basePrice": 119000, "image": "https://images.pexels.com/photos/47261/pexels-photo-47261.jpeg", "keywords": ["phone", "iphone", "apple", "mobile", "smartphone", "ios"] },
+        { "id": "elec-headphones", "title": "Wireless Noise Cancelling Headphones", "brand": "Sony", "basePrice": 24000, "image": "", "keywords": ["headphones", "headphone", "earphones", "audio", "sony", "wireless"] },
+        { "id": "elec-monitor", "title": "27-inch 4K UHD Monitor", "brand": "LG", "basePrice": 32000, "image": "", "keywords": ["monitor", "display", "screen", "4k", "lg", "uhd"] }
+    ],
+    "grocery": [
+        { "id": "groc-rice", "title": "Premium Basmati Rice 10kg", "brand": "India Gate", "basePrice": 1100, "image": "https://images.pexels.com/photos/3737691/pexels-photo-3737691.jpeg", "keywords": ["rice", "basmati", "grain", "staple"] },
+        { "id": "groc-oil", "title": "Sunflower Cooking Oil 5L", "brand": "Fortune", "basePrice": 850, "image": "", "keywords": ["oil", "cooking oil", "sunflower", "fortune"] },
+        { "id": "groc-atta", "title": "Whole Wheat Atta 10kg", "brand": "Aashirvaad", "basePrice": 520, "image": "", "keywords": ["atta", "flour", "wheat", "aashirvaad"] },
+        { "id": "groc-sugar", "title": "Refined Sugar 5kg", "brand": "Madhur", "basePrice": 260, "image": "", "keywords": ["sugar", "madhur", "sweetener"] },
+        { "id": "groc-veg", "title": "Fresh Vegetables Combo 5kg", "brand": "Farm Fresh", "basePrice": 420, "image": "", "keywords": ["vegetables", "veggies", "fresh", "combo", "produce"] }
+    ],
+    "fashion": [
+        { "id": "fash-shoes-nike", "title": "Air Zoom Running Shoes", "brand": "Nike", "basePrice": 7500, "image": "https://images.pexels.com/photos/13525711/pexels-photo-13525711.jpeg", "keywords": ["nike", "shoes", "running", "sneakers", "footwear", "air", "zoom"] },
+        { "id": "fash-shoes-adidas", "title": "Ultraboost Running Shoes", "brand": "Adidas", "basePrice": 8200, "image": "", "keywords": ["adidas", "shoes", "running", "sneakers", "ultraboost", "footwear"] },
+        { "id": "fash-tshirt", "title": "Cotton Crew Neck T-Shirt", "brand": "Levi's", "basePrice": 1200, "image": "https://images.pexels.com/photos/20458071/pexels-photo-20458071.jpeg", "keywords": ["tshirt", "t-shirt", "shirt", "cotton", "apparel", "tee"] },
+        { "id": "fash-jeans", "title": "Slim Fit Denim Jeans", "brand": "Levi's", "basePrice": 2800, "image": "", "keywords": ["jeans", "denim", "pants", "trousers"] },
+        { "id": "fash-jacket", "title": "Windcheater Jacket", "brand": "Puma", "basePrice": 3500, "image": "", "keywords": ["jacket", "windcheater", "puma", "outerwear", "coat"] }
+    ],
+    "furniture": [
+        { "id": "furn-chair", "title": "Ergonomic Office Chair", "brand": "Featherlite", "basePrice": 12000, "image": "https://images.pexels.com/photos/295480/pexels-photo-295480.jpeg", "keywords": ["chair", "office chair", "ergonomic", "seating"] },
+        { "id": "furn-desk", "title": "Height-Adjustable Standing Desk", "brand": "Urban", "basePrice": 18000, "image": "", "keywords": ["desk", "table", "standing desk", "work"] },
+        { "id": "furn-sofa", "title": "3-Seater Fabric Sofa", "brand": "HomeTown", "basePrice": 35000, "image": "", "keywords": ["sofa", "couch", "seater", "living"] }
+    ],
+    "office": [
+        { "id": "off-paper", "title": "A4 Copier Paper (5 Reams)", "brand": "JK Copier", "basePrice": 1400, "image": "", "keywords": ["paper", "a4", "copier", "reams", "stationery"] },
+        { "id": "off-pens", "title": "Ballpoint Pens (Pack of 50)", "brand": "Cello", "basePrice": 350, "image": "", "keywords": ["pen", "pens", "ballpoint", "stationery"] },
+        { "id": "off-printer", "title": "All-in-One Inkjet Printer", "brand": "Canon", "basePrice": 14000, "image": "", "keywords": ["printer", "inkjet", "canon", "office", "scanner"] }
+    ],
+    "cleaning": [
+        { "id": "clean-floor", "title": "Floor Cleaner Disinfectant 5L", "brand": "Lizol", "basePrice": 650, "image": "", "keywords": ["floor cleaner", "cleaner", "lizol", "disinfectant"] },
+        { "id": "clean-sanitizer", "title": "Hand Sanitizer 5L Refill", "brand": "Dettol", "basePrice": 900, "image": "", "keywords": ["sanitizer", "hand sanitizer", "dettol", "hygiene"] },
+        { "id": "clean-tissue", "title": "Tissue Rolls (Pack of 12)", "brand": "Origami", "basePrice": 480, "image": "", "keywords": ["tissue", "tissue rolls", "paper towels", "napkin"] }
+    ],
+    "medical": [
+        { "id": "med-mask", "title": "3-Ply Surgical Masks (Box of 100)", "brand": "MediShield", "basePrice": 300, "image": "", "keywords": ["mask", "surgical mask", "ppe", "3-ply", "face mask"] },
+        { "id": "med-gloves", "title": "Nitrile Examination Gloves (Box of 100)", "brand": "SafeHand", "basePrice": 600, "image": "", "keywords": ["gloves", "nitrile", "examination", "ppe"] },
+        { "id": "med-oximeter", "title": "Fingertip Pulse Oximeter", "brand": "Dr Trust", "basePrice": 1500, "image": "", "keywords": ["oximeter", "pulse oximeter", "spo2", "device"] },
+        { "id": "med-thermometer", "title": "Infrared Thermometer", "brand": "Omron", "basePrice": 1800, "image": "", "keywords": ["thermometer", "infrared", "temperature", "device"] }
+    ],
+    "industrial": [
+        { "id": "ind-drill", "title": "Cordless Power Drill 20V", "brand": "Bosch", "basePrice": 6500, "image": "", "keywords": ["drill", "power drill", "cordless", "bosch", "tool"] },
+        { "id": "ind-helmet", "title": "Safety Helmets (Pack of 10)", "brand": "Karam", "basePrice": 1200, "image": "", "keywords": ["helmet", "safety helmet", "ppe", "hard hat"] },
+        { "id": "ind-wrench", "title": "Adjustable Wrench Set", "brand": "Taparia", "basePrice": 1800, "image": "", "keywords": ["wrench", "spanner", "tool set", "taparia"] }
+    ]
+}

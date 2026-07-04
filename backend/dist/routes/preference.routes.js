@@ -1,0 +1,10 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const PreferenceController_1 = require("../controllers/PreferenceController");
+const auth_1 = require("../middleware/auth");
+const router = (0, express_1.Router)();
+router.get('/preferences', auth_1.authenticate, PreferenceController_1.PreferenceController.get);
+router.put('/preferences', auth_1.authenticate, PreferenceController_1.PreferenceController.update);
+router.get('/weight-profiles', auth_1.authenticate, PreferenceController_1.PreferenceController.weightProfiles);
+exports.default = router;
