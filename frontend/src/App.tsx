@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useCallback } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
@@ -12,6 +12,7 @@ import { AnalyticsPage } from './pages/AnalyticsPage';
 import { HistoryPage } from './pages/HistoryPage';
 import { SettingsPage } from './pages/SettingsPage';
 import { DocsPage } from './pages/DocsPage';
+import { SplashScreen } from './components/SplashScreen';
 
 const protectedRoute = (el: React.ReactNode) => (
   <ProtectedRoute>
@@ -20,6 +21,27 @@ const protectedRoute = (el: React.ReactNode) => (
 );
 
 export default function App() {
+  const [showSplash, setShowSplash] = useState(() => {
+    try {
+      return !sessionStorage.getItem('splash_seen');
+    } catch {
+      return true;
+    }
+  });
+
+  const hideSplash = useCallback(() => {
+    try {
+      sessionStorage.setItem('splash_seen', '1');
+      setShowSplash(false);
+    } catch {
+      setShowSplash(false);
+    }
+  }, []);
+
+  if (showSplash) {
+    return <SplashScreen onFinish={hideSplash} />;
+  }
+
   return (
     <ThemeProvider>
     <AuthProvider>
