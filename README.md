@@ -1,28 +1,150 @@
 # ProcureAI — AI-Powered Procurement & Vendor Intelligence Platform
 
-## Table of Contents
+> **Transforming how businesses buy — from hours of manual comparison to AI-optimized decisions in seconds.**
 
-- [Application Overview](#application-overview)
-- [Architecture](#architecture)
-- [Application Flow](#application-flow)
-- [Module-wise Explanation](#module-wise-explanation)
-- [API Reference](#api-reference)
-- [Setup & Running the Project](#setup--running-the-project)
-- [Developer Guide](#developer-guide)
+[![GitHub](https://img.shields.io/badge/GitHub-Rakshitkulkarni223%2FProcureAI-blue?logo=github)](https://github.com/Rakshitkulkarni223/ProcureAI)
 
 ---
 
-## Application Overview
+## 🏆 Business Transformation
 
-### Purpose
+### The Problem
 
-ProcureAI is an AI-powered procurement platform that helps organizations compare products across multiple suppliers, optimize purchasing decisions, and track savings — all from a single dashboard.
+Small and medium businesses spend **hours** manually comparing suppliers across Amazon, Flipkart, IndiaMART, and other marketplaces.
 
-### Problem It Solves
+The typical procurement process involves:
 
-Procurement teams manually compare prices across dozens of supplier websites, miss volume discounts, and lack data-driven visibility into spend patterns. ProcureAI automates multi-supplier search, applies weighted scoring to recommend the best vendor, and optimizes multi-item baskets for cost, delivery, and quality.
+- 🔍 Opening **5–10 supplier websites** one by one
+- 📋 Copying prices into **Excel spreadsheets**
+- ⏱️ Comparing delivery timelines and ratings **manually**
+- 🧮 Running calculations to find the best deal
+- 📝 Preparing reports for **management approvals**
+- 🔁 Repeating this for **every single purchase**
 
-### Key Features
+This process is **repetitive, error-prone, and expensive** — often leading to suboptimal purchasing decisions and higher procurement costs.
+
+---
+
+### Our Solution
+
+ProcureAI uses **AI to automate** supplier discovery, comparison, and procurement optimization.
+
+Instead of spending nearly an hour comparing suppliers manually, users receive an **AI-optimized recommendation in seconds** — with full transparency into why each supplier was chosen.
+
+```
+🏢 Business Problem         →    🤖 ProcureAI           →    📊 AI Recommendation     →    💰 Business Impact
+                                                                                              
+Manual supplier comparison        Automated multi-supplier      Weighted scoring with          Measurable savings,
+across 5–10 websites              search + AI scoring           explainable reasoning          hours freed, ROI tracked
+(45–60 min per purchase)          (3–5 min per purchase)        (radar chart + scoreboard)     (dedicated impact dashboard)
+```
+
+---
+
+### Business Impact
+
+| Metric | Before (Manual) | After (ProcureAI) |
+|---|---|---|
+| **Supplier comparison** | Manual across multiple websites | Automated — all suppliers in one click |
+| **Time per procurement** | 45–60 minutes | 3–5 minutes |
+| **Websites visited** | 5–10 per purchase | 1 (ProcureAI) |
+| **Manual calculations** | Required (Excel/paper) | Eliminated — AI handles scoring |
+| **AI recommendations** | ❌ Not available | ✅ Weighted scoring with explanation |
+| **Procurement reports** | Manual preparation | One-click CSV & PDF export |
+| **Multi-item optimization** | Not feasible manually | ✅ Split-cart optimizer across suppliers |
+| **Savings tracking** | No visibility | ✅ Real-time dashboard with trends |
+| **Decision transparency** | "Gut feel" | ✅ Radar chart + scoreboard |
+
+---
+
+### Value Delivered
+
+- 📉 Reduce procurement time by up to **93%** (45 min → 3 min)
+- 💰 **Track and maximize savings** with AI-optimized recommendations
+- 🧠 **Explainable AI** — every recommendation comes with a "Why?" panel
+- 📊 **Business Impact Dashboard** — total savings, hours saved, efficiency score, ROI calculator
+- 🛒 **Basket Optimization** — split orders across suppliers for maximum savings
+- 📄 **One-click reports** — export comparisons as professional PDF or CSV
+- 👁️ **Price Watchlist** — track products and set target price alerts
+- 🌗 **Dark mode** — optimized for extended use
+
+---
+
+## 📸 Product Screenshots
+
+### Dashboard — KPIs & AI Insights
+
+> Real-time procurement intelligence with date range filtering.
+
+![Dashboard](screenshots/dashboard.png)
+
+### Search & Compare — AI Recommendations
+
+> Search any product across all suppliers. AI scores and ranks every option.
+
+![Search & Compare](screenshots/search-compare.png)
+
+### AI Explanation Panel
+
+> "Why this recommendation?" — Radar chart + supplier scoreboard with scores out of 100.
+
+![AI Explanation](screenshots/ai-explanation.png)
+
+### Basket Optimization
+
+> Multi-item split-cart optimizer finds the cheapest combination across suppliers.
+
+![Basket Optimization](screenshots/basket-optimization.png)
+
+### Business Impact Dashboard
+
+> Measurable business transformation — savings, hours saved, efficiency score.
+
+![Business Impact](screenshots/business-impact.png)
+
+### ROI Calculator
+
+> Interactive calculator — estimate monthly savings based on your team size and purchase volume.
+
+![ROI Calculator](screenshots/roi-calculator.png)
+
+### Analytics — Spend & Savings Trends
+
+> Visual charts showing spending patterns, category breakdown, and cumulative savings.
+
+![Analytics](screenshots/analytics.png)
+
+---
+
+## 🔄 How It Works
+
+```
+┌─────────────────┐     ┌─────────────────────┐     ┌──────────────────────┐     ┌─────────────────────┐
+│                 │     │                     │     │                      │     │                     │
+│  🏢 Business    │────►│  🤖 ProcureAI       │────►│  📊 AI               │────►│  💰 Business        │
+│     Need        │     │     Platform        │     │     Recommendation   │     │     Impact          │
+│                 │     │                     │     │                      │     │                     │
+│  "I need to     │     │  • Multi-supplier   │     │  • Weighted scoring  │     │  • Total savings    │
+│   buy laptops   │     │    search           │     │  • Confidence score  │     │  • Hours saved      │
+│   for my team"  │     │  • Price normalize  │     │  • Radar chart       │     │  • Efficiency score │
+│                 │     │  • AI scoring       │     │  • "Why?" panel      │     │  • ROI projection   │
+│                 │     │  • Basket optimize  │     │  • Export PDF/CSV    │     │  • Annual forecast  │
+└─────────────────┘     └─────────────────────┘     └──────────────────────┘     └─────────────────────┘
+```
+
+### Step-by-Step
+
+1. **Search** — Type a product name, pick a category, and ProcureAI queries all suppliers simultaneously
+2. **Compare** — Results are normalized and displayed in a sortable comparison table
+3. **Recommend** — AI scores every option on price, delivery, rating, discount, warranty, and returns
+4. **Explain** — Click "Why this recommendation?" for a radar chart and supplier scoreboard
+5. **Optimize** — Add multiple items to a basket for split-cart optimization across suppliers
+6. **Export** — Download results as CSV or styled PDF for team review
+7. **Track** — Monitor savings, hours freed, and procurement efficiency on the Business Impact dashboard
+
+---
+
+## ✨ Key Features
 
 | Feature | Description |
 |---|---|
@@ -31,19 +153,27 @@ Procurement teams manually compare prices across dozens of supplier websites, mi
 | **Weight Profiles** | Choose from predefined profiles (Balanced, Cost Saver, Speed Priority, Quality First) that adjust how price, delivery, rating, discount, warranty, and return policy are weighted. |
 | **AI Explanation Panel** | "Why this recommendation?" — interactive radar chart comparing top suppliers + color-coded scoreboard with scores out of 100. |
 | **Export Reports** | Export comparison results to CSV or styled PDF directly from the results table. |
-| **Price Watchlist** | Add products to a persistent watchlist (localStorage) to track prices across sessions. |
-| **Autocomplete Search** | Bloom filter–based prefix search suggestions for faster product discovery. |
+| **Price Watchlist** | Add products to a persistent watchlist to track prices and set target alerts across sessions. |
 | **Business Impact Dashboard** | Dedicated page showing measurable business transformation: total savings, hours saved, purchases optimized, AI accuracy, procurement efficiency score, projected annual savings — all with date range filtering. |
 | **Before vs After Workflow** | Visual side-by-side comparison of manual procurement (45–60 min, 8 steps) vs ProcureAI-assisted (3–5 min, 5 steps) showing 93% time reduction. |
 | **ROI Calculator** | Interactive calculator with sliders — input purchases/month, hourly cost, manual vs AI time to estimate monthly hours saved, salary savings, annual savings, and cost reduction %. |
-| **Dashboard & Analytics** | Real-time KPIs with **date range filtering** — preset ranges (Last 7/30/90 days, This Month, Last Month) or custom date picker. All charts, insights, and KPIs update based on the selected period. Default: All Time. |
-| **Search History** | Paginated (15 per page), per-user log of successful comparisons. Failed/empty searches are automatically excluded. Re-run or delete past searches. |
-| **User Preferences** | Persist default category, currency, and notification settings. |
-| **Auth** | JWT-based registration and login with bcrypt password hashing. Single unified user role (no admin/buyer distinction). |
+| **Dashboard & Analytics** | Real-time KPIs with date range filtering — preset ranges (Last 7/30/90 days, This Month, Last Month) or custom date picker. |
+| **Search History** | Paginated (15 per page), per-user log of successful comparisons. Failed/empty searches are automatically excluded. |
+| **Dark Mode** | Full light/dark theme support with CSS variable theming. |
 
 ---
 
-## Architecture
+## 🏗️ Architecture
+
+### Technology Stack
+
+| Layer | Technology |
+|---|---|
+| **Frontend** | React 18, TypeScript, TailwindCSS, React Router v6, Axios, Recharts, Framer Motion, Lucide Icons |
+| **Backend** | Node.js, Express 4, TypeScript, Zod (validation), Swagger UI |
+| **Database** | MongoDB with Mongoose ODM |
+| **Auth** | JWT (jsonwebtoken) + bcryptjs |
+| **Dev Tools** | tsx (dev server), react-scripts, PostCSS, Autoprefixer |
 
 ### High-Level Architecture
 
@@ -83,16 +213,6 @@ Procurement teams manually compare prices across dozens of supplier websites, mi
                     └───────────────┘
 ```
 
-### Technology Stack
-
-| Layer | Technology |
-|---|---|
-| **Frontend** | React 18, TypeScript, TailwindCSS, React Router v6, Axios, Recharts, Framer Motion, Lucide Icons, Bloom Filter |
-| **Backend** | Node.js, Express 4, TypeScript, Zod (validation), Swagger UI |
-| **Database** | MongoDB with Mongoose ODM |
-| **Auth** | JWT (jsonwebtoken) + bcryptjs |
-| **Dev Tools** | tsx (dev server), react-scripts, PostCSS, Autoprefixer |
-
 ### Project Structure
 
 ```
@@ -101,216 +221,32 @@ ProcureAI/
 │   └── src/
 │       ├── adapters/           # Provider adapters (MockProviderAdapter, ProviderFactory)
 │       ├── config/             # env, db, seed data, swagger spec
-│       ├── controllers/        # Request handlers (Auth, Search, Basket, History, Dashboard, etc.)
-│       ├── interfaces/         # ProviderAdapter interface
+│       ├── controllers/        # Request handlers (Auth, Search, Basket, History, Dashboard)
 │       ├── middleware/         # auth (JWT verify), error handler
-│       ├── mock-data/          # catalog.json — product catalog per supplier
-│       ├── models/             # Mongoose schemas (User, SearchHistory, BasketHistory, Category, Supplier, UserPreference)
+│       ├── models/             # Mongoose schemas
 │       ├── repositories/       # Data access layer (CRUD + pagination)
 │       ├── routes/             # Express routers
-│       ├── services/           # Business logic (Search, Comparison, Recommendation, BasketOptimization, Dashboard, etc.)
-│       ├── types/              # Shared TypeScript interfaces
+│       ├── services/           # Business logic (Search, Comparison, Recommendation, Basket, Dashboard)
 │       ├── utils/              # http helpers, logger, currency
 │       └── validators/         # Zod schemas
 │
 ├── frontend/
 │   └── src/
-│       ├── components/         # Reusable UI (AppLayout, Card, Badge, ComparisonResults, BasketResults, DateRangeFilter, etc.)
-│       ├── context/            # AuthContext (React Context + Provider)
-│       ├── hooks/              # Custom hooks (useSearchSuggestions, useWatchlist)
-│       ├── lib/                # api client, formatters, icons, utils, exportUtils
-│       ├── pages/              # Route-level pages (Dashboard, Search, Analytics, History, Settings, Watchlist, Login, Register)
-│       └── types.ts            # Shared frontend type definitions
+│       ├── components/         # Reusable UI (AppLayout, Card, Badge, DateRangeFilter, etc.)
+│       ├── context/            # AuthContext, ThemeContext
+│       ├── hooks/              # useSearchSuggestions, useWatchlist
+│       ├── lib/                # api client, formatters, exportUtils
+│       ├── pages/              # Dashboard, Search, Analytics, History, BusinessImpact, Watchlist, Settings, Docs
+│       └── types.ts            # Shared TypeScript interfaces
 │
+├── demo/                      # Playwright demo recorder script
+├── screenshots/               # Product screenshots for README
 └── README.md
 ```
 
 ---
 
-## Application Flow
-
-### End-to-End Request Flow
-
-```
-User Action          Frontend                     Backend                         Database
-    │                    │                            │                               │
-    │  1. Login          │                            │                               │
-    │───────────────────►│  POST /api/auth/login      │                               │
-    │                    │───────────────────────────►│  Verify password (bcrypt)      │
-    │                    │                            │──────────────────────────────►│
-    │                    │◄───────────────────────────│  Return JWT token             │
-    │◄───────────────────│  Store token, redirect     │                               │
-    │                    │                            │                               │
-    │  2. Search         │                            │                               │
-    │───────────────────►│  POST /api/search           │                               │
-    │                    │───────────────────────────►│  a) Resolve supplier adapters  │
-    │                    │                            │  b) Query all in parallel      │
-    │                    │                            │  c) Normalize & dedupe         │
-    │                    │                            │  d) Apply comparison/sort      │
-    │                    │                            │  e) Run recommendation engine  │
-    │                    │                            │  f) Persist history ──────────►│
-    │                    │◄───────────────────────────│  Return ranked results         │
-    │◄───────────────────│  Display comparison table  │                               │
-    │                    │                            │                               │
-    │  3. Basket Optimize│                            │                               │
-    │───────────────────►│  POST /api/basket/optimize  │                               │
-    │                    │───────────────────────────►│  a) Search each basket item    │
-    │                    │                            │  b) Score per supplier/item    │
-    │                    │                            │  c) Build SPLIT vs CONSOL plan │
-    │                    │                            │  d) Compare + recommend        │
-    │                    │                            │  e) Persist basket history ───►│
-    │                    │◄───────────────────────────│  Return optimization result    │
-    │◄───────────────────│  Display basket results    │                               │
-```
-
-### User Journey
-
-```
-┌──────────┐     ┌──────────────┐     ┌─────────────────┐     ┌───────────────┐
-│  Login / │────►│  Dashboard   │────►│  Search &       │────►│  View Results │
-│ Register │     │  (KPIs +     │     │  Compare        │     │  + AI         │
-│          │     │   insights)  │     │  (Single/Basket)│     │  Recommend.   │
-└──────────┘     └──────┬───────┘     └────────┬────────┘     └───────┬───────┘
-                        │                      │                      │
-                        ▼                      ▼                      ▼
-                 ┌──────────────┐     ┌─────────────────┐     ┌───────────────┐
-                 │  Analytics   │     │   History        │     │  Settings     │
-                 │  (Spend,     │     │   (Paginated,    │     │  (Preferences,│
-                 │   Savings)   │     │    Re-run,       │     │   Profile)    │
-                 │              │     │    Delete)        │     │              │
-                 └──────────────┘     └─────────────────┘     └───────────────┘
-```
-
----
-
-## Module-wise Explanation
-
-### Backend Modules
-
-#### 1. Adapters (`adapters/`)
-
-- **`MockProviderAdapter`** — Simulates supplier APIs using a local `catalog.json`. Each adapter is instantiated per supplier name and returns normalized `Product` objects.
-- **`ProviderFactory`** — Creates the correct adapter for a given supplier name. In production, this is where real API adapters would be plugged in.
-
-#### 2. Services (`services/`)
-
-| Service | Responsibility |
-|---|---|
-| **`AuthService`** | Registration (bcrypt hash), login (password verify + JWT sign) |
-| **`SearchService`** | Resolves adapters, queries suppliers in parallel (`Promise.allSettled`), normalizes results, runs comparison + recommendation, persists history |
-| **`ComparisonService`** | Deduplicates products, applies filters, sorts by chosen strategy |
-| **`RecommendationService`** | AI scoring engine — normalizes price/delivery/rating/discount/warranty/returns to 0–1, multiplies by weight profile, sums to a final score. Generates human-readable reasons. |
-| **`BasketOptimizationService`** | Split-cart optimizer. Builds a SPLIT plan (best supplier per item) vs. CONSOLIDATED baseline (single supplier). Applies consolidation penalty for shipping. |
-| **`DashboardService`** | Aggregates KPIs from search/basket history with optional date range filtering. Includes `businessImpact()` for hours saved, efficiency score, and ROI metrics |
-| **`CatalogService`** | Returns categories and suppliers per category |
-| **`HistoryService`** | Paginated listing and deletion of search history |
-| **`PreferenceService`** | CRUD for user preferences |
-
-#### 3. Models (`models/`)
-
-| Model | Key Fields |
-|---|---|
-| **User** | name, email, password (hashed), role (default: `user`) |
-| **SearchHistory** | userId, query, category, suppliers, resultCount, recommendedSupplier, bestPrice, estimatedSavings, weightProfile |
-| **BasketHistory** | userId, category, suppliers, items[], splitTotal, baselineTotal, estimatedSavings, recommendedPlan |
-| **Category** | name, slug, icon |
-| **Supplier** | name, slug, color, enabled, categories[] |
-| **UserPreference** | userId, defaultCategory, currency, notifications |
-
-#### 4. Repositories (`repositories/`)
-
-Data access layer wrapping Mongoose queries. Each repository provides `create`, `listByUser`, `paginatedByUser`, `deleteById`, etc. Compound indexes on `{ userId: 1, createdAt: -1 }` ensure fast paginated reads.
-
-### Frontend Modules
-
-#### Pages
-
-| Page | Route | Purpose |
-|---|---|---|
-| **LoginPage** | `/login` | Email + password login form |
-| **RegisterPage** | `/register` | New user registration |
-| **DashboardPage** | `/` | KPIs, recent searches, spend & savings charts — with date range filter |
-| **SearchPage** | `/search` | Single search + basket optimization, supplier selection, weight profiles, export, AI explanation |
-| **AnalyticsPage** | `/analytics` | Spend by month/category, supplier usage, savings trend — with date range filter |
-| **HistoryPage** | `/history` | Paginated search history (15/page) with Prev/Next, re-run, delete |
-| **WatchlistPage** | `/watchlist` | Price watchlist with localStorage persistence |
-| **BusinessImpactPage** | `/impact` | Business transformation metrics, before/after workflow, ROI calculator |
-| **SettingsPage** | `/settings` | User preferences |
-
-#### Key Components
-
-| Component | Purpose |
-|---|---|
-| **AppLayout** | Sidebar navigation + responsive mobile menu |
-| **ComparisonResults** | Renders the supplier comparison table with export and watchlist actions |
-| **BasketResults** | Renders the split-cart optimization results |
-| **RecommendationCard** | AI recommendation with radar chart, color-coded scoreboard, and explanation panel |
-| **WeightProfileSelector** | UI for selecting weight profiles (Balanced, Cost Saver, etc.) |
-| **DateRangeFilter** | Preset + custom date range picker used on Dashboard, Analytics, and Business Impact |
-| **SupplierLogo** | Renders supplier avatar with brand color |
-| **AuthShell** | Layout wrapper for login/register pages |
-| **ProtectedRoute** | Route guard that redirects unauthenticated users to `/login` |
-
----
-
-## API Reference
-
-### Authentication
-
-| Method | Endpoint | Description |
-|---|---|---|
-| POST | `/api/auth/register` | Register a new user |
-| POST | `/api/auth/login` | Login, returns JWT token |
-| GET | `/api/auth/me` | Get current user profile |
-
-### Catalog
-
-| Method | Endpoint | Description |
-|---|---|---|
-| GET | `/api/categories` | List all product categories |
-| GET | `/api/suppliers/:category` | List suppliers for a category |
-
-### Search & Compare
-
-| Method | Endpoint | Description |
-|---|---|---|
-| POST | `/api/search` | Search products across suppliers |
-
-### Basket Optimization
-
-| Method | Endpoint | Description |
-|---|---|---|
-| POST | `/api/basket/optimize` | Optimize a multi-item basket |
-| GET | `/api/basket/history?page=1&limit=20` | Paginated basket optimization history |
-
-### History
-
-| Method | Endpoint | Description |
-|---|---|---|
-| GET | `/api/history?page=1&limit=20` | Paginated search history (default page=1, limit=20, max limit=100) |
-| DELETE | `/api/history/:id` | Delete a history entry |
-
-### Preferences
-
-| Method | Endpoint | Description |
-|---|---|---|
-| GET | `/api/preferences` | Get user preferences |
-| PUT | `/api/preferences` | Update user preferences |
-| GET | `/api/weight-profiles` | List available weight profiles |
-
-### Dashboard & Analytics
-
-| Method | Endpoint | Description |
-|---|---|---|
-| GET | `/api/dashboard?from=YYYY-MM-DD&to=YYYY-MM-DD` | Dashboard KPIs (date range optional, default: all time) |
-| GET | `/api/analytics/spend?from=YYYY-MM-DD&to=YYYY-MM-DD` | Spend analytics with optional date filter |
-| GET | `/api/analytics/savings?from=YYYY-MM-DD&to=YYYY-MM-DD` | Savings trend + total savings with optional date filter |
-| GET | `/api/insights?from=YYYY-MM-DD&to=YYYY-MM-DD` | AI-generated procurement insights with optional date filter |
-| GET | `/api/business-impact?from=YYYY-MM-DD&to=YYYY-MM-DD` | Business impact metrics (savings, hours saved, efficiency score, ROI) |
-
----
-
-## Setup & Running the Project
+## 🚀 Setup & Running the Project
 
 ### Prerequisites
 
@@ -389,32 +325,69 @@ The demo user is automatically created via the seed script on first startup.
 
 ---
 
-## Developer Guide
+## 📡 API Reference
 
-### Common Workflows
+### Authentication
 
-1. **Add a new supplier adapter** — Create a class implementing `ProviderAdapter` in `adapters/`, register it in `ProviderFactory.create()`.
-2. **Add a new category** — Add to `CATEGORY_SUPPLIERS` in `config/data.ts` and add catalog entries in `mock-data/catalog.json`.
-3. **Add a new weight profile** — Add to `WEIGHT_PROFILES` in `config/data.ts`.
-4. **Add a new API endpoint** — Create controller → service → repository → route file → register in `routes/index.ts`.
+| Method | Endpoint | Description |
+|---|---|---|
+| POST | `/api/auth/register` | Register a new user |
+| POST | `/api/auth/login` | Login, returns JWT token |
+| GET | `/api/auth/me` | Get current user profile |
+
+### Search & Compare
+
+| Method | Endpoint | Description |
+|---|---|---|
+| POST | `/api/search` | Search products across suppliers |
+| GET | `/api/categories` | List all product categories |
+| GET | `/api/suppliers/:category` | List suppliers for a category |
+
+### Basket Optimization
+
+| Method | Endpoint | Description |
+|---|---|---|
+| POST | `/api/basket/optimize` | Optimize a multi-item basket |
+| GET | `/api/basket/history?page=1&limit=20` | Paginated basket optimization history |
+
+### History & Preferences
+
+| Method | Endpoint | Description |
+|---|---|---|
+| GET | `/api/history?page=1&limit=20` | Paginated search history |
+| DELETE | `/api/history/:id` | Delete a history entry |
+| GET | `/api/preferences` | Get user preferences |
+| PUT | `/api/preferences` | Update user preferences |
+
+### Dashboard, Analytics & Business Impact
+
+| Method | Endpoint | Description |
+|---|---|---|
+| GET | `/api/dashboard?from=&to=` | Dashboard KPIs (date range optional) |
+| GET | `/api/analytics/spend?from=&to=` | Spend analytics |
+| GET | `/api/analytics/savings?from=&to=` | Savings trend |
+| GET | `/api/insights?from=&to=` | AI-generated procurement insights |
+| GET | `/api/business-impact?from=&to=` | Business impact metrics (savings, hours saved, efficiency, ROI) |
+
+---
+
+## 🛠️ Developer Guide
 
 ### Design Decisions
 
 - **Adapter Pattern** — Supplier integrations use an adapter interface so mock data can be swapped for real APIs without touching business logic.
 - **Repository Pattern** — All database access goes through repositories, keeping Mongoose out of services and controllers.
-- **Promise.allSettled** — Individual supplier failures don't block the entire search. Failed providers are logged and skipped.
-- **Fire-and-forget history** — Search history is persisted asynchronously so it never slows down the response. Only successful searches (with results) are saved.
-- **Date range filtering** — Dashboard, Analytics, and Business Impact endpoints accept optional `from`/`to` query params, enabling period-based analysis without separate aggregation pipelines.
-- **Business impact metrics** — Derived from search history: hours saved (manual 45 min vs AI 3 min per search), efficiency score (composite of accuracy + automation + volume), projected annual savings.
-- **Single user role** — No admin/buyer distinction. All users share the same role (`user`) and feature set, keeping the auth model simple.
-- **Compound indexes** — `{ userId: 1, createdAt: -1 }` on both history collections for efficient user-scoped, time-sorted pagination.
-- **Weight profiles** — The recommendation engine is fully configurable via weight profiles, making it easy to add new scoring strategies.
+- **Promise.allSettled** — Individual supplier failures don't block the entire search.
+- **Fire-and-forget history** — Search history is persisted asynchronously. Only successful searches (with results) are saved.
+- **Date range filtering** — Dashboard, Analytics, and Business Impact endpoints accept optional `from`/`to` query params.
+- **Business impact metrics** — Derived from search history: hours saved (manual 45 min vs AI 3 min), efficiency score (composite of accuracy + automation + volume), projected annual savings.
+- **Weight profiles** — The recommendation engine is fully configurable via weight profiles.
 
 ### Conventions
 
 - **Backend**: Controller → Service → Repository layering. All async handlers wrapped in `asyncHandler`. Responses use `ok(res, data)`.
 - **Frontend**: Functional components with hooks. State collocated in page components. `api.ts` centralizes all HTTP calls. TailwindCSS utility classes for styling.
-- **Error handling**: All functions wrapped in try-catch blocks. Backend uses `ApiError` class with status codes. Frontend uses `apiError()` helper for user-friendly messages.
+- **Error handling**: All functions wrapped in try-catch blocks. Backend uses `ApiError` class. Frontend uses `apiError()` helper.
 - **TypeScript**: Strict types shared between layers. Zod for runtime request validation on the backend.
 
 ### Running Tests
@@ -424,3 +397,10 @@ cd backend
 npm run test:unit 
 npm run typecheck    # TypeScript type checking
 ```
+
+---
+
+<p align="center">
+  <b>ProcureAI</b> — Smart Procurement, Powered by AI<br/>
+  <a href="https://github.com/Rakshitkulkarni223/ProcureAI">GitHub</a>
+</p>

@@ -413,7 +413,6 @@ const GENERAL_SECTIONS: DocSection[] = [
     id: 'g-business-impact',
     title: 'Business Impact',
     icon: Gauge,
-    badge: { label: 'New', tone: 'success' },
     content: (
       <div className="space-y-4 text-sm text-ink-soft leading-relaxed">
         <p>

@@ -10,3 +10,6 @@ backend/node_modules
 frontend/node_modules
 backend/__pycache__
 frontend/__pycache__
+
+demo/
+screenshots/
