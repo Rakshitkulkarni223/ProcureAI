@@ -58,6 +58,7 @@ export function AnalyticsPage() {
                   <YAxis tick={{ fontSize: 11, fill: 'var(--color-muted)' }} axisLine={false} tickLine={false}
                     tickFormatter={(v) => `₹${v >= 1000 ? (v / 1000).toFixed(0) + 'k' : v}`} />
                   <Tooltip formatter={(v: number) => [formatINR(v), 'Value']}
+                    cursor={{ fill: 'var(--color-line)', opacity: 0.3 }}
                     contentStyle={{ borderRadius: 6, border: '1px solid var(--color-line)', fontSize: 12, background: 'var(--color-surface)', color: 'var(--color-ink)' }}
                     labelStyle={{ color: 'var(--color-ink)' }}
                     itemStyle={{ color: 'var(--color-ink)' }} />
