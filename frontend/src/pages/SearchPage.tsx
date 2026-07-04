@@ -32,6 +32,8 @@ import { ComparisonResults } from '../components/ComparisonResults';
 import { BasketResults } from '../components/BasketResults';
 import { getIcon } from '../lib/icons';
 import { cn } from '../lib/utils';
+import { useSearchSuggestions } from '../hooks/useSearchSuggestions';
+import { SearchSuggestions } from '../components/SearchSuggestions';
 
 const EXAMPLES: Record<string, string[]> = {
   electronics: ['UltraBook Laptop', 'Galaxy Smartphone', 'Noise Cancelling Headphones'],
@@ -78,6 +80,9 @@ export function SearchPage() {
   const [weightProfile, setWeightProfile] = useState<WeightProfileKey>('balanced');
   const [sortPref, setSortPref] = useState<SortOption>('lowest_price');
   const [error, setError] = useState('');
+
+  // Bloom filter powered suggestions
+  const suggestions = useSearchSuggestions(category);
 
   const [mode, setMode] = useState<Mode>('single');
 
@@ -365,16 +370,16 @@ export function SearchPage() {
                 }}
                 className="flex flex-col gap-3 sm:flex-row"
               >
-                <div className="relative flex-1">
-                  <Search size={17} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-muted" />
-                  <input
-                    data-testid="search-input"
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                    placeholder={searchPlaceholder}
-                    className="h-12 w-full rounded-md border border-line bg-surface pl-11 pr-4 text-sm text-ink placeholder:text-muted/70 focus:border-ink focus:outline-none focus:ring-2 focus:ring-ink/10"
-                  />
-                </div>
+                <SearchSuggestions
+                  data-testid="search-input"
+                  value={query}
+                  onChange={setQuery}
+                  onSelect={(val) => setQuery(val)}
+                  suggestions={suggestions.suggest(query)}
+                  placeholder={searchPlaceholder}
+                  className="flex-1"
+                  categoryLabel={suggestions.categoryLabel}
+                />
                 <Button type="submit" size="lg" variant="accent" loading={loading} data-testid="search-submit-button">
                   <Sparkles size={16} /> Search &amp; Compare
                 </Button>
@@ -404,16 +409,17 @@ export function SearchPage() {
               <div className="space-y-2" data-testid="basket-rows">
                 {basketRows.map((row, i) => (
                   <div key={row.id} className="flex items-center gap-2">
-                    <div className="relative flex-1">
-                      <Search size={15} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
-                      <input
-                        data-testid={`basket-item-input-${i}`}
-                        value={row.query}
-                        onChange={(e) => updateRow(i, { query: e.target.value })}
-                        placeholder={basketPlaceholder(i)}
-                        className="h-11 w-full rounded-md border border-line bg-surface pl-9 pr-3 text-sm text-ink placeholder:text-muted/70 focus:border-ink focus:outline-none"
-                      />
-                    </div>
+                    <SearchSuggestions
+                      data-testid={`basket-item-input-${i}`}
+                      value={row.query}
+                      onChange={(val) => updateRow(i, { query: val })}
+                      suggestions={suggestions.suggest(row.query)}
+                      placeholder={basketPlaceholder(i)}
+                      className="flex-1"
+                      inputClassName="!h-11 !pl-9"
+                      iconSize={15}
+                      categoryLabel={suggestions.categoryLabel}
+                    />
                     <input
                       data-testid={`basket-item-qty-${i}`}
                       type="number"
