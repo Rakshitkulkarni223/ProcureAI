@@ -328,9 +328,9 @@ DB_NAME=procureai
 JWT_SECRET=your-secret-key
 JWT_EXPIRES_IN=7d
 PORT=8002
-ADMIN_EMAIL=admin@procureai.com
-ADMIN_PASSWORD=Admin@123
-ADMIN_NAME=Procurement Admin
+DEMO_EMAIL=demo@procureai.com
+DEMO_PASSWORD=Demo@123
+DEMO_NAME=Demo User
 CORS_ORIGINS=*
 NODE_ENV=development
 ```
@@ -370,10 +370,10 @@ The app will be available at `http://localhost:3000`.
 
 | Field | Value |
 |---|---|
-| Email | `admin@procureai.com` |
-| Password | `Admin@123` |
+| Email | `demo@procureai.com` |
+| Password | `Demo@123` |
 
-The admin user is automatically created via the seed script on first startup.
+The demo user is automatically created via the seed script on first startup.
 
 ---
 

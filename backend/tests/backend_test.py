@@ -33,8 +33,7 @@ if not BASE_URL:
 
 API = f"{BASE_URL}/api"
 
-ADMIN = {"email": "admin@procureai.com", "password": "Admin@123"}
-BUYER = {"email": "buyer@procureai.com", "password": "Buyer@123"}
+ADMIN = {"email": "demo@procureai.com", "password": "Demo@123"}
 
 
 def _ok(resp):
@@ -84,7 +83,7 @@ class TestAuth:
         data = _ok(r)
         assert isinstance(data["token"], str) and len(data["token"]) > 10
         assert data["user"]["email"] == ADMIN["email"]
-        assert data["user"].get("role") == "admin"
+        assert data["user"].get("role") == "user"
 
     def test_login_invalid(self, s):
         r = s.post(f"{API}/auth/login", json={"email": ADMIN["email"], "password": "wrong"}, timeout=20)

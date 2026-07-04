@@ -10,8 +10,8 @@ import { apiError } from '../lib/api';
 export function LoginPage() {
   const { login } = useAuth();
   const navigate = useNavigate();
-  const [email, setEmail] = useState('admin@procureai.com');
-  const [password, setPassword] = useState('Admin@123');
+  const [email, setEmail] = useState('demo@procureai.com');
+  const [password, setPassword] = useState('Demo@123');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -75,7 +75,7 @@ export function LoginPage() {
       </form>
 
       <div className="mt-5 rounded-md border border-line bg-surface px-3.5 py-3 text-xs text-muted">
-        <span className="font-semibold text-ink">Demo:</span> admin@procureai.com · Admin@123
+        <span className="font-semibold text-ink">Demo:</span> demo@procureai.com · Demo@123
       </div>
 
       <p className="mt-6 text-center text-sm text-muted">

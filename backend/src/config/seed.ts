@@ -35,26 +35,31 @@ async function seedSuppliers() {
   }
 }
 
-async function seedUser(email: string, password: string, name: string, role: 'admin' | 'user') {
-  let user = await User.findOne({ email: email.toLowerCase() });
-  if (!user) {
-    const passwordHash = await hashPassword(password);
-    user = await User.create({ email: email.toLowerCase(), passwordHash, name, role });
-    logger.info(`Seeded ${role}: ${email}`);
-  } else {
-    const same = await verifyPassword(password, user.passwordHash);
-    if (!same) {
-      user.passwordHash = await hashPassword(password);
-      await user.save();
-      logger.info(`Updated password for ${email}`);
+async function seedUser(email: string, password: string, name: string) {
+  try {
+    let user = await User.findOne({ email: email.toLowerCase() });
+    if (!user) {
+      const passwordHash = await hashPassword(password);
+      user = await User.create({ email: email.toLowerCase(), passwordHash, name, role: 'user' });
+      logger.info(`Seeded user: ${email}`);
+    } else {
+      const same = await verifyPassword(password, user.passwordHash);
+      if (!same) {
+        user.passwordHash = await hashPassword(password);
+        await user.save();
+        logger.info(`Updated password for ${email}`);
+      }
     }
+    await UserPreference.updateOne(
+      { userId: user._id },
+      { $setOnInsert: { businessType: 'general' } },
+      { upsert: true },
+    );
+    return user;
+  } catch (e) {
+    logger.error('Failed to seed user', e);
+    throw e;
   }
-  await UserPreference.updateOne(
-    { userId: user._id },
-    { $setOnInsert: { businessType: role === 'admin' ? 'general' : 'startup' } },
-    { upsert: true },
-  );
-  return user;
 }
 
 async function seedSampleHistory(userId: Types.ObjectId) {
@@ -104,15 +109,9 @@ function writeTestCredentials() {
     if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
     const content = `# Test Credentials — ProcureAI
 
-## Admin Account
-- Email: ${env.adminEmail}
-- Password: ${env.adminPassword}
-- Role: admin
-
-## Test User Account
-- Email: buyer@procureai.com
-- Password: Buyer@123
-- Role: user
+## Demo Account
+- Email: ${env.demoEmail}
+- Password: ${env.demoPassword}
 
 ## Auth
 - Tokens are JWT (Bearer). Login returns { token, user }. Send \`Authorization: Bearer <token>\`.
@@ -121,7 +120,7 @@ function writeTestCredentials() {
 ## Notes
 - Backend: Node.js + Express + TypeScript on internal port 8002, fronted by a FastAPI proxy on 8001.
 - All API routes are prefixed with /api.
-- The admin account is seeded with ~9 sample searches so the dashboard/analytics are populated.
+- The demo account is seeded with ~9 sample searches so the dashboard/analytics are populated.
 `;
     fs.writeFileSync(path.join(dir, 'test_credentials.md'), content, 'utf-8');
   } catch (e) {
@@ -132,9 +131,8 @@ function writeTestCredentials() {
 export async function runSeed() {
   await seedCategories();
   await seedSuppliers();
-  const admin = await seedUser(env.adminEmail, env.adminPassword, env.adminName, 'admin');
-  await seedUser('buyer@procureai.com', 'Buyer@123', 'Demo Buyer', 'user');
-  await seedSampleHistory(admin._id as Types.ObjectId);
+  const demoUser = await seedUser(env.demoEmail, env.demoPassword, env.demoName);
+  await seedSampleHistory(demoUser._id as Types.ObjectId);
   writeTestCredentials();
   logger.info('Seed complete');
 }
