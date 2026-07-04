@@ -149,7 +149,7 @@ across 5–10 websites              search + AI scoring           explainable re
 <details>
 <summary>Can't see the video above? Click to expand.</summary>
 
-The demo video is located at [`demo/procureai-demo.webm`](demo/procureai-demo.webm). Download and play locally, or run `node demo/record-demo.mjs` to re-record.
+The demo video is located at [`demo/procureai-demo.mp4`](demo/procureai-demo.mp4). Download and play locally, or run `node demo/record-demo.mjs` to re-record.
 
 </details>
 
