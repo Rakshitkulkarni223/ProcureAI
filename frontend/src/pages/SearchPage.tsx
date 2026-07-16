@@ -73,7 +73,7 @@ const BASKET_PRESETS: Record<string, { query: string; quantity: number }[]> = {
 type Mode = 'single' | 'basket';
 let nextRowId = 0;
 const makeRow = (query = '', quantity = 1): BasketRow => ({ id: nextRowId++, query, quantity });
-let basketInitialSynced = false;
+
 interface BasketRow {
   id: number;
   query: string;
@@ -114,10 +114,11 @@ export function SearchPage() {
   const [basketLoading, setBasketLoading] = useState(false);
 
   const autoRan = useRef(false);
+  const basketSynced = useRef(false);
 
   useEffect(() => {
-    if (!basketInitialSynced && category && !basketResult) {
-      basketInitialSynced = true;
+    if (!basketSynced.current && category && !basketResult) {
+      basketSynced.current = true;
       if (BASKET_PRESETS[category]) {
         setBasketRows(BASKET_PRESETS[category].map((p) => makeRow(p.query, p.quantity)));
       } else {
@@ -570,7 +571,7 @@ export function SearchPage() {
                   'data-num mt-1.5 text-lg font-bold',
                   basketResult.intelligence?.risk?.level === 'Low' ? 'text-success'
                     : basketResult.intelligence?.risk?.level === 'Medium' ? 'text-amber-600'
-                    : 'text-danger',
+                      : 'text-danger',
                 )}>
                   {basketResult.intelligence?.risk?.level ?? '—'}
                 </div>
@@ -736,17 +737,17 @@ function EmptyState({ mode }: { mode: Mode }) {
 function SearchLoader({ basket }: { basket?: boolean }) {
   const lines = basket
     ? [
-        'Fetching every item across suppliers in parallel…',
-        'Scoring each item × supplier with the weighted engine…',
-        'Comparing split-optimal vs single-supplier baseline…',
-        'Balancing item savings against delivery consolidation…',
-      ]
+      'Fetching every item across suppliers in parallel…',
+      'Scoring each item × supplier with the weighted engine…',
+      'Comparing split-optimal vs single-supplier baseline…',
+      'Balancing item savings against delivery consolidation…',
+    ]
     : [
-        'Resolving enabled provider adapters…',
-        'Querying suppliers in parallel (Promise.allSettled)…',
-        'Normalizing products to common schema…',
-        'Scoring suppliers with weighted decision engine…',
-      ];
+      'Resolving enabled provider adapters…',
+      'Querying suppliers in parallel (Promise.allSettled)…',
+      'Normalizing products to common schema…',
+      'Scoring suppliers with weighted decision engine…',
+    ];
   return (
     <Card data-testid="search-loader">
       <CardBody className="font-mono text-xs text-muted">
