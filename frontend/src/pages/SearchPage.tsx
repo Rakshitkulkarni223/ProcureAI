@@ -113,6 +113,16 @@ export function SearchPage() {
   const [basketLoading, setBasketLoading] = useState(false);
 
   const autoRan = useRef(false);
+  const basketSynced = useRef(false);
+
+  useEffect(() => {
+    if (!basketSynced.current && category && !basketResult) {
+      basketSynced.current = true;
+      if (BASKET_PRESETS[category]) {
+        setBasketRows(BASKET_PRESETS[category].map((p) => makeRow(p.query, p.quantity)));
+      }
+    }
+  }, [category, basketResult]);
 
   useEffect(() => {
     Promise.all([api.categories(), api.weightProfiles(), api.recommendationModes(), api.preferences()])
