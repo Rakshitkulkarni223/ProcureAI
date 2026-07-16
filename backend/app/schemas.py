@@ -84,3 +84,4 @@ class BasketInput(BaseModel):
     items: list[BasketItem] = Field(..., min_length=1)
     weightProfile: Optional[Literal["balanced", "budget", "urgent", "fast"]] = None
     consolidationPenalty: Optional[float] = Field(None, ge=0, le=100000)
+    recommendationMode: Optional[RecommendationMode] = None

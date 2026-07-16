@@ -283,6 +283,7 @@ async def basket_optimize(body: BasketInput, user: dict = Depends(get_current_us
             "items": [{"query": i.query, "quantity": i.quantity or 1} for i in body.items],
             "weightProfile": body.weightProfile or "balanced",
             "consolidationPenalty": body.consolidationPenalty or 0,
+            "recommendationMode": body.recommendationMode or "balanced",
         }
         result = await BasketOptimizationService.optimize(user["sub"], req)
 

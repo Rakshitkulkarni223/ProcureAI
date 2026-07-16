@@ -201,7 +201,7 @@ export function SearchPage() {
     }
   }, [suppliers, preset?.query, runSearch]);
 
-  const runOptimize = useCallback(async (profileOverride?: WeightProfileKey) => {
+  const runOptimize = useCallback(async (profileOverride?: WeightProfileKey, modeOverride?: RecommendationMode) => {
     try {
       const items = basketRows
         .filter((r) => r.query.trim())
@@ -223,6 +223,7 @@ export function SearchPage() {
         items,
         weightProfile: profileOverride ?? weightProfileRef.current,
         consolidationPenalty: penalty || 0,
+        recommendationMode: modeOverride ?? recModeRef.current,
       });
       setBasketResult(res);
     } catch (e) {
@@ -250,10 +251,13 @@ export function SearchPage() {
       if (mode === 'single' && result) {
         runSearch(result.query, result.results.map((r) => r.provider), undefined, m);
       }
+      if (mode === 'basket' && basketResult) {
+        runOptimize(undefined, m);
+      }
     } catch (e) {
       console.error('Failed to change recommendation mode', e);
     }
-  }, [mode, result, runSearch]);
+  }, [mode, result, basketResult, runSearch, runOptimize]);
 
   const switchMode = useCallback((m: Mode) => {
     try {

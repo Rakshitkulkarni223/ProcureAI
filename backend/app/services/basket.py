@@ -28,6 +28,7 @@ class BasketOptimizationService:
         items: list[dict],
         consolidation_penalty: float = 0,
         weight_profile: str = "balanced",
+        recommendation_mode: str = "balanced",
     ) -> dict:
         """Pure function: no I/O. Produces the optimal plan from pre-gathered items."""
         try:
@@ -48,7 +49,7 @@ class BasketOptimizationService:
                 best: Optional[dict] = None
                 reasons: list[str] = []
                 if by_supplier:
-                    rec = RecommendationService.recommend(list(by_supplier.values()), weight_profile)
+                    rec = RecommendationService.recommend_by_mode(list(by_supplier.values()), recommendation_mode)
                     if rec:
                         best = rec["product"]
                         reasons = rec["reasons"][:3]
@@ -218,6 +219,7 @@ class BasketOptimizationService:
                 suppliers = valid
 
             weight_profile = req.get("weightProfile", "balanced")
+            recommendation_mode = req.get("recommendationMode", "balanced")
 
             import asyncio
             gathered = await asyncio.gather(*[
@@ -226,7 +228,7 @@ class BasketOptimizationService:
             ])
 
             plan = BasketOptimizationService.build_plan(
-                list(gathered), req.get("consolidationPenalty", 0) or 0, weight_profile
+                list(gathered), req.get("consolidationPenalty", 0) or 0, weight_profile, recommendation_mode
             )
             return {"category": category, "weightProfile": weight_profile, **plan}
         except Exception:

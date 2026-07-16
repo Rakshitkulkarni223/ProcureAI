@@ -89,6 +89,7 @@ export const api = {
     items: { query: string; quantity?: number }[];
     weightProfile?: string;
     consolidationPenalty?: number;
+    recommendationMode?: string;
   }) => unwrap<BasketOptimizeResponse>(API.post('/basket/optimize', body)),
   basketHistory: (page = 1, limit = 20) =>
     unwrap<PaginatedResponse<BasketHistoryEntry>>(API.get('/basket/history', { params: { page, limit } })),
