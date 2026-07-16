@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Check, User as UserIcon } from 'lucide-react';
-import type { Category, Preferences, SortOption, WeightProfile, WeightProfileKey } from '../types';
+import type { Category, Preferences, SortOption } from '../types';
 import { api, apiError } from '../lib/api';
 import { Card, CardBody, CardHeader } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { Badge } from '../components/ui/Badge';
-import { WeightProfileSelector } from '../components/WeightProfileSelector';
 import { useAuth } from '../context/AuthContext';
 
 const SORTS: { value: SortOption; label: string }[] = [
@@ -18,17 +17,15 @@ const SORTS: { value: SortOption; label: string }[] = [
 export function SettingsPage() {
   const { user } = useAuth();
   const [categories, setCategories] = useState<Category[]>([]);
-  const [profiles, setProfiles] = useState<WeightProfile[]>([]);
   const [prefs, setPrefs] = useState<Preferences | null>(null);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState('');
 
   useEffect(() => {
-    Promise.all([api.categories(), api.weightProfiles(), api.preferences()])
-      .then(([c, p, pr]) => {
+    Promise.all([api.categories(), api.preferences()])
+      .then(([c, pr]) => {
         setCategories(c);
-        setProfiles(p);
         setPrefs(pr);
       })
       .catch((e) => setError(apiError(e)));
@@ -58,8 +55,6 @@ export function SettingsPage() {
       setSaving(false);
     }
   };
-
-  const activeProfile = profiles.find((p) => p.key === prefs?.weightProfile);
 
   return (
     <div className="space-y-7">
@@ -121,26 +116,6 @@ export function SettingsPage() {
                   ))}
                 </select>
               </div>
-            </div>
-
-            <div>
-              <label className="label-eyebrow mb-2.5 block">AI Weight Profile</label>
-              <WeightProfileSelector
-                profiles={profiles}
-                value={(prefs?.weightProfile as WeightProfileKey) || 'balanced'}
-                onChange={(v) => update({ weightProfile: v })}
-              />
-              {activeProfile && (
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {Object.entries(activeProfile.weights)
-                    .filter(([, w]) => w > 0)
-                    .map(([k, w]) => (
-                      <Badge key={k} tone="neutral">
-                        {k}: {Math.round(w * 100)}%
-                      </Badge>
-                    ))}
-                </div>
-              )}
             </div>
 
             {error && <div className="rounded-md bg-danger/10 px-3 py-2 text-sm text-danger">{error}</div>}

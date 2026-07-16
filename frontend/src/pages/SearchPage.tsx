@@ -105,7 +105,9 @@ export function SearchPage() {
   const [loading, setLoading] = useState(false);
 
   // Basket
-  const [basketRows, setBasketRows] = useState<BasketRow[]>([makeRow()]);
+  const [basketRows, setBasketRows] = useState<BasketRow[]>(
+    BASKET_PRESETS['grocery'].map((p) => makeRow(p.query, p.quantity))
+  );
   const [penalty, setPenalty] = useState(0);
   const [basketResult, setBasketResult] = useState<BasketOptimizeResponse | null>(null);
   const [basketLoading, setBasketLoading] = useState(false);
