@@ -137,7 +137,11 @@ async def _seed_sample_history(user_id: ObjectId) -> None:
 
 
 async def _seed_supplier_hub_demo(user_id: ObjectId) -> None:
-    """Seed demo Supplier Hub suppliers and products for the demo user."""
+    """Seed demo Supplier Hub suppliers and products for the demo user.
+
+    Products are named to match marketplace catalog keywords so they appear
+    in search results alongside marketplace products.
+    """
     try:
         db = get_db()
         existing = await db.supplier_hub_suppliers.count_documents({"userId": user_id})
@@ -146,7 +150,7 @@ async def _seed_supplier_hub_demo(user_id: ObjectId) -> None:
 
         now = datetime.utcnow()
 
-        # --- Demo suppliers ---
+        # --- Demo suppliers (10 suppliers covering all 8 categories) ---
         demo_suppliers = [
             {
                 "name": "Sharma Wholesale Traders",
@@ -157,14 +161,9 @@ async def _seed_supplier_hub_demo(user_id: ObjectId) -> None:
                 "phone": "+91 98765 43210",
                 "email": "rajesh@sharmawholesale.in",
                 "address": "Plot 12, Industrial Area, Phase II",
-                "city": "Pune",
-                "state": "Maharashtra",
-                "country": "India",
-                "deliveryDays": 4,
-                "creditPeriod": 30,
-                "minimumOrderQuantity": 10,
-                "deliveryCharges": 150,
-                "paymentTerms": "Net 30",
+                "city": "Pune", "state": "Maharashtra", "country": "India",
+                "deliveryDays": 4, "creditPeriod": 30, "minimumOrderQuantity": 10,
+                "deliveryCharges": 150, "paymentTerms": "Net 30",
                 "reliabilityScore": 8.5,
                 "preferredCategories": ["grocery", "cleaning"],
                 "notes": "Reliable wholesale supplier for bulk grocery and cleaning supplies.",
@@ -179,14 +178,9 @@ async def _seed_supplier_hub_demo(user_id: ObjectId) -> None:
                 "phone": "+91 90000 11111",
                 "email": "priya@techdistribute.in",
                 "address": "Tech Park, Whitefield Road",
-                "city": "Bengaluru",
-                "state": "Karnataka",
-                "country": "India",
-                "deliveryDays": 3,
-                "creditPeriod": 15,
-                "minimumOrderQuantity": 5,
-                "deliveryCharges": 200,
-                "paymentTerms": "Net 15",
+                "city": "Bengaluru", "state": "Karnataka", "country": "India",
+                "deliveryDays": 3, "creditPeriod": 15, "minimumOrderQuantity": 5,
+                "deliveryCharges": 200, "paymentTerms": "Net 15",
                 "reliabilityScore": 9.0,
                 "preferredCategories": ["electronics", "office"],
                 "notes": "Authorized distributor for major electronics brands.",
@@ -201,14 +195,9 @@ async def _seed_supplier_hub_demo(user_id: ObjectId) -> None:
                 "phone": "+91 80000 22222",
                 "email": "anand@anandfpo.in",
                 "address": "Village Anand, Taluka Borsad",
-                "city": "Anand",
-                "state": "Gujarat",
-                "country": "India",
-                "deliveryDays": 5,
-                "creditPeriod": 0,
-                "minimumOrderQuantity": 20,
-                "deliveryCharges": 100,
-                "paymentTerms": "Advance",
+                "city": "Anand", "state": "Gujarat", "country": "India",
+                "deliveryDays": 5, "creditPeriod": 0, "minimumOrderQuantity": 20,
+                "deliveryCharges": 100, "paymentTerms": "Advance",
                 "reliabilityScore": 7.5,
                 "preferredCategories": ["grocery"],
                 "notes": "Direct-from-farm collective. Best prices on staples.",
@@ -223,14 +212,9 @@ async def _seed_supplier_hub_demo(user_id: ObjectId) -> None:
                 "phone": "+91 70000 33333",
                 "email": "suresh@metrogarments.in",
                 "address": "Industrial Estate, Sector 18",
-                "city": "Noida",
-                "state": "Uttar Pradesh",
-                "country": "India",
-                "deliveryDays": 7,
-                "creditPeriod": 45,
-                "minimumOrderQuantity": 50,
-                "deliveryCharges": 300,
-                "paymentTerms": "Net 45",
+                "city": "Noida", "state": "Uttar Pradesh", "country": "India",
+                "deliveryDays": 7, "creditPeriod": 45, "minimumOrderQuantity": 50,
+                "deliveryCharges": 300, "paymentTerms": "Net 45",
                 "reliabilityScore": 8.0,
                 "preferredCategories": ["fashion"],
                 "notes": "Direct manufacturer for bulk apparel orders.",
@@ -245,14 +229,9 @@ async def _seed_supplier_hub_demo(user_id: ObjectId) -> None:
                 "phone": "+91 60000 44444",
                 "email": "lakshmi@medisafe.in",
                 "address": "Medical Complex, T Nagar",
-                "city": "Chennai",
-                "state": "Tamil Nadu",
-                "country": "India",
-                "deliveryDays": 2,
-                "creditPeriod": 30,
-                "minimumOrderQuantity": 5,
-                "deliveryCharges": 250,
-                "paymentTerms": "Net 30",
+                "city": "Chennai", "state": "Tamil Nadu", "country": "India",
+                "deliveryDays": 2, "creditPeriod": 30, "minimumOrderQuantity": 5,
+                "deliveryCharges": 250, "paymentTerms": "Net 30",
                 "reliabilityScore": 9.2,
                 "preferredCategories": ["medical", "cleaning"],
                 "notes": "Certified medical supplies distributor with cold-chain capability.",
@@ -267,17 +246,80 @@ async def _seed_supplier_hub_demo(user_id: ObjectId) -> None:
                 "phone": "+91 50000 55555",
                 "email": "vikram@bharatindustrial.in",
                 "address": "Industrial Zone, Surajpur",
-                "city": "Greater Noida",
-                "state": "Uttar Pradesh",
-                "country": "India",
-                "deliveryDays": 6,
-                "creditPeriod": 30,
-                "minimumOrderQuantity": 2,
-                "deliveryCharges": 400,
-                "paymentTerms": "Net 30",
+                "city": "Greater Noida", "state": "Uttar Pradesh", "country": "India",
+                "deliveryDays": 6, "creditPeriod": 30, "minimumOrderQuantity": 2,
+                "deliveryCharges": 400, "paymentTerms": "Net 30",
                 "reliabilityScore": 8.8,
                 "preferredCategories": ["industrial", "office"],
                 "notes": "Heavy-duty industrial tools and safety equipment manufacturer.",
+                "active": True,
+            },
+            {
+                "name": "Furniture Craft Works",
+                "supplierType": "manufacturer",
+                "businessName": "Furniture Craft Works Pvt Ltd",
+                "gstNumber": "36QWERT5678Y9Z0",
+                "contactPerson": "Arjun Reddy",
+                "phone": "+91 95000 66666",
+                "email": "arjun@furniturecraft.in",
+                "address": "Wood Industries Hub, Jeedimetla",
+                "city": "Hyderabad", "state": "Telangana", "country": "India",
+                "deliveryDays": 8, "creditPeriod": 30, "minimumOrderQuantity": 2,
+                "deliveryCharges": 500, "paymentTerms": "Net 30",
+                "reliabilityScore": 8.3,
+                "preferredCategories": ["furniture", "office"],
+                "notes": "Custom furniture manufacturer for office and institutional buyers.",
+                "active": True,
+            },
+            {
+                "name": "Krishna Electronics Distributors",
+                "supplierType": "distributor",
+                "businessName": "Krishna Electronics Distributors Pvt Ltd",
+                "gstNumber": "27PQRST9012A3B4",
+                "contactPerson": "Krishna Deshpande",
+                "phone": "+91 94000 77777",
+                "email": "krishna@kedistributors.in",
+                "address": "Electronics Market, Lamington Road",
+                "city": "Mumbai", "state": "Maharashtra", "country": "India",
+                "deliveryDays": 3, "creditPeriod": 21, "minimumOrderQuantity": 3,
+                "deliveryCharges": 180, "paymentTerms": "Net 21",
+                "reliabilityScore": 8.7,
+                "preferredCategories": ["electronics"],
+                "notes": "Bulk electronics distributor with competitive pricing on laptops and peripherals.",
+                "active": True,
+            },
+            {
+                "name": "PureClean Hygiene Co",
+                "supplierType": "wholesaler",
+                "businessName": "PureClean Hygiene Products Co",
+                "gstNumber": "07MNOPQ3456R7S8",
+                "contactPerson": "Deepak Aggarwal",
+                "phone": "+91 93000 88888",
+                "email": "deepak@pureclean.in",
+                "address": "Sanitation Supplies Market, Sector 62",
+                "city": "Faridabad", "state": "Haryana", "country": "India",
+                "deliveryDays": 3, "creditPeriod": 30, "minimumOrderQuantity": 10,
+                "deliveryCharges": 120, "paymentTerms": "Net 30",
+                "reliabilityScore": 8.1,
+                "preferredCategories": ["cleaning", "medical"],
+                "notes": "Bulk supplier of cleaning and hygiene products for institutions.",
+                "active": True,
+            },
+            {
+                "name": "StyleCraft Apparel House",
+                "supplierType": "wholesaler",
+                "businessName": "StyleCraft Apparel House LLP",
+                "gstNumber": "33UVWXY7890Z1A2",
+                "contactPerson": "Meera Krishnan",
+                "phone": "+91 92000 99999",
+                "email": "meera@stylecraft.in",
+                "address": "Textile Hub, Erode Road",
+                "city": "Tirupur", "state": "Tamil Nadu", "country": "India",
+                "deliveryDays": 5, "creditPeriod": 30, "minimumOrderQuantity": 30,
+                "deliveryCharges": 200, "paymentTerms": "Net 30",
+                "reliabilityScore": 8.4,
+                "preferredCategories": ["fashion"],
+                "notes": "Wholesale apparel supplier specializing in branded clothing lots.",
                 "active": True,
             },
         ]
@@ -291,42 +333,120 @@ async def _seed_supplier_hub_demo(user_id: ObjectId) -> None:
             supplier_ids.append(result.inserted_id)
 
         # --- Demo products ---
+        # Product names match marketplace catalog keywords so they appear in search results.
+        # Prices are set competitively vs marketplace base prices to make comparison meaningful.
         demo_products = [
-            # Sharma Wholesale Traders (grocery, cleaning)
-            {"supplierIdx": 0, "productName": "Basmati Rice Premium 25kg", "brand": "India Gate", "category": "grocery", "unit": "bag", "currentPrice": 1850, "moq": 10, "availability": "In Stock"},
-            {"supplierIdx": 0, "productName": "Sunflower Cooking Oil 15L", "brand": "Fortune", "category": "grocery", "unit": "tin", "currentPrice": 1450, "moq": 5, "availability": "In Stock"},
-            {"supplierIdx": 0, "productName": "Toor Dal Yellow 10kg", "brand": "Tata Sampann", "category": "grocery", "unit": "bag", "currentPrice": 980, "moq": 10, "availability": "In Stock"},
-            {"supplierIdx": 0, "productName": "Floor Cleaner Concentrate 5L", "brand": "Lizol", "category": "cleaning", "unit": "bottle", "currentPrice": 320, "moq": 12, "availability": "In Stock"},
-            {"supplierIdx": 0, "productName": "Hand Sanitizer Bulk 1L", "brand": "Dettol", "category": "cleaning", "unit": "bottle", "currentPrice": 180, "moq": 20, "availability": "In Stock"},
+            # 0: Sharma Wholesale Traders (grocery, cleaning)
+            # Matches: "Premium Basmati Rice 10kg" (marketplace ₹1,100)
+            {"supplierIdx": 0, "productName": "Premium Basmati Rice 10kg", "brand": "India Gate", "category": "grocery", "unit": "bag", "currentPrice": 920, "moq": 10, "availability": "In Stock"},
+            # Matches: "Sunflower Cooking Oil 5L" (marketplace ₹850)
+            {"supplierIdx": 0, "productName": "Sunflower Cooking Oil 5L", "brand": "Fortune", "category": "grocery", "unit": "jerrycan", "currentPrice": 720, "moq": 5, "availability": "In Stock"},
+            # Matches: "Whole Wheat Atta 10kg" (marketplace ₹520)
+            {"supplierIdx": 0, "productName": "Whole Wheat Atta 10kg", "brand": "Aashirvaad", "category": "grocery", "unit": "bag", "currentPrice": 460, "moq": 10, "availability": "In Stock"},
+            # Matches: "Refined Sugar 5kg" (marketplace ₹260)
+            {"supplierIdx": 0, "productName": "Refined Sugar 5kg", "brand": "Madhur", "category": "grocery", "unit": "bag", "currentPrice": 230, "moq": 10, "availability": "In Stock"},
+            # Matches: "Floor Cleaner Disinfectant 5L" (marketplace ₹650)
+            {"supplierIdx": 0, "productName": "Floor Cleaner Disinfectant 5L", "brand": "Lizol", "category": "cleaning", "unit": "can", "currentPrice": 520, "moq": 12, "availability": "In Stock"},
+            # Matches: "Hand Sanitizer 5L Refill" (marketplace ₹900)
+            {"supplierIdx": 0, "productName": "Hand Sanitizer 5L Refill", "brand": "Dettol", "category": "cleaning", "unit": "can", "currentPrice": 750, "moq": 6, "availability": "In Stock"},
+            # Matches: "Tissue Rolls (Pack of 12)" (marketplace ₹480)
+            {"supplierIdx": 0, "productName": "Tissue Rolls (Pack of 12)", "brand": "Origami", "category": "cleaning", "unit": "pack", "currentPrice": 410, "moq": 10, "availability": "In Stock"},
 
-            # TechDistribute India (electronics, office)
-            {"supplierIdx": 1, "productName": "UltraBook Pro Laptop i7", "brand": "Lenovo", "category": "electronics", "unit": "unit", "currentPrice": 68500, "moq": 5, "availability": "In Stock"},
-            {"supplierIdx": 1, "productName": "Wireless Mouse Combo", "brand": "Logitech", "category": "electronics", "unit": "set", "currentPrice": 850, "moq": 10, "availability": "In Stock"},
-            {"supplierIdx": 1, "productName": "USB-C Hub 7-in-1", "brand": "Anker", "category": "electronics", "unit": "unit", "currentPrice": 1200, "moq": 5, "availability": "In Stock"},
-            {"supplierIdx": 1, "productName": "A4 Copier Paper 500 sheets", "brand": "JK Copier", "category": "office", "unit": "ream", "currentPrice": 240, "moq": 20, "availability": "In Stock"},
-            {"supplierIdx": 1, "productName": "Ballpoint Pens Blue Pack 50", "brand": "Reynolds", "category": "office", "unit": "pack", "currentPrice": 350, "moq": 10, "availability": "In Stock"},
+            # 1: TechDistribute India (electronics, office)
+            # Matches: "UltraBook Pro 14 Laptop (16GB/512GB)" (marketplace ₹78,000)
+            {"supplierIdx": 1, "productName": "UltraBook Pro 14 Laptop (16GB/512GB)", "brand": "Dell", "category": "electronics", "unit": "unit", "currentPrice": 72000, "moq": 5, "availability": "In Stock"},
+            # Matches: "ProBook Air 13 Slim Laptop" (marketplace ₹65,000)
+            {"supplierIdx": 1, "productName": "ProBook Air 13 Slim Laptop", "brand": "HP", "category": "electronics", "unit": "unit", "currentPrice": 59000, "moq": 5, "availability": "In Stock"},
+            # Matches: "Wireless Noise Cancelling Headphones" (marketplace ₹24,000)
+            {"supplierIdx": 1, "productName": "Wireless Noise Cancelling Headphones", "brand": "Sony", "category": "electronics", "unit": "unit", "currentPrice": 21000, "moq": 5, "availability": "In Stock"},
+            # Matches: "27-inch 4K UHD Monitor" (marketplace ₹32,000)
+            {"supplierIdx": 1, "productName": "27-inch 4K UHD Monitor", "brand": "LG", "category": "electronics", "unit": "unit", "currentPrice": 28500, "moq": 3, "availability": "In Stock"},
+            # Matches: "A4 Copier Paper (5 Reams)" (marketplace ₹1,400)
+            {"supplierIdx": 1, "productName": "A4 Copier Paper (5 Reams)", "brand": "JK Copier", "category": "office", "unit": "pack", "currentPrice": 1150, "moq": 10, "availability": "In Stock"},
+            # Matches: "Ballpoint Pens (Pack of 50)" (marketplace ₹350)
+            {"supplierIdx": 1, "productName": "Ballpoint Pens (Pack of 50)", "brand": "Cello", "category": "office", "unit": "pack", "currentPrice": 290, "moq": 10, "availability": "In Stock"},
+            # Matches: "All-in-One Inkjet Printer" (marketplace ₹14,000)
+            {"supplierIdx": 1, "productName": "All-in-One Inkjet Printer", "brand": "Canon", "category": "office", "unit": "unit", "currentPrice": 12500, "moq": 3, "availability": "In Stock"},
 
-            # Anand FPO Collective (grocery)
-            {"supplierIdx": 2, "productName": "Organic Basmati Rice 25kg", "brand": "Anand Organic", "category": "grocery", "unit": "bag", "currentPrice": 1650, "moq": 20, "availability": "In Stock"},
-            {"supplierIdx": 2, "productName": "Fresh Onions 20kg", "brand": "Anand FPO", "category": "grocery", "unit": "sack", "currentPrice": 480, "moq": 20, "availability": "In Stock"},
+            # 2: Anand FPO Collective (grocery)
+            # Matches: "Premium Basmati Rice 10kg" (marketplace ₹1,100)
+            {"supplierIdx": 2, "productName": "Premium Basmati Rice 10kg", "brand": "India Gate", "category": "grocery", "unit": "bag", "currentPrice": 850, "moq": 20, "availability": "In Stock"},
+            # Matches: "Fresh Vegetables Combo 5kg" (marketplace ₹420)
+            {"supplierIdx": 2, "productName": "Fresh Vegetables Combo 5kg", "brand": "Farm Fresh", "category": "grocery", "unit": "combo", "currentPrice": 350, "moq": 20, "availability": "In Stock"},
+            # Unique product
             {"supplierIdx": 2, "productName": "Organic Turmeric Powder 5kg", "brand": "Anand Organic", "category": "grocery", "unit": "bag", "currentPrice": 720, "moq": 10, "availability": "Limited Stock"},
 
-            # Metro Garments Mfg (fashion)
-            {"supplierIdx": 3, "productName": "Cotton T-Shirt Bulk Pack 50", "brand": "Metro Basics", "category": "fashion", "unit": "pack", "currentPrice": 4200, "moq": 50, "availability": "In Stock"},
-            {"supplierIdx": 3, "productName": "Denim Jeans Assorted 30pcs", "brand": "Metro Denim", "category": "fashion", "unit": "lot", "currentPrice": 9800, "moq": 30, "availability": "In Stock"},
-            {"supplierIdx": 3, "productName": "Formal Shirt Pack 20", "brand": "Metro Formal", "category": "fashion", "unit": "pack", "currentPrice": 5600, "moq": 20, "availability": "In Stock"},
+            # 3: Metro Garments Mfg (fashion)
+            # Matches: "Cotton Crew Neck T-Shirt" (marketplace ₹1,200)
+            {"supplierIdx": 3, "productName": "Cotton Crew Neck T-Shirt", "brand": "Levi's", "category": "fashion", "unit": "unit", "currentPrice": 850, "moq": 50, "availability": "In Stock"},
+            # Matches: "Slim Fit Denim Jeans" (marketplace ₹2,800)
+            {"supplierIdx": 3, "productName": "Slim Fit Denim Jeans", "brand": "Levi's", "category": "fashion", "unit": "unit", "currentPrice": 2200, "moq": 30, "availability": "In Stock"},
+            # Matches: "Air Zoom Running Shoes" (marketplace ₹7,500)
+            {"supplierIdx": 3, "productName": "Air Zoom Running Shoes", "brand": "Nike", "category": "fashion", "unit": "pair", "currentPrice": 6200, "moq": 20, "availability": "In Stock"},
+            # Matches: "Windcheater Jacket" (marketplace ₹3,500)
+            {"supplierIdx": 3, "productName": "Windcheater Jacket", "brand": "Puma", "category": "fashion", "unit": "unit", "currentPrice": 2800, "moq": 30, "availability": "In Stock"},
 
-            # MediSafe Supplies (medical, cleaning)
-            {"supplierIdx": 4, "productName": "Surgical Masks 3-Ply Box 2000", "brand": "MediSafe", "category": "medical", "unit": "box", "currentPrice": 2800, "moq": 5, "availability": "In Stock"},
-            {"supplierIdx": 4, "productName": "Nitrile Gloves Box 100", "brand": "MediSafe", "category": "medical", "unit": "box", "currentPrice": 450, "moq": 10, "availability": "In Stock"},
-            {"supplierIdx": 4, "productName": "Pulse Oximeter Fingertip", "brand": "Dr. Trust", "category": "medical", "unit": "unit", "currentPrice": 980, "moq": 5, "availability": "In Stock"},
-            {"supplierIdx": 4, "productName": "Surface Disinfectant 5L", "brand": "Dettol Pro", "category": "cleaning", "unit": "can", "currentPrice": 380, "moq": 10, "availability": "In Stock"},
+            # 4: MediSafe Supplies (medical, cleaning)
+            # Matches: "3-Ply Surgical Masks (Box of 100)" (marketplace ₹300)
+            {"supplierIdx": 4, "productName": "3-Ply Surgical Masks (Box of 100)", "brand": "MediShield", "category": "medical", "unit": "box", "currentPrice": 250, "moq": 10, "availability": "In Stock"},
+            # Matches: "Nitrile Examination Gloves (Box of 100)" (marketplace ₹600)
+            {"supplierIdx": 4, "productName": "Nitrile Examination Gloves (Box of 100)", "brand": "SafeHand", "category": "medical", "unit": "box", "currentPrice": 480, "moq": 10, "availability": "In Stock"},
+            # Matches: "Fingertip Pulse Oximeter" (marketplace ₹1,500)
+            {"supplierIdx": 4, "productName": "Fingertip Pulse Oximeter", "brand": "Dr Trust", "category": "medical", "unit": "unit", "currentPrice": 1200, "moq": 5, "availability": "In Stock"},
+            # Matches: "Infrared Thermometer" (marketplace ₹1,800)
+            {"supplierIdx": 4, "productName": "Infrared Thermometer", "brand": "Omron", "category": "medical", "unit": "unit", "currentPrice": 1450, "moq": 5, "availability": "In Stock"},
+            # Matches: "Floor Cleaner Disinfectant 5L" (marketplace ₹650)
+            {"supplierIdx": 4, "productName": "Floor Cleaner Disinfectant 5L", "brand": "Lizol", "category": "cleaning", "unit": "can", "currentPrice": 550, "moq": 10, "availability": "In Stock"},
 
-            # Bharat Industrial Tools (industrial, office)
-            {"supplierIdx": 5, "productName": "Power Drill 13mm Corded", "brand": "Bosch", "category": "industrial", "unit": "unit", "currentPrice": 3200, "moq": 2, "availability": "In Stock"},
-            {"supplierIdx": 5, "productName": "Safety Helmet ISI Marked", "brand": "Karam", "category": "industrial", "unit": "unit", "currentPrice": 280, "moq": 10, "availability": "In Stock"},
-            {"supplierIdx": 5, "productName": "Wrench Set 12-piece", "brand": "Taparia", "category": "industrial", "unit": "set", "currentPrice": 1450, "moq": 5, "availability": "In Stock"},
-            {"supplierIdx": 5, "productName": "Office Chair Ergonomic", "brand": "Bharat Seating", "category": "office", "unit": "unit", "currentPrice": 3800, "moq": 2, "availability": "In Stock"},
+            # 5: Bharat Industrial Tools (industrial, office)
+            # Matches: "Cordless Power Drill 20V" (marketplace ₹6,500)
+            {"supplierIdx": 5, "productName": "Cordless Power Drill 20V", "brand": "Bosch", "category": "industrial", "unit": "unit", "currentPrice": 5800, "moq": 2, "availability": "In Stock"},
+            # Matches: "Safety Helmets (Pack of 10)" (marketplace ₹1,200)
+            {"supplierIdx": 5, "productName": "Safety Helmets (Pack of 10)", "brand": "Karam", "category": "industrial", "unit": "pack", "currentPrice": 980, "moq": 5, "availability": "In Stock"},
+            # Matches: "Adjustable Wrench Set" (marketplace ₹1,800)
+            {"supplierIdx": 5, "productName": "Adjustable Wrench Set", "brand": "Taparia", "category": "industrial", "unit": "set", "currentPrice": 1500, "moq": 5, "availability": "In Stock"},
+            # Matches: "Ergonomic Office Chair" (marketplace ₹12,000)
+            {"supplierIdx": 5, "productName": "Ergonomic Office Chair", "brand": "Featherlite", "category": "office", "unit": "unit", "currentPrice": 9800, "moq": 2, "availability": "In Stock"},
+
+            # 6: Furniture Craft Works (furniture, office)
+            # Matches: "Ergonomic Office Chair" (marketplace ₹12,000)
+            {"supplierIdx": 6, "productName": "Ergonomic Office Chair", "brand": "Featherlite", "category": "furniture", "unit": "unit", "currentPrice": 10500, "moq": 2, "availability": "In Stock"},
+            # Matches: "Height-Adjustable Standing Desk" (marketplace ₹18,000)
+            {"supplierIdx": 6, "productName": "Height-Adjustable Standing Desk", "brand": "Urban", "category": "furniture", "unit": "unit", "currentPrice": 15500, "moq": 2, "availability": "In Stock"},
+            # Matches: "3-Seater Fabric Sofa" (marketplace ₹35,000)
+            {"supplierIdx": 6, "productName": "3-Seater Fabric Sofa", "brand": "HomeTown", "category": "furniture", "unit": "unit", "currentPrice": 30000, "moq": 2, "availability": "In Stock"},
+            # Unique office product
+            {"supplierIdx": 6, "productName": "Filing Cabinet 4-Drawer", "brand": "Furniture Craft", "category": "office", "unit": "unit", "currentPrice": 6500, "moq": 2, "availability": "In Stock"},
+
+            # 7: Krishna Electronics Distributors (electronics)
+            # Matches: "Galaxy S Smartphone 5G (256GB)" (marketplace ₹62,000)
+            {"supplierIdx": 7, "productName": "Galaxy S Smartphone 5G (256GB)", "brand": "Samsung", "category": "electronics", "unit": "unit", "currentPrice": 56000, "moq": 3, "availability": "In Stock"},
+            # Matches: "iPhone Pro Smartphone (256GB)" (marketplace ₹1,19,000)
+            {"supplierIdx": 7, "productName": "iPhone Pro Smartphone (256GB)", "brand": "Apple", "category": "electronics", "unit": "unit", "currentPrice": 108000, "moq": 3, "availability": "In Stock"},
+            # Matches: "27-inch 4K UHD Monitor" (marketplace ₹32,000)
+            {"supplierIdx": 7, "productName": "27-inch 4K UHD Monitor", "brand": "LG", "category": "electronics", "unit": "unit", "currentPrice": 27000, "moq": 3, "availability": "In Stock"},
+            # Matches: "Wireless Noise Cancelling Headphones" (marketplace ₹24,000)
+            {"supplierIdx": 7, "productName": "Wireless Noise Cancelling Headphones", "brand": "Sony", "category": "electronics", "unit": "unit", "currentPrice": 20500, "moq": 5, "availability": "In Stock"},
+
+            # 8: PureClean Hygiene Co (cleaning, medical)
+            # Matches: "Hand Sanitizer 5L Refill" (marketplace ₹900)
+            {"supplierIdx": 8, "productName": "Hand Sanitizer 5L Refill", "brand": "Dettol", "category": "cleaning", "unit": "can", "currentPrice": 780, "moq": 10, "availability": "In Stock"},
+            # Matches: "Tissue Rolls (Pack of 12)" (marketplace ₹480)
+            {"supplierIdx": 8, "productName": "Tissue Rolls (Pack of 12)", "brand": "Origami", "category": "cleaning", "unit": "pack", "currentPrice": 420, "moq": 10, "availability": "In Stock"},
+            # Matches: "3-Ply Surgical Masks (Box of 100)" (marketplace ₹300)
+            {"supplierIdx": 8, "productName": "3-Ply Surgical Masks (Box of 100)", "brand": "MediShield", "category": "medical", "unit": "box", "currentPrice": 220, "moq": 20, "availability": "In Stock"},
+            # Matches: "Nitrile Examination Gloves (Box of 100)" (marketplace ₹600)
+            {"supplierIdx": 8, "productName": "Nitrile Examination Gloves (Box of 100)", "brand": "SafeHand", "category": "medical", "unit": "box", "currentPrice": 450, "moq": 15, "availability": "In Stock"},
+
+            # 9: StyleCraft Apparel House (fashion)
+            # Matches: "Ultraboost Running Shoes" (marketplace ₹8,200)
+            {"supplierIdx": 9, "productName": "Ultraboost Running Shoes", "brand": "Adidas", "category": "fashion", "unit": "pair", "currentPrice": 6800, "moq": 30, "availability": "In Stock"},
+            # Matches: "Cotton Crew Neck T-Shirt" (marketplace ₹1,200)
+            {"supplierIdx": 9, "productName": "Cotton Crew Neck T-Shirt", "brand": "Levi's", "category": "fashion", "unit": "unit", "currentPrice": 900, "moq": 30, "availability": "In Stock"},
+            # Matches: "Slim Fit Denim Jeans" (marketplace ₹2,800)
+            {"supplierIdx": 9, "productName": "Slim Fit Denim Jeans", "brand": "Levi's", "category": "fashion", "unit": "unit", "currentPrice": 2400, "moq": 30, "availability": "In Stock"},
+            # Matches: "Windcheater Jacket" (marketplace ₹3,500)
+            {"supplierIdx": 9, "productName": "Windcheater Jacket", "brand": "Puma", "category": "fashion", "unit": "unit", "currentPrice": 2950, "moq": 30, "availability": "In Stock"},
         ]
 
         product_docs = []
