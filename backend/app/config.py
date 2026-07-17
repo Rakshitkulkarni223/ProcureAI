@@ -79,7 +79,6 @@ SUPPLIER_PROFILES: dict[str, dict[str, Any]] = {
     "Pepperfry": {"name": "Pepperfry", "color": "#F16521", "priceFactor": 1.0, "baseRating": 4.1, "deliveryDays": 7, "discountBias": 25, "warrantyMonths": 12, "returnDays": 7, "stockProbability": 0.8},
     "Urban Ladder": {"name": "Urban Ladder", "color": "#1A1A1A", "priceFactor": 1.06, "baseRating": 4.3, "deliveryDays": 8, "discountBias": 15, "warrantyMonths": 36, "returnDays": 7, "stockProbability": 0.82},
     "IKEA": {"name": "IKEA", "color": "#0058A3", "priceFactor": 0.97, "baseRating": 4.5, "deliveryDays": 6, "discountBias": 10, "warrantyMonths": 24, "returnDays": 14, "stockProbability": 0.85},
-    "Local Suppliers": {"name": "Local Suppliers", "color": "#64748B", "priceFactor": 0.9, "baseRating": 3.9, "deliveryDays": 3, "discountBias": 8, "warrantyMonths": 6, "returnDays": 5, "stockProbability": 0.8},
     "Pharmacy Vendors": {"name": "Pharmacy Vendors", "color": "#16A34A", "priceFactor": 1.0, "baseRating": 4.2, "deliveryDays": 2, "discountBias": 10, "warrantyMonths": 0, "returnDays": 3, "stockProbability": 0.9},
     "Medical Equipment Suppliers": {"name": "Medical Equipment Suppliers", "color": "#0EA5E9", "priceFactor": 1.08, "baseRating": 4.4, "deliveryDays": 5, "discountBias": 5, "warrantyMonths": 12, "returnDays": 7, "stockProbability": 0.85},
     "Apollo Pharmacy": {"name": "Apollo Pharmacy", "color": "#1AA34A", "priceFactor": 1.02, "baseRating": 4.5, "deliveryDays": 1, "discountBias": 12, "warrantyMonths": 0, "returnDays": 5, "stockProbability": 0.92},
@@ -93,10 +92,10 @@ CATEGORY_SUPPLIERS: dict[str, list[str]] = {
     "grocery": ["Blinkit", "Zepto", "BigBasket", "JioMart", "Instamart"],
     "fashion": ["Myntra", "Ajio", "Amazon", "Flipkart", "Tata CLiQ"],
     "furniture": ["Pepperfry", "Urban Ladder", "IKEA"],
-    "office": ["Amazon", "Flipkart", "Local Suppliers"],
-    "cleaning": ["Amazon", "BigBasket", "JioMart", "Local Suppliers"],
+    "office": ["Amazon", "Flipkart"],
+    "cleaning": ["Amazon", "BigBasket", "JioMart"],
     "medical": ["Apollo Pharmacy", "Netmeds", "Pharmacy Vendors", "Medical Equipment Suppliers"],
-    "industrial": ["Amazon Business", "Industrial Tools Co", "Local Suppliers"],
+    "industrial": ["Amazon Business", "Industrial Tools Co"],
 }
 
 
