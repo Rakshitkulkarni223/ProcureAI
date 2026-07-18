@@ -31,7 +31,6 @@ export function SettingsPage() {
         setPrefs({ ...pr, city: pr.city || contextCity });
       })
       .catch((e) => setError(apiError(e)));
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const update = (patch: Partial<Preferences>) => {
