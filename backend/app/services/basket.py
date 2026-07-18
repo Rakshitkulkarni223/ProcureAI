@@ -35,6 +35,11 @@ class BasketOptimizationService:
             penalty = max(0, consolidation_penalty or 0)
             unfulfillable: list[str] = []
 
+            # Determine the primary sort criterion from the recommendation mode
+            from app.config import RECOMMENDATION_MODES
+            mode_config = RECOMMENDATION_MODES.get(recommendation_mode, RECOMMENDATION_MODES["balanced"])
+            sort_by = mode_config.get("sortBy", "balanced")
+
             # --- Per-item analysis ---
             analyses = []
             for item in items:
@@ -70,26 +75,66 @@ class BasketOptimizationService:
                 for s in a["bySupplier"]:
                     all_suppliers.add(s)
 
-            baseline = {"supplier": None, "total": 0, "coverage": 0}
+            baseline = {"supplier": None, "total": 0, "coverage": 0, "delivery": float("inf")}
             for s in all_suppliers:
                 coverage = 0
                 total = 0
+                max_delivery = 0
                 for a in fulfillable:
                     p = a["bySupplier"].get(s)
                     if p:
                         coverage += 1
                         total += p["price"] * a["qty"]
-                better = (
-                    coverage > baseline["coverage"]
-                    or (coverage == baseline["coverage"] and (baseline["supplier"] is None or total < baseline["total"]))
-                )
+                        max_delivery = max(max_delivery, p.get("deliveryDays", 0))
+                # Determine "better" based on the strategy's sort criterion
+                if sort_by == "delivery":
+                    # Fastest delivery: prefer max coverage, then fastest delivery, then cost
+                    better = (
+                        coverage > baseline["coverage"]
+                        or (coverage == baseline["coverage"] and max_delivery < baseline["delivery"])
+                        or (coverage == baseline["coverage"] and max_delivery == baseline["delivery"] and total < baseline["total"])
+                    )
+                elif sort_by == "total_cost":
+                    # Lowest cost: prefer max coverage, then lowest cost
+                    better = (
+                        coverage > baseline["coverage"]
+                        or (coverage == baseline["coverage"] and total < baseline["total"])
+                    )
+                elif sort_by == "risk":
+                    # Lowest risk: prefer max coverage, then lowest cost (risk handled per-item)
+                    better = (
+                        coverage > baseline["coverage"]
+                        or (coverage == baseline["coverage"] and total < baseline["total"])
+                    )
+                elif sort_by == "reliability":
+                    # Highest reliability: prefer max coverage, then lowest cost (reliability handled per-item)
+                    better = (
+                        coverage > baseline["coverage"]
+                        or (coverage == baseline["coverage"] and total < baseline["total"])
+                    )
+                else:
+                    # Balanced: prefer max coverage, then lowest cost
+                    better = (
+                        coverage > baseline["coverage"]
+                        or (coverage == baseline["coverage"] and total < baseline["total"])
+                    )
                 if better:
-                    baseline = {"supplier": s, "total": total, "coverage": coverage}
+                    baseline = {"supplier": s, "total": total, "coverage": coverage, "delivery": max_delivery}
 
             baseline_net = baseline["total"] + penalty if baseline["supplier"] else float("inf")
             can_consolidate = bool(baseline["supplier"]) and baseline["coverage"] == len(fulfillable) and len(fulfillable) > 0
 
-            recommended_plan = "consolidate" if can_consolidate and baseline_net < split_net else "split"
+            # For delivery-focused strategies, also compare delivery times
+            if sort_by == "delivery":
+                split_max_delivery = max((a["best"]["deliveryDays"] for a in fulfillable), default=0)
+                baseline_delivery = baseline["delivery"]
+                # Consolidate if baseline delivery is faster or equal AND cost is not much worse
+                cost_tolerance = 0.15  # allow 15% cost increase for faster delivery
+                cost_ok = baseline_net <= split_net * (1 + cost_tolerance)
+                delivery_ok = baseline_delivery <= split_max_delivery
+                recommended_plan = "consolidate" if can_consolidate and delivery_ok and cost_ok else "split"
+            else:
+                recommended_plan = "consolidate" if can_consolidate and baseline_net < split_net else "split"
 
             # --- Materialize ---
             grouped: dict[str, dict] = {}
