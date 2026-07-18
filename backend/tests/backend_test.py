@@ -326,7 +326,7 @@ class TestBasketOptimization:
         """Gibberish items should be marked as unfulfillable, not matched."""
         data = _do_basket(s, admin_headers, items=[
             {"query": "xyzzyplugh999", "quantity": 1},
-            {"query": "Basmati Rice", "quantity": 1},
+            {"query": "Premium Basmati Rice 10kg", "quantity": 1},
         ])
         unfulfillable = data.get("unfulfillable", [])
         # The gibberish query should appear in unfulfillable

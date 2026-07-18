@@ -715,8 +715,8 @@ const DEV_SECTIONS: DocSection[] = [
         <CodeBlock title="POST /api/basket/optimize — Request" code={`{
   "category": "grocery",
   "items": [
-    { "query": "Basmati Rice", "quantity": 2 },
-    { "query": "Cooking Oil", "quantity": 1 }
+    { "query": "Premium Basmati Rice 10kg", "quantity": 2 },
+    { "query": "Sunflower Cooking Oil 5L", "quantity": 1 }
   ],
   "weightProfile": "balanced"
 }`} />

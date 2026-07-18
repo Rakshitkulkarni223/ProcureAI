@@ -49,26 +49,26 @@ import { useSearchSuggestions } from '../hooks/useSearchSuggestions';
 import { SearchSuggestions } from '../components/SearchSuggestions';
 
 const EXAMPLES: Record<string, string[]> = {
-  electronics: ['UltraBook Laptop', 'Galaxy Smartphone', 'Noise Cancelling Headphones'],
-  grocery: ['Basmati Rice', 'Cooking Oil', 'Fresh Vegetables'],
-  fashion: ['Nike Shoes', 'Cotton T-Shirt', 'Denim Jeans'],
-  furniture: ['Office Chair', 'Standing Desk', 'Fabric Sofa'],
-  office: ['A4 Copier Paper', 'Ballpoint Pens', 'Inkjet Printer'],
-  cleaning: ['Floor Cleaner', 'Hand Sanitizer', 'Tissue Rolls'],
-  medical: ['Surgical Masks', 'Nitrile Gloves', 'Pulse Oximeter'],
-  industrial: ['Power Drill', 'Safety Helmets', 'Wrench Set'],
+  electronics: ['UltraBook Pro 14 Laptop (16GB/512GB)', 'Galaxy S Smartphone 5G (256GB)', 'Wireless Noise Cancelling Headphones'],
+  grocery: ['Premium Basmati Rice 10kg', 'Sunflower Cooking Oil 5L', 'Fresh Vegetables Combo 5kg'],
+  fashion: ['Air Zoom Running Shoes', 'Cotton Crew Neck T-Shirt', 'Slim Fit Denim Jeans'],
+  furniture: ['Ergonomic Office Chair', 'Height-Adjustable Standing Desk', '3-Seater Fabric Sofa'],
+  office: ['A4 Copier Paper (5 Reams)', 'Ballpoint Pens (Pack of 50)', 'All-in-One Inkjet Printer'],
+  cleaning: ['Floor Cleaner Disinfectant 5L', 'Hand Sanitizer 5L Refill', 'Tissue Rolls (Pack of 12)'],
+  medical: ['3-Ply Surgical Masks (Box of 100)', 'Nitrile Examination Gloves (Box of 100)', 'Fingertip Pulse Oximeter'],
+  industrial: ['Cordless Power Drill 20V', 'Safety Helmets (Pack of 10)', 'Adjustable Wrench Set'],
 };
 
 const BASKET_PRESETS: Record<string, { query: string; quantity: number }[]> = {
   grocery: [
-    { query: 'Basmati Rice', quantity: 1 },
-    { query: 'Cooking Oil', quantity: 2 },
-    { query: 'Fresh Vegetables', quantity: 3 },
+    { query: 'Premium Basmati Rice 10kg', quantity: 1 },
+    { query: 'Sunflower Cooking Oil 5L', quantity: 2 },
+    { query: 'Fresh Vegetables Combo 5kg', quantity: 3 },
   ],
   office: [
-    { query: 'A4 Copier Paper', quantity: 2 },
-    { query: 'Ballpoint Pens', quantity: 1 },
-    { query: 'Inkjet Printer', quantity: 1 },
+    { query: 'A4 Copier Paper (5 Reams)', quantity: 2 },
+    { query: 'Ballpoint Pens (Pack of 50)', quantity: 1 },
+    { query: 'All-in-One Inkjet Printer', quantity: 1 },
   ],
 };
 
@@ -314,7 +314,7 @@ export function SearchPage() {
   const removeRow = useCallback((i: number) => setBasketRows((rows) => (rows.length > 1 ? rows.filter((_, idx) => idx !== i) : rows)), []);
 
   const categoryIcon = categories.find((c) => c.slug === category)?.icon;
-  const categoryExamples = EXAMPLES[category] ?? ['Nike Shoes', 'UltraBook Laptop', 'Basmati Rice'];
+  const categoryExamples = EXAMPLES[category] ?? ['Air Zoom Running Shoes', 'UltraBook Pro 14 Laptop (16GB/512GB)', 'Premium Basmati Rice 10kg'];
   const searchPlaceholder = `e.g. ${categoryExamples.join(', ')}…`;
   const basketPlaceholder = (i: number) => `e.g. ${categoryExamples[i % categoryExamples.length]}`;
 
