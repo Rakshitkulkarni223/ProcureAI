@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { MapPin, ChevronDown } from 'lucide-react';
 import { api, apiError } from '../lib/api';
 
-export function LocationDropdown() {
+export function LocationDropdown({ readOnly = false }: { readOnly?: boolean }) {
   const [cities, setCities] = useState<string[]>([]);
   const [city, setCity] = useState<string>('Mumbai');
   const [open, setOpen] = useState(false);
@@ -48,6 +48,15 @@ export function LocationDropdown() {
       setLoading(false);
     }
   };
+
+  if (readOnly) {
+    return (
+      <div className="flex items-center gap-1.5 rounded-md border border-line bg-surface px-2.5 py-1.5 text-xs font-medium text-ink" data-testid="location-readonly">
+        <MapPin size={13} className="text-accent shrink-0" />
+        <span className="max-w-[100px] truncate">{city}</span>
+      </div>
+    );
+  }
 
   return (
     <div ref={ref} className="relative" data-testid="location-dropdown">
