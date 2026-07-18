@@ -65,6 +65,7 @@ class SupplierProductCreate(BaseModel):
     currentPrice: Optional[float] = Field(None, ge=0)
     moq: Optional[float] = Field(None, ge=0)
     availability: Optional[str] = None
+    catalogId: Optional[str] = None
     notes: Optional[str] = None
 
 
@@ -76,4 +77,5 @@ class SupplierProductUpdate(BaseModel):
     currentPrice: Optional[float] = Field(None, ge=0)
     moq: Optional[float] = Field(None, ge=0)
     availability: Optional[str] = None
+    catalogId: Optional[str] = None
     notes: Optional[str] = None

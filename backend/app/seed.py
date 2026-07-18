@@ -337,116 +337,70 @@ async def _seed_supplier_hub_demo(user_id: ObjectId) -> None:
         # Prices are set competitively vs marketplace base prices to make comparison meaningful.
         demo_products = [
             # 0: Sharma Wholesale Traders (grocery, cleaning)
-            # Matches: "Premium Basmati Rice 10kg" (marketplace ₹1,100)
-            {"supplierIdx": 0, "productName": "Premium Basmati Rice 10kg", "brand": "India Gate", "category": "grocery", "unit": "bag", "currentPrice": 920, "moq": 10, "availability": "In Stock"},
-            # Matches: "Sunflower Cooking Oil 5L" (marketplace ₹850)
-            {"supplierIdx": 0, "productName": "Sunflower Cooking Oil 5L", "brand": "Fortune", "category": "grocery", "unit": "jerrycan", "currentPrice": 720, "moq": 5, "availability": "In Stock"},
-            # Matches: "Whole Wheat Atta 10kg" (marketplace ₹520)
-            {"supplierIdx": 0, "productName": "Whole Wheat Atta 10kg", "brand": "Aashirvaad", "category": "grocery", "unit": "bag", "currentPrice": 460, "moq": 10, "availability": "In Stock"},
-            # Matches: "Refined Sugar 5kg" (marketplace ₹260)
-            {"supplierIdx": 0, "productName": "Refined Sugar 5kg", "brand": "Madhur", "category": "grocery", "unit": "bag", "currentPrice": 230, "moq": 10, "availability": "In Stock"},
-            # Matches: "Floor Cleaner Disinfectant 5L" (marketplace ₹650)
-            {"supplierIdx": 0, "productName": "Floor Cleaner Disinfectant 5L", "brand": "Lizol", "category": "cleaning", "unit": "can", "currentPrice": 520, "moq": 12, "availability": "In Stock"},
-            # Matches: "Hand Sanitizer 5L Refill" (marketplace ₹900)
-            {"supplierIdx": 0, "productName": "Hand Sanitizer 5L Refill", "brand": "Dettol", "category": "cleaning", "unit": "can", "currentPrice": 750, "moq": 6, "availability": "In Stock"},
-            # Matches: "Tissue Rolls (Pack of 12)" (marketplace ₹480)
-            {"supplierIdx": 0, "productName": "Tissue Rolls (Pack of 12)", "brand": "Origami", "category": "cleaning", "unit": "pack", "currentPrice": 410, "moq": 10, "availability": "In Stock"},
+            {"supplierIdx": 0, "productName": "Premium Basmati Rice 10kg", "brand": "India Gate", "category": "grocery", "unit": "bag", "currentPrice": 920, "moq": 10, "availability": "In Stock", "catalogId": "groc-rice"},
+            {"supplierIdx": 0, "productName": "Sunflower Cooking Oil 5L", "brand": "Fortune", "category": "grocery", "unit": "jerrycan", "currentPrice": 720, "moq": 5, "availability": "In Stock", "catalogId": "groc-oil"},
+            {"supplierIdx": 0, "productName": "Whole Wheat Atta 10kg", "brand": "Aashirvaad", "category": "grocery", "unit": "bag", "currentPrice": 460, "moq": 10, "availability": "In Stock", "catalogId": "groc-atta"},
+            {"supplierIdx": 0, "productName": "Refined Sugar 5kg", "brand": "Madhur", "category": "grocery", "unit": "bag", "currentPrice": 230, "moq": 10, "availability": "In Stock", "catalogId": "groc-sugar"},
+            {"supplierIdx": 0, "productName": "Floor Cleaner Disinfectant 5L", "brand": "Lizol", "category": "cleaning", "unit": "can", "currentPrice": 520, "moq": 12, "availability": "In Stock", "catalogId": "clean-floor"},
+            {"supplierIdx": 0, "productName": "Hand Sanitizer 5L Refill", "brand": "Dettol", "category": "cleaning", "unit": "can", "currentPrice": 750, "moq": 6, "availability": "In Stock", "catalogId": "clean-sanitizer"},
+            {"supplierIdx": 0, "productName": "Tissue Rolls (Pack of 12)", "brand": "Origami", "category": "cleaning", "unit": "pack", "currentPrice": 410, "moq": 10, "availability": "In Stock", "catalogId": "clean-tissue"},
 
             # 1: TechDistribute India (electronics, office)
-            # Matches: "UltraBook Pro 14 Laptop (16GB/512GB)" (marketplace ₹78,000)
-            {"supplierIdx": 1, "productName": "UltraBook Pro 14 Laptop (16GB/512GB)", "brand": "Dell", "category": "electronics", "unit": "unit", "currentPrice": 72000, "moq": 5, "availability": "In Stock"},
-            # Matches: "ProBook Air 13 Slim Laptop" (marketplace ₹65,000)
-            {"supplierIdx": 1, "productName": "ProBook Air 13 Slim Laptop", "brand": "HP", "category": "electronics", "unit": "unit", "currentPrice": 59000, "moq": 5, "availability": "In Stock"},
-            # Matches: "Wireless Noise Cancelling Headphones" (marketplace ₹24,000)
-            {"supplierIdx": 1, "productName": "Wireless Noise Cancelling Headphones", "brand": "Sony", "category": "electronics", "unit": "unit", "currentPrice": 21000, "moq": 5, "availability": "In Stock"},
-            # Matches: "27-inch 4K UHD Monitor" (marketplace ₹32,000)
-            {"supplierIdx": 1, "productName": "27-inch 4K UHD Monitor", "brand": "LG", "category": "electronics", "unit": "unit", "currentPrice": 28500, "moq": 3, "availability": "In Stock"},
-            # Matches: "A4 Copier Paper (5 Reams)" (marketplace ₹1,400)
-            {"supplierIdx": 1, "productName": "A4 Copier Paper (5 Reams)", "brand": "JK Copier", "category": "office", "unit": "pack", "currentPrice": 1150, "moq": 10, "availability": "In Stock"},
-            # Matches: "Ballpoint Pens (Pack of 50)" (marketplace ₹350)
-            {"supplierIdx": 1, "productName": "Ballpoint Pens (Pack of 50)", "brand": "Cello", "category": "office", "unit": "pack", "currentPrice": 290, "moq": 10, "availability": "In Stock"},
-            # Matches: "All-in-One Inkjet Printer" (marketplace ₹14,000)
-            {"supplierIdx": 1, "productName": "All-in-One Inkjet Printer", "brand": "Canon", "category": "office", "unit": "unit", "currentPrice": 12500, "moq": 3, "availability": "In Stock"},
+            {"supplierIdx": 1, "productName": "UltraBook Pro 14 Laptop (16GB/512GB)", "brand": "Dell", "category": "electronics", "unit": "unit", "currentPrice": 72000, "moq": 5, "availability": "In Stock", "catalogId": "elec-laptop-ultrabook"},
+            {"supplierIdx": 1, "productName": "ProBook Air 13 Slim Laptop", "brand": "HP", "category": "electronics", "unit": "unit", "currentPrice": 59000, "moq": 5, "availability": "In Stock", "catalogId": "elec-laptop-air"},
+            {"supplierIdx": 1, "productName": "Wireless Noise Cancelling Headphones", "brand": "Sony", "category": "electronics", "unit": "unit", "currentPrice": 21000, "moq": 5, "availability": "In Stock", "catalogId": "elec-headphones"},
+            {"supplierIdx": 1, "productName": "27-inch 4K UHD Monitor", "brand": "LG", "category": "electronics", "unit": "unit", "currentPrice": 28500, "moq": 3, "availability": "In Stock", "catalogId": "elec-monitor"},
+            {"supplierIdx": 1, "productName": "A4 Copier Paper (5 Reams)", "brand": "JK Copier", "category": "office", "unit": "pack", "currentPrice": 1150, "moq": 10, "availability": "In Stock", "catalogId": "off-paper"},
+            {"supplierIdx": 1, "productName": "Ballpoint Pens (Pack of 50)", "brand": "Cello", "category": "office", "unit": "pack", "currentPrice": 290, "moq": 10, "availability": "In Stock", "catalogId": "off-pens"},
+            {"supplierIdx": 1, "productName": "All-in-One Inkjet Printer", "brand": "Canon", "category": "office", "unit": "unit", "currentPrice": 12500, "moq": 3, "availability": "In Stock", "catalogId": "off-printer"},
 
             # 2: Anand FPO Collective (grocery)
-            # Matches: "Premium Basmati Rice 10kg" (marketplace ₹1,100)
-            {"supplierIdx": 2, "productName": "Premium Basmati Rice 10kg", "brand": "India Gate", "category": "grocery", "unit": "bag", "currentPrice": 850, "moq": 20, "availability": "In Stock"},
-            # Matches: "Fresh Vegetables Combo 5kg" (marketplace ₹420)
-            {"supplierIdx": 2, "productName": "Fresh Vegetables Combo 5kg", "brand": "Farm Fresh", "category": "grocery", "unit": "combo", "currentPrice": 350, "moq": 20, "availability": "In Stock"},
-            # Unique product
+            {"supplierIdx": 2, "productName": "Premium Basmati Rice 10kg", "brand": "India Gate", "category": "grocery", "unit": "bag", "currentPrice": 850, "moq": 20, "availability": "In Stock", "catalogId": "groc-rice"},
+            {"supplierIdx": 2, "productName": "Fresh Vegetables Combo 5kg", "brand": "Farm Fresh", "category": "grocery", "unit": "combo", "currentPrice": 350, "moq": 20, "availability": "In Stock", "catalogId": "groc-veg"},
             {"supplierIdx": 2, "productName": "Organic Turmeric Powder 5kg", "brand": "Anand Organic", "category": "grocery", "unit": "bag", "currentPrice": 720, "moq": 10, "availability": "Limited Stock"},
 
             # 3: Metro Garments Mfg (fashion)
-            # Matches: "Cotton Crew Neck T-Shirt" (marketplace ₹1,200)
-            {"supplierIdx": 3, "productName": "Cotton Crew Neck T-Shirt", "brand": "Levi's", "category": "fashion", "unit": "unit", "currentPrice": 850, "moq": 50, "availability": "In Stock"},
-            # Matches: "Slim Fit Denim Jeans" (marketplace ₹2,800)
-            {"supplierIdx": 3, "productName": "Slim Fit Denim Jeans", "brand": "Levi's", "category": "fashion", "unit": "unit", "currentPrice": 2200, "moq": 30, "availability": "In Stock"},
-            # Matches: "Air Zoom Running Shoes" (marketplace ₹7,500)
-            {"supplierIdx": 3, "productName": "Air Zoom Running Shoes", "brand": "Nike", "category": "fashion", "unit": "pair", "currentPrice": 6200, "moq": 20, "availability": "In Stock"},
-            # Matches: "Windcheater Jacket" (marketplace ₹3,500)
-            {"supplierIdx": 3, "productName": "Windcheater Jacket", "brand": "Puma", "category": "fashion", "unit": "unit", "currentPrice": 2800, "moq": 30, "availability": "In Stock"},
+            {"supplierIdx": 3, "productName": "Cotton Crew Neck T-Shirt", "brand": "Levi's", "category": "fashion", "unit": "unit", "currentPrice": 850, "moq": 50, "availability": "In Stock", "catalogId": "fash-tshirt"},
+            {"supplierIdx": 3, "productName": "Slim Fit Denim Jeans", "brand": "Levi's", "category": "fashion", "unit": "unit", "currentPrice": 2200, "moq": 30, "availability": "In Stock", "catalogId": "fash-jeans"},
+            {"supplierIdx": 3, "productName": "Air Zoom Running Shoes", "brand": "Nike", "category": "fashion", "unit": "pair", "currentPrice": 6200, "moq": 20, "availability": "In Stock", "catalogId": "fash-shoes-nike"},
+            {"supplierIdx": 3, "productName": "Windcheater Jacket", "brand": "Puma", "category": "fashion", "unit": "unit", "currentPrice": 2800, "moq": 30, "availability": "In Stock", "catalogId": "fash-jacket"},
 
             # 4: MediSafe Supplies (medical, cleaning)
-            # Matches: "3-Ply Surgical Masks (Box of 100)" (marketplace ₹300)
-            {"supplierIdx": 4, "productName": "3-Ply Surgical Masks (Box of 100)", "brand": "MediShield", "category": "medical", "unit": "box", "currentPrice": 250, "moq": 10, "availability": "In Stock"},
-            # Matches: "Nitrile Examination Gloves (Box of 100)" (marketplace ₹600)
-            {"supplierIdx": 4, "productName": "Nitrile Examination Gloves (Box of 100)", "brand": "SafeHand", "category": "medical", "unit": "box", "currentPrice": 480, "moq": 10, "availability": "In Stock"},
-            # Matches: "Fingertip Pulse Oximeter" (marketplace ₹1,500)
-            {"supplierIdx": 4, "productName": "Fingertip Pulse Oximeter", "brand": "Dr Trust", "category": "medical", "unit": "unit", "currentPrice": 1200, "moq": 5, "availability": "In Stock"},
-            # Matches: "Infrared Thermometer" (marketplace ₹1,800)
-            {"supplierIdx": 4, "productName": "Infrared Thermometer", "brand": "Omron", "category": "medical", "unit": "unit", "currentPrice": 1450, "moq": 5, "availability": "In Stock"},
-            # Matches: "Floor Cleaner Disinfectant 5L" (marketplace ₹650)
-            {"supplierIdx": 4, "productName": "Floor Cleaner Disinfectant 5L", "brand": "Lizol", "category": "cleaning", "unit": "can", "currentPrice": 550, "moq": 10, "availability": "In Stock"},
+            {"supplierIdx": 4, "productName": "3-Ply Surgical Masks (Box of 100)", "brand": "MediShield", "category": "medical", "unit": "box", "currentPrice": 250, "moq": 10, "availability": "In Stock", "catalogId": "med-mask"},
+            {"supplierIdx": 4, "productName": "Nitrile Examination Gloves (Box of 100)", "brand": "SafeHand", "category": "medical", "unit": "box", "currentPrice": 480, "moq": 10, "availability": "In Stock", "catalogId": "med-gloves"},
+            {"supplierIdx": 4, "productName": "Fingertip Pulse Oximeter", "brand": "Dr Trust", "category": "medical", "unit": "unit", "currentPrice": 1200, "moq": 5, "availability": "In Stock", "catalogId": "med-oximeter"},
+            {"supplierIdx": 4, "productName": "Infrared Thermometer", "brand": "Omron", "category": "medical", "unit": "unit", "currentPrice": 1450, "moq": 5, "availability": "In Stock", "catalogId": "med-thermometer"},
+            {"supplierIdx": 4, "productName": "Floor Cleaner Disinfectant 5L", "brand": "Lizol", "category": "cleaning", "unit": "can", "currentPrice": 550, "moq": 10, "availability": "In Stock", "catalogId": "clean-floor"},
 
             # 5: Bharat Industrial Tools (industrial, office)
-            # Matches: "Cordless Power Drill 20V" (marketplace ₹6,500)
-            {"supplierIdx": 5, "productName": "Cordless Power Drill 20V", "brand": "Bosch", "category": "industrial", "unit": "unit", "currentPrice": 5800, "moq": 2, "availability": "In Stock"},
-            # Matches: "Safety Helmets (Pack of 10)" (marketplace ₹1,200)
-            {"supplierIdx": 5, "productName": "Safety Helmets (Pack of 10)", "brand": "Karam", "category": "industrial", "unit": "pack", "currentPrice": 980, "moq": 5, "availability": "In Stock"},
-            # Matches: "Adjustable Wrench Set" (marketplace ₹1,800)
-            {"supplierIdx": 5, "productName": "Adjustable Wrench Set", "brand": "Taparia", "category": "industrial", "unit": "set", "currentPrice": 1500, "moq": 5, "availability": "In Stock"},
-            # Matches: "Ergonomic Office Chair" (marketplace ₹12,000)
-            {"supplierIdx": 5, "productName": "Ergonomic Office Chair", "brand": "Featherlite", "category": "office", "unit": "unit", "currentPrice": 9800, "moq": 2, "availability": "In Stock"},
+            {"supplierIdx": 5, "productName": "Cordless Power Drill 20V", "brand": "Bosch", "category": "industrial", "unit": "unit", "currentPrice": 5800, "moq": 2, "availability": "In Stock", "catalogId": "ind-drill"},
+            {"supplierIdx": 5, "productName": "Safety Helmets (Pack of 10)", "brand": "Karam", "category": "industrial", "unit": "pack", "currentPrice": 980, "moq": 5, "availability": "In Stock", "catalogId": "ind-helmet"},
+            {"supplierIdx": 5, "productName": "Adjustable Wrench Set", "brand": "Taparia", "category": "industrial", "unit": "set", "currentPrice": 1500, "moq": 5, "availability": "In Stock", "catalogId": "ind-wrench"},
+            {"supplierIdx": 5, "productName": "Ergonomic Office Chair", "brand": "Featherlite", "category": "office", "unit": "unit", "currentPrice": 9800, "moq": 2, "availability": "In Stock", "catalogId": "furn-chair"},
 
             # 6: Furniture Craft Works (furniture, office)
-            # Matches: "Ergonomic Office Chair" (marketplace ₹12,000)
-            {"supplierIdx": 6, "productName": "Ergonomic Office Chair", "brand": "Featherlite", "category": "furniture", "unit": "unit", "currentPrice": 10500, "moq": 2, "availability": "In Stock"},
-            # Matches: "Height-Adjustable Standing Desk" (marketplace ₹18,000)
-            {"supplierIdx": 6, "productName": "Height-Adjustable Standing Desk", "brand": "Urban", "category": "furniture", "unit": "unit", "currentPrice": 15500, "moq": 2, "availability": "In Stock"},
-            # Matches: "3-Seater Fabric Sofa" (marketplace ₹35,000)
-            {"supplierIdx": 6, "productName": "3-Seater Fabric Sofa", "brand": "HomeTown", "category": "furniture", "unit": "unit", "currentPrice": 30000, "moq": 2, "availability": "In Stock"},
-            # Unique office product
+            {"supplierIdx": 6, "productName": "Ergonomic Office Chair", "brand": "Featherlite", "category": "furniture", "unit": "unit", "currentPrice": 10500, "moq": 2, "availability": "In Stock", "catalogId": "furn-chair"},
+            {"supplierIdx": 6, "productName": "Height-Adjustable Standing Desk", "brand": "Urban", "category": "furniture", "unit": "unit", "currentPrice": 15500, "moq": 2, "availability": "In Stock", "catalogId": "furn-desk"},
+            {"supplierIdx": 6, "productName": "3-Seater Fabric Sofa", "brand": "HomeTown", "category": "furniture", "unit": "unit", "currentPrice": 30000, "moq": 2, "availability": "In Stock", "catalogId": "furn-sofa"},
             {"supplierIdx": 6, "productName": "Filing Cabinet 4-Drawer", "brand": "Furniture Craft", "category": "office", "unit": "unit", "currentPrice": 6500, "moq": 2, "availability": "In Stock"},
 
             # 7: Krishna Electronics Distributors (electronics)
-            # Matches: "Galaxy S Smartphone 5G (256GB)" (marketplace ₹62,000)
-            {"supplierIdx": 7, "productName": "Galaxy S Smartphone 5G (256GB)", "brand": "Samsung", "category": "electronics", "unit": "unit", "currentPrice": 56000, "moq": 3, "availability": "In Stock"},
-            # Matches: "iPhone Pro Smartphone (256GB)" (marketplace ₹1,19,000)
-            {"supplierIdx": 7, "productName": "iPhone Pro Smartphone (256GB)", "brand": "Apple", "category": "electronics", "unit": "unit", "currentPrice": 108000, "moq": 3, "availability": "In Stock"},
-            # Matches: "27-inch 4K UHD Monitor" (marketplace ₹32,000)
-            {"supplierIdx": 7, "productName": "27-inch 4K UHD Monitor", "brand": "LG", "category": "electronics", "unit": "unit", "currentPrice": 27000, "moq": 3, "availability": "In Stock"},
-            # Matches: "Wireless Noise Cancelling Headphones" (marketplace ₹24,000)
-            {"supplierIdx": 7, "productName": "Wireless Noise Cancelling Headphones", "brand": "Sony", "category": "electronics", "unit": "unit", "currentPrice": 20500, "moq": 5, "availability": "In Stock"},
+            {"supplierIdx": 7, "productName": "Galaxy S Smartphone 5G (256GB)", "brand": "Samsung", "category": "electronics", "unit": "unit", "currentPrice": 56000, "moq": 3, "availability": "In Stock", "catalogId": "elec-phone-galaxy"},
+            {"supplierIdx": 7, "productName": "iPhone Pro Smartphone (256GB)", "brand": "Apple", "category": "electronics", "unit": "unit", "currentPrice": 108000, "moq": 3, "availability": "In Stock", "catalogId": "elec-phone-iphone"},
+            {"supplierIdx": 7, "productName": "27-inch 4K UHD Monitor", "brand": "LG", "category": "electronics", "unit": "unit", "currentPrice": 27000, "moq": 3, "availability": "In Stock", "catalogId": "elec-monitor"},
+            {"supplierIdx": 7, "productName": "Wireless Noise Cancelling Headphones", "brand": "Sony", "category": "electronics", "unit": "unit", "currentPrice": 20500, "moq": 5, "availability": "In Stock", "catalogId": "elec-headphones"},
 
             # 8: PureClean Hygiene Co (cleaning, medical)
-            # Matches: "Hand Sanitizer 5L Refill" (marketplace ₹900)
-            {"supplierIdx": 8, "productName": "Hand Sanitizer 5L Refill", "brand": "Dettol", "category": "cleaning", "unit": "can", "currentPrice": 780, "moq": 10, "availability": "In Stock"},
-            # Matches: "Tissue Rolls (Pack of 12)" (marketplace ₹480)
-            {"supplierIdx": 8, "productName": "Tissue Rolls (Pack of 12)", "brand": "Origami", "category": "cleaning", "unit": "pack", "currentPrice": 420, "moq": 10, "availability": "In Stock"},
-            # Matches: "3-Ply Surgical Masks (Box of 100)" (marketplace ₹300)
-            {"supplierIdx": 8, "productName": "3-Ply Surgical Masks (Box of 100)", "brand": "MediShield", "category": "medical", "unit": "box", "currentPrice": 220, "moq": 20, "availability": "In Stock"},
-            # Matches: "Nitrile Examination Gloves (Box of 100)" (marketplace ₹600)
-            {"supplierIdx": 8, "productName": "Nitrile Examination Gloves (Box of 100)", "brand": "SafeHand", "category": "medical", "unit": "box", "currentPrice": 450, "moq": 15, "availability": "In Stock"},
+            {"supplierIdx": 8, "productName": "Hand Sanitizer 5L Refill", "brand": "Dettol", "category": "cleaning", "unit": "can", "currentPrice": 780, "moq": 10, "availability": "In Stock", "catalogId": "clean-sanitizer"},
+            {"supplierIdx": 8, "productName": "Tissue Rolls (Pack of 12)", "brand": "Origami", "category": "cleaning", "unit": "pack", "currentPrice": 420, "moq": 10, "availability": "In Stock", "catalogId": "clean-tissue"},
+            {"supplierIdx": 8, "productName": "3-Ply Surgical Masks (Box of 100)", "brand": "MediShield", "category": "medical", "unit": "box", "currentPrice": 220, "moq": 20, "availability": "In Stock", "catalogId": "med-mask"},
+            {"supplierIdx": 8, "productName": "Nitrile Examination Gloves (Box of 100)", "brand": "SafeHand", "category": "medical", "unit": "box", "currentPrice": 450, "moq": 15, "availability": "In Stock", "catalogId": "med-gloves"},
 
             # 9: StyleCraft Apparel House (fashion)
-            # Matches: "Ultraboost Running Shoes" (marketplace ₹8,200)
-            {"supplierIdx": 9, "productName": "Ultraboost Running Shoes", "brand": "Adidas", "category": "fashion", "unit": "pair", "currentPrice": 6800, "moq": 30, "availability": "In Stock"},
-            # Matches: "Cotton Crew Neck T-Shirt" (marketplace ₹1,200)
-            {"supplierIdx": 9, "productName": "Cotton Crew Neck T-Shirt", "brand": "Levi's", "category": "fashion", "unit": "unit", "currentPrice": 900, "moq": 30, "availability": "In Stock"},
-            # Matches: "Slim Fit Denim Jeans" (marketplace ₹2,800)
-            {"supplierIdx": 9, "productName": "Slim Fit Denim Jeans", "brand": "Levi's", "category": "fashion", "unit": "unit", "currentPrice": 2400, "moq": 30, "availability": "In Stock"},
-            # Matches: "Windcheater Jacket" (marketplace ₹3,500)
-            {"supplierIdx": 9, "productName": "Windcheater Jacket", "brand": "Puma", "category": "fashion", "unit": "unit", "currentPrice": 2950, "moq": 30, "availability": "In Stock"},
+            {"supplierIdx": 9, "productName": "Ultraboost Running Shoes", "brand": "Adidas", "category": "fashion", "unit": "pair", "currentPrice": 6800, "moq": 30, "availability": "In Stock", "catalogId": "fash-shoes-adidas"},
+            {"supplierIdx": 9, "productName": "Cotton Crew Neck T-Shirt", "brand": "Levi's", "category": "fashion", "unit": "unit", "currentPrice": 900, "moq": 30, "availability": "In Stock", "catalogId": "fash-tshirt"},
+            {"supplierIdx": 9, "productName": "Slim Fit Denim Jeans", "brand": "Levi's", "category": "fashion", "unit": "unit", "currentPrice": 2400, "moq": 30, "availability": "In Stock", "catalogId": "fash-jeans"},
+            {"supplierIdx": 9, "productName": "Windcheater Jacket", "brand": "Puma", "category": "fashion", "unit": "unit", "currentPrice": 2950, "moq": 30, "availability": "In Stock", "catalogId": "fash-jacket"},
         ]
 
         product_docs = []
@@ -462,6 +416,7 @@ async def _seed_supplier_hub_demo(user_id: ObjectId) -> None:
                 "currentPrice": p.get("currentPrice"),
                 "moq": p.get("moq"),
                 "availability": p.get("availability", "In Stock"),
+                "catalogId": p.get("catalogId"),
                 "notes": None,
                 "createdAt": now,
                 "updatedAt": now,

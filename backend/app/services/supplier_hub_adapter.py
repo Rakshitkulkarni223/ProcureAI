@@ -11,6 +11,8 @@ import re
 from datetime import datetime, timedelta, timezone
 from typing import Optional
 
+from app.config import CATALOG
+
 
 def _tokenize(text: str) -> list[str]:
     try:
@@ -73,9 +75,23 @@ class SupplierHubProviderAdapter:
                     prod_name = prod.get("productName", "")
                     prod_brand = prod.get("brand") or ""
                     prod_category = prod.get("category") or ""
+                    catalog_id = prod.get("catalogId")
 
-                    # Score against query
+                    # Score against query — use catalog keywords if available for better matching
                     score = _score_product(prod_name, prod_brand, query_tokens)
+                    if score <= 0 and catalog_id:
+                        # Try matching against catalog keywords across all categories
+                        for cat_entries in CATALOG.values():
+                            for entry in cat_entries:
+                                if entry.get("id") == catalog_id:
+                                    keywords = entry.get("keywords", [])
+                                    kw_text = " ".join(keywords)
+                                    for tok in query_tokens:
+                                        if tok in kw_text:
+                                            score += 1.5
+                                    break
+                            if score > 0:
+                                break
                     if score <= 0:
                         continue
 
