@@ -587,11 +587,11 @@ python -m pytest tests/backend_test.py -v
 
 ## 🗺️ Future Ready — Live Procurement Ecosystem
 
-> **Google Shopping is already live.** ProcureAI includes a real-time integration with Google Shopping via SerpAPI (100 free searches/month). Set `SERPAPI_KEY` in your `.env` to enable it. This proves the adapter architecture works with real APIs — adding more marketplaces requires only a new adapter file.
+> **Real-time market data is already live.** ProcureAI silently enriches every search with real Google Shopping prices via SerpAPI. When `SERPAPI_KEY` is set, the system fetches live product data and **filters it to only your enabled suppliers** (e.g., Amazon, Flipkart, Croma). Real prices blend seamlessly with simulated data — the AI scores both equally. No UI changes needed; no extra checkboxes. The architecture proves that adding any new API requires only a single adapter file.
 
 | Phase | Feature | Description |
 |---|---|---|
-| **✅ Done** | Google Shopping (Live) | Real-time product data via SerpAPI — prices, ratings, sellers, images from Google Shopping India |
+| **✅ Done** | Live Market Prices | Real-time prices from Google Shopping India via SerpAPI — filtered to your selected suppliers, blended silently into AI scoring |
 | **P1** | More Marketplace APIs | Amazon Business, Udaan, Metro, IndiaMART, Flipkart — live pricing and availability |
 | **P1** | Live Supplier Quotes | Real-time quote requests and responses from Supplier Hub network |
 | **P1** | ERP Integration | Sync procurement data with SAP, Oracle, Zoho for seamless order management |
