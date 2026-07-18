@@ -88,7 +88,7 @@
 
 ---
 
-## AI Pipeline
+## Scoring Pipeline
 
 ```
 User Search
@@ -147,7 +147,7 @@ User Search
 1. **Build** — Add your trusted suppliers and products to Supplier Hub
 2. **Search** — ProcureAI queries marketplace and private suppliers from a single interface
 3. **Compare** — Results from online and offline suppliers are normalized in one sortable table
-4. **Recommend** — AI scores every option across price, delivery, reliability, risk, warranty, and returns
+4. **Recommend** — The decision engine scores every option across price, delivery, reliability, risk, warranty, and returns
 5. **Explain** — Click "Why this recommendation?" for a radar chart, scoreboard, and business reasoning
 6. **Optimize** — Add multiple items to a basket for split-cart optimization across all suppliers
 7. **Export** — Download results as CSV or styled PDF for team review
@@ -190,5 +190,5 @@ Each mode generates **different business-friendly reasoning** explaining why the
 
 | Integration | Env Variable | Purpose | Fallback |
 |-------------|-------------|---------|----------|
-| **SerpAPI** | `SERPAPI_KEY` | Live Google Shopping prices blended into AI scoring | Built-in mock providers |
+| **SerpAPI** | `SERPAPI_KEY` | Live Google Shopping prices blended into scoring | Built-in mock providers |
 | **Google Gemini** | `GEMINI_API_KEY` | Natural language explanations for recommendations | Rule-based template explanations |

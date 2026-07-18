@@ -4,7 +4,7 @@
 
 # 🚀 ProcureAI — Procurement Decision Intelligence Platform
 
-> Compare marketplace and private suppliers from a single interface. Optimize purchasing with explainable, multi-factor AI.
+> Compare marketplace and private suppliers from a single interface. Optimize purchasing with a multi-factor decision engine and optional AI-powered explanations.
 
 - ✅ Compare online + offline suppliers in one search
 - ✅ Multi-factor recommendation engine with confidence scores
@@ -37,7 +37,7 @@
 | **Product Search** | Search any product across marketplace and private suppliers — results normalized, scored, and ranked |
 | **Supplier Hub** | Register offline suppliers with products, pricing, and delivery info — they appear in every search |
 | **Basket Optimization** | Split-cart optimizer finds the cheapest multi-item combination across suppliers |
-| **AI Explanation Panel** | Radar chart + scoreboard + business reasoning for every recommendation |
+| **Explanation Panel** | Radar chart + scoreboard + business reasoning for every recommendation (rule-based or AI-generated via Gemini) |
 | **6 Recommendation Modes** | Balanced, Lowest Cost, Lowest Risk, Fastest Delivery, Highest Reliability, Best Long-Term Value |
 | **Location-Aware Delivery** | Same city → 1 day, same state → 2 days, different state → 4–5 days |
 | **Business Impact Dashboard** | Savings, hours saved, efficiency score, projected annual savings — with date range filtering |
@@ -51,7 +51,7 @@
 
 ## 📸 Screenshots
 
-| Dashboard | Search & Compare | AI Explanation |
+| Dashboard | Search & Compare | Explanation Panel |
 |---|---|---|
 | ![Dashboard](screenshots/dashboard.png) | ![Search](screenshots/search-compare.png) | ![AI](screenshots/ai-explanation.png) |
 
@@ -137,7 +137,7 @@ Download from [`demo/procureai-demo.mp4`](demo/procureai-demo.mp4) and play loca
 | **Backend** | Python 3.13, FastAPI, Pydantic, Uvicorn |
 | **Database** | MongoDB with Motor (async driver) |
 | **Auth** | JWT (PyJWT) + bcrypt |
-| **Optional** | SerpAPI (live Google Shopping), Gemini 2.0 Flash (AI explanations) |
+| **Optional** | SerpAPI (live Google Shopping), Gemini 2.0 Flash (natural language explanations) |
 
 ---
 
@@ -166,7 +166,7 @@ Download from [`demo/procureai-demo.mp4`](demo/procureai-demo.mp4) and play loca
 ## 🧩 Engineering Challenges
 
 - Unified different supplier response schemas using the **Adapter Pattern**
-- Balanced AI scoring across **7 procurement factors** with configurable weight profiles
+- Balanced weighted scoring across **7 procurement factors** with configurable weight profiles
 - Implemented **split-cart optimization** — finds cheapest multi-item combination across suppliers
 - Built **explainable recommendations** — confidence scores, radar charts, and business reasoning
 - **Location-aware delivery estimation** — city/state distance-based delivery days
@@ -251,7 +251,7 @@ cd backend && python -m pytest tests/backend_test.py -v
 - ✅ React + FastAPI full-stack architecture
 - ✅ JWT authentication with bcrypt
 - ✅ Async MongoDB backend (Motor)
-- ✅ Multi-factor recommendation engine (7 scoring dimensions)
+- ✅ Multi-factor decision engine (7 scoring dimensions)
 - ✅ 6 configurable procurement strategies
 - ✅ Split-cart basket optimization algorithm
 - ✅ Supplier Hub — private supplier management
@@ -268,7 +268,7 @@ cd backend && python -m pytest tests/backend_test.py -v
 | Document | Description |
 |----------|-------------|
 | [docs/API.md](docs/API.md) | Full API reference — all endpoints with auth requirements |
-| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | System design, AI pipeline, recommendation modes, workflow diagrams |
+| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | System design, scoring pipeline, recommendation modes, workflow diagrams |
 | [docs/DESIGN.md](docs/DESIGN.md) | Project structure, design decisions, conventions, data model |
 
 ---

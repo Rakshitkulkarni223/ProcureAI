@@ -137,8 +137,8 @@ const GENERAL_SECTIONS: DocSection[] = [
                 ['Supplier comparison', 'Manual across multiple websites', 'Automated — one click'],
                 ['Time per procurement', '45–60 minutes', '3–5 minutes'],
                 ['Websites visited', '5–10 per purchase', '1 (ProcureAI)'],
-                ['Manual calculations', 'Required (Excel/paper)', 'Eliminated — AI handles it'],
-                ['AI recommendations', '❌ Not available', '✅ Weighted scoring + explanation'],
+                ['Manual calculations', 'Required (Excel/paper)', 'Eliminated — scoring engine handles it'],
+                ['Recommendations', '❌ Not available', '✅ Weighted scoring + explanation'],
                 ['Procurement reports', 'Manual preparation', 'One-click CSV & PDF'],
                 ['Multi-item optimization', 'Not feasible', '✅ Split-cart optimizer'],
                 ['Savings tracking', 'No visibility', '✅ Real-time dashboard'],
@@ -206,7 +206,7 @@ const GENERAL_SECTIONS: DocSection[] = [
       <div className="space-y-4 text-sm text-ink-soft leading-relaxed">
         {/* Visual workflow */}
         <div className="flex flex-wrap items-center justify-center gap-2 rounded-md border border-line bg-bg p-4 text-xs font-medium">
-          {['🏢 Business Need', '🤖 ProcureAI', '📊 AI Recommendation', '💰 Business Impact'].map((s, i, arr) => (
+          {['🏢 Business Need', '🤖 ProcureAI', '📊 Recommendation', '💰 Business Impact'].map((s, i, arr) => (
             <React.Fragment key={s}>
               <span className="rounded-md bg-accent-soft px-3 py-1.5 text-accent whitespace-nowrap">{s}</span>
               {i < arr.length - 1 && <ArrowRight size={14} className="text-muted shrink-0" />}
@@ -217,7 +217,7 @@ const GENERAL_SECTIONS: DocSection[] = [
           {[
             { step: 1, title: 'Search', desc: 'Type a product name, pick a category — ProcureAI queries all configured suppliers simultaneously.' },
             { step: 2, title: 'Compare', desc: 'Results are normalized and displayed in a sortable comparison table.' },
-            { step: 3, title: 'Recommend', desc: 'AI scores every option on price, delivery, rating, discount, warranty, and returns.' },
+            { step: 3, title: 'Recommend', desc: 'The decision engine scores every option on price, delivery, rating, discount, warranty, and returns.' },
             { step: 4, title: 'Explain', desc: 'Click "Why this recommendation?" for a radar chart and supplier scoreboard.' },
             { step: 5, title: 'Optimize', desc: 'Add multiple items to a basket for split-cart optimization across suppliers.' },
             { step: 6, title: 'Export & Track', desc: 'Download CSV/PDF reports. Track savings on the Business Impact dashboard.' },
@@ -280,10 +280,10 @@ const GENERAL_SECTIONS: DocSection[] = [
     content: (
       <div className="space-y-4 text-sm text-ink-soft leading-relaxed">
         <p>
-          Every AI recommendation is <strong className="text-ink">transparent and auditable</strong>. See why a supplier was chosen through rule-based reasoning or optional Gemini-generated insights.
+          Every recommendation is <strong className="text-ink">transparent and auditable</strong>. The decision engine uses rule-based weighted scoring, with optional Gemini-generated natural language explanations.
         </p>
         <div className="rounded-md border border-line bg-bg p-4">
-          <h4 className="mb-2 font-semibold text-ink">What the AI Evaluates (7 Factors)</h4>
+          <h4 className="mb-2 font-semibold text-ink">What the Decision Engine Evaluates (7 Factors)</h4>
           <div className="grid gap-1.5 sm:grid-cols-2">
             {[
               { factor: 'Price', desc: 'Unit cost, line total, volume discounts' },
@@ -308,13 +308,13 @@ const GENERAL_SECTIONS: DocSection[] = [
           </div>
           <div className="rounded-md border border-line bg-bg p-4">
             <h4 className="mb-2 font-semibold text-ink">Supplier Scoreboard</h4>
-            <p className="text-xs text-muted">A ranked table of all suppliers with color-coded progress bars, weighted scores out of 100, and prices so you can verify the AI's choice.</p>
+            <p className="text-xs text-muted">A ranked table of all suppliers with color-coded progress bars, weighted scores out of 100, and prices so you can verify the recommendation.</p>
           </div>
         </div>
         <div className="rounded-md border border-line bg-bg p-4">
-          <h4 className="mb-2 font-semibold text-ink">What the AI Produces</h4>
+          <h4 className="mb-2 font-semibold text-ink">What It Produces</h4>
           <ul className="space-y-1 text-xs text-muted">
-            <li><CheckCircle2 size={11} className="mr-1 inline text-success" /> <strong className="text-ink">Confidence Score</strong> — how confident the AI is in its recommendation</li>
+            <li><CheckCircle2 size={11} className="mr-1 inline text-success" /> <strong className="text-ink">Confidence Score</strong> — how far ahead the top supplier is vs. the runner-up</li>
             <li><CheckCircle2 size={11} className="mr-1 inline text-success" /> <strong className="text-ink">Business Reasoning</strong> — why this supplier was selected (not just "lowest price")</li>
             <li><CheckCircle2 size={11} className="mr-1 inline text-success" /> <strong className="text-ink">Trade-offs</strong> — radar chart showing how the top supplier compares on every dimension</li>
             <li><CheckCircle2 size={11} className="mr-1 inline text-success" /> <strong className="text-ink">Supplier Scoreboard</strong> — all suppliers ranked with scores out of 100</li>
@@ -378,11 +378,11 @@ const GENERAL_SECTIONS: DocSection[] = [
           <h4 className="mb-3 font-semibold text-ink">Key Metrics</h4>
           <div className="grid gap-2 sm:grid-cols-3">
             {[
-              { title: 'Total Savings', desc: 'Cumulative procurement savings from AI recommendations.' },
+              { title: 'Total Savings', desc: 'Cumulative procurement savings from recommendations.' },
               { title: 'Hours Saved', desc: 'Time saved vs manual comparison (42 min per search).' },
-              { title: 'Purchases Optimized', desc: 'Searches where AI recommended a better supplier.' },
+              { title: 'Purchases Optimized', desc: 'Searches where the engine recommended a better supplier.' },
               { title: 'Products Compared', desc: 'Total supplier options evaluated across all searches.' },
-              { title: 'AI Accuracy', desc: 'Percentage of searches with a successful recommendation.' },
+              { title: 'Recommendation Accuracy', desc: 'Percentage of searches with a successful recommendation.' },
               { title: 'Efficiency Score', desc: 'Composite score (0–100) measuring procurement performance.' },
             ].map((m) => (
               <div key={m.title} className="rounded-md border border-line bg-surface p-3">
@@ -484,7 +484,7 @@ const GENERAL_SECTIONS: DocSection[] = [
       <div className="space-y-4 text-sm text-ink-soft leading-relaxed">
         <p>
           Build your own <strong className="text-ink">private supplier network</strong> — combine online marketplace data with your trusted offline suppliers.
-          Every supplier is searchable and comparable using the same AI recommendation engine.
+          Every supplier is searchable and comparable using the same multi-factor decision engine.
         </p>
         <div className="rounded-md border border-line bg-bg p-4">
           <h4 className="mb-3 font-semibold text-ink">Capabilities</h4>
@@ -494,7 +494,7 @@ const GENERAL_SECTIONS: DocSection[] = [
               { title: 'Add Products', desc: 'Add products with pricing, delivery days, warranty, ratings, and stock status.' },
               { title: 'Unified Search', desc: 'Supplier Hub products appear alongside marketplace results in every search.' },
               { title: 'State Filtering', desc: 'Only suppliers from your state are included — ensuring relevant, local results.' },
-              { title: 'Same AI Engine', desc: 'Your suppliers are scored and ranked by the same recommendation engine as marketplace suppliers.' },
+              { title: 'Same Scoring Engine', desc: 'Your suppliers are scored and ranked by the same decision engine as marketplace suppliers.' },
             ].map((c) => (
               <div key={c.title} className="flex gap-2 rounded border border-line bg-surface px-3 py-2">
                 <CheckCircle2 size={12} className="mt-0.5 shrink-0 text-success" />
