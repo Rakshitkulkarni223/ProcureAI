@@ -52,7 +52,7 @@ export interface Product {
   warrantyMonths?: number;
   returnPolicyDays?: number;
   productUrl: string;
-  supplierSource?: 'marketplace' | 'supplier_hub';
+  supplierSource?: 'marketplace' | 'supplier_hub' | 'google_shopping';
   city?: string;
   state?: string;
   distanceKm?: number;
