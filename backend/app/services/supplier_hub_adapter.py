@@ -67,7 +67,7 @@ class SupplierHubProviderAdapter:
             supplier_state = s.get("state") or ""
             # Calculate distance-based delivery days
             distance_km = get_city_distance(self.user_city, supplier_city)
-            delivery_days = distance_to_delivery_days(distance_km, base_delivery_days)
+            delivery_days = distance_to_delivery_days(distance_km, base_delivery_days, user_city=self.user_city, supplier_city=supplier_city)
             reliability = s.get("reliabilityScore")
             # Scale reliability (0-10) to rating (0-5)
             if reliability is not None:

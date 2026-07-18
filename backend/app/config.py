@@ -316,28 +316,69 @@ def get_city_distance(city_a: str, city_b: str) -> int:
         return 0
 
 
-def distance_to_delivery_days(distance_km: int, base_days: int = 0) -> int:
-    """Convert distance to additional delivery days.
-    <100km: +0 days (same-day/next-day)
-    100-300km: +1 day
-    300-600km: +2 days
-    600-1000km: +3 days
-    1000-1500km: +4 days
-    >1500km: +5 days
+# ---------------------------------------------------------------------------
+# City → State mapping for delivery day estimation
+# ---------------------------------------------------------------------------
+CITY_STATE_MAP: dict[str, str] = {
+    "Mumbai": "Maharashtra",
+    "Pune": "Maharashtra",
+    "Nashik": "Maharashtra",
+    "Nagpur": "Maharashtra",
+    "Bengaluru": "Karnataka",
+    "Mysuru": "Karnataka",
+    "Chennai": "Tamil Nadu",
+    "Coimbatore": "Tamil Nadu",
+    "Tirupur": "Tamil Nadu",
+    "Hyderabad": "Telangana",
+    "Delhi": "Delhi",
+    "Noida": "Uttar Pradesh",
+    "Greater Noida": "Uttar Pradesh",
+    "Faridabad": "Haryana",
+    "Gurugram": "Haryana",
+    "Kolkata": "West Bengal",
+    "Ahmedabad": "Gujarat",
+    "Surat": "Gujarat",
+    "Anand": "Gujarat",
+    "Vadodara": "Gujarat",
+    "Indore": "Madhya Pradesh",
+    "Jaipur": "Rajasthan",
+    "Kochi": "Kerala",
+}
+
+
+def get_city_state(city: str) -> str:
+    """Get the state for a city. Returns empty string if unknown."""
+    try:
+        return CITY_STATE_MAP.get(city, "")
+    except Exception:
+        return ""
+
+
+def distance_to_delivery_days(distance_km: int, base_days: int = 0, user_city: str = "", supplier_city: str = "") -> int:
+    """Convert location relationship to delivery days.
+    Same City:       1 day
+    Same State:      2 days
+    Different State: 4–5 days (4 if <1000km, 5 if >=1000km)
     """
     try:
-        if distance_km <= 0:
-            return base_days
-        if distance_km < 100:
-            return base_days
-        if distance_km < 300:
-            return base_days + 1
-        if distance_km < 600:
-            return base_days + 2
-        if distance_km < 1000:
-            return base_days + 3
-        if distance_km < 1500:
-            return base_days + 4
-        return base_days + 5
+        # Same city → 1 day
+        if user_city and supplier_city and user_city.strip().lower() == supplier_city.strip().lower():
+            return 1
+
+        # Same state → 2 days
+        user_state = get_city_state(user_city)
+        supplier_state = get_city_state(supplier_city)
+        if user_state and supplier_state and user_state == supplier_state:
+            return 2
+
+        # NCR region special case (Delhi, Noida, Gurugram, Faridabad, Greater Noida)
+        ncr_cities = {"Delhi", "Noida", "Greater Noida", "Faridabad", "Gurugram"}
+        if user_city in ncr_cities and supplier_city in ncr_cities:
+            return 1
+
+        # Different state → 4 or 5 days based on distance
+        if distance_km >= 1000:
+            return 5
+        return 4
     except Exception:
-        return base_days
+        return base_days or 4

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Split, Layers, Truck, Gauge, Check, PackageX, Store, Building2, ArrowUpDown, MapPin } from 'lucide-react';
 import type { BasketOptimizeResponse } from '../types';
@@ -306,115 +306,148 @@ export function BasketResults({
 
       {/* Per-item supplier comparison */}
       {result.comparisons && result.comparisons.length > 0 && (
-        <div className="overflow-hidden rounded-md border border-line bg-surface">
-          <div className="border-b border-line bg-bg px-4 py-2.5 flex items-center gap-2">
-            <ArrowUpDown size={14} className="text-muted" />
-            <span className="label-eyebrow">Supplier Comparison</span>
-          </div>
-          <div className="divide-y divide-line">
-            {result.comparisons.map((cmp, ci) => {
-              const chosenItem = result.items.find((it) => it.query === cmp.query);
-              const chosenSupplier = chosenItem?.supplier;
-              const cheapest = cmp.suppliers[0];
-              return (
-                <div key={`${cmp.query}-${ci}`} className="px-4 py-3">
-                  <div className="mb-2 flex items-center gap-2">
-                    <span className="font-medium text-ink">{cmp.query}</span>
-                    {chosenItem && chosenItem.quantity > 1 && (
-                      <Badge tone="neutral">×{chosenItem.quantity}</Badge>
-                    )}
-                  </div>
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-sm">
-                      <thead>
-                        <tr className="border-b border-line text-left text-xs text-muted">
-                          <th className="pb-1.5 pr-3 font-medium">Supplier</th>
-                          <th className="pb-1.5 pr-3 font-medium">Source</th>
-                          <th className="pb-1.5 pr-3 font-medium">Location</th>
-                          <th className="pb-1.5 pr-3 text-right font-medium">Unit Price</th>
-                          <th className="pb-1.5 pr-3 text-right font-medium">Line Total</th>
-                          <th className="pb-1.5 pr-3 text-right font-medium">Delivery</th>
-                          <th className="pb-1.5 text-right font-medium">Rating</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {cmp.suppliers.map((s, si) => {
-                          const isChosen = s.supplier === chosenSupplier;
-                          const isCheapest = si === 0;
-                          return (
-                            <tr
-                              key={`${s.supplier}-${si}`}
-                              className={cn(
-                                'border-b border-line/50 last:border-0',
-                                isChosen && 'bg-accent-soft/30'
-                              )}
-                            >
-                              <td className="py-2 pr-3">
-                                <div className="flex items-center gap-2">
-                                  <SupplierLogo name={s.supplier} color={supplierColors[s.supplier]} size={20} />
-                                  <span className={cn('font-medium', isChosen ? 'text-ink' : 'text-ink-soft')}>
-                                    {s.supplier}
-                                  </span>
-                                  {isChosen && (
-                                    <Badge tone="accent" className="gap-1 text-[10px]">
-                                      <Check size={9} /> Chosen
-                                    </Badge>
-                                  )}
-                                </div>
-                              </td>
-                              <td className="py-2 pr-3">
-                                {s.supplierSource === 'supplier_hub' ? (
-                                  <Badge tone="neutral" className="gap-1">
-                                    <Building2 size={9} /> My Supplier
-                                  </Badge>
-                                ) : (
-                                  <Badge tone="accent" className="gap-1">
-                                    <Store size={9} /> Marketplace
-                                  </Badge>
-                                )}
-                              </td>
-                              <td className="py-2 pr-3">
-                                {s.city ? (
-                                  <div className="flex items-center gap-1 text-xs text-muted">
-                                    <MapPin size={10} className="shrink-0" />
-                                    <span>{s.city}</span>
-                                    {s.distanceKm != null && s.distanceKm > 0 && (
-                                      <span className="text-[10px] text-muted/70">({s.distanceKm}km)</span>
-                                    )}
-                                  </div>
-                                ) : (
-                                  <span className="text-xs text-muted/50">—</span>
-                                )}
-                              </td>
-                              <td className="py-2 pr-3 text-right">
-                                <span className={cn('data-num', isCheapest && 'font-semibold text-success')}>
-                                  {formatINR(s.price)}
-                                </span>
-                                {isCheapest && cmp.suppliers.length > 1 && (
-                                  <span className="ml-1 text-[10px] text-success">lowest</span>
-                                )}
-                              </td>
-                              <td className="py-2 pr-3 text-right data-num text-ink-soft">
-                                {formatINR(s.lineTotal)}
-                              </td>
-                              <td className="py-2 pr-3 text-right text-xs text-muted">
-                                {s.deliveryDays}d
-                              </td>
-                              <td className="py-2 text-right text-xs text-muted">
-                                {s.rating > 0 ? s.rating.toFixed(1) : '—'}
-                              </td>
-                            </tr>
-                          );
-                        })}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
+        <SupplierComparisonDropdown
+          comparisons={result.comparisons}
+          items={result.items}
+          supplierColors={supplierColors}
+        />
       )}
     </div>
   );
+}
+
+function SupplierComparisonDropdown({
+  comparisons,
+  items,
+  supplierColors,
+}: {
+  comparisons: NonNullable<BasketOptimizeResponse['comparisons']>;
+  items: BasketOptimizeResponse['items'];
+  supplierColors: Record<string, string>;
+}) {
+  const [selectedIdx, setSelectedIdx] = useState(0);
+
+  try {
+    const cmp = comparisons[selectedIdx];
+    if (!cmp) return null;
+
+    const chosenItem = items.find((it) => it.query === cmp.query);
+    const chosenSupplier = chosenItem?.supplier;
+
+    return (
+      <div className="overflow-hidden rounded-md border border-line bg-surface">
+        <div className="flex items-center gap-3 border-b border-line bg-bg px-4 py-2.5">
+          <ArrowUpDown size={14} className="text-muted shrink-0" />
+          <span className="label-eyebrow shrink-0">Supplier Comparison</span>
+          <select
+            value={selectedIdx}
+            onChange={(e) => { try { setSelectedIdx(Number(e.target.value)); } catch { /* silent */ } }}
+            className="ml-auto max-w-[260px] rounded-md border border-line bg-surface px-2.5 py-1 text-sm text-ink focus:border-accent focus:outline-none"
+          >
+            {comparisons.map((c, i) => (
+              <option key={`${c.query}-${i}`} value={i}>
+                {c.query} ({c.suppliers.length} supplier{c.suppliers.length > 1 ? 's' : ''})
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="px-4 py-3">
+          <div className="mb-2 flex items-center gap-2">
+            <span className="font-medium text-ink">{cmp.query}</span>
+            {chosenItem && chosenItem.quantity > 1 && (
+              <Badge tone="neutral">×{chosenItem.quantity}</Badge>
+            )}
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-line text-left text-xs text-muted">
+                  <th className="pb-1.5 pr-3 font-medium">Supplier</th>
+                  <th className="pb-1.5 pr-3 font-medium">Source</th>
+                  <th className="pb-1.5 pr-3 font-medium">Location</th>
+                  <th className="pb-1.5 pr-3 text-right font-medium">Unit Price</th>
+                  <th className="pb-1.5 pr-3 text-right font-medium">Line Total</th>
+                  <th className="pb-1.5 pr-3 text-right font-medium">Delivery</th>
+                  <th className="pb-1.5 text-right font-medium">Rating</th>
+                </tr>
+              </thead>
+              <tbody>
+                {cmp.suppliers.map((s, si) => {
+                  const isChosen = s.supplier === chosenSupplier;
+                  const isCheapest = si === 0;
+                  return (
+                    <tr
+                      key={`${s.supplier}-${si}`}
+                      className={cn(
+                        'border-b border-line/50 last:border-0',
+                        isChosen && 'bg-accent-soft/30'
+                      )}
+                    >
+                      <td className="py-2 pr-3">
+                        <div className="flex items-center gap-2">
+                          <SupplierLogo name={s.supplier} color={supplierColors[s.supplier]} size={20} />
+                          <span className={cn('font-medium', isChosen ? 'text-ink' : 'text-ink-soft')}>
+                            {s.supplier}
+                          </span>
+                          {isChosen && (
+                            <Badge tone="accent" className="gap-1 text-[10px]">
+                              <Check size={9} /> Chosen
+                            </Badge>
+                          )}
+                        </div>
+                      </td>
+                      <td className="py-2 pr-3">
+                        {s.supplierSource === 'supplier_hub' ? (
+                          <Badge tone="neutral" className="gap-1">
+                            <Building2 size={9} /> My Supplier
+                          </Badge>
+                        ) : (
+                          <Badge tone="accent" className="gap-1">
+                            <Store size={9} /> Marketplace
+                          </Badge>
+                        )}
+                      </td>
+                      <td className="py-2 pr-3">
+                        {s.city ? (
+                          <div className="flex items-center gap-1 text-xs text-muted">
+                            <MapPin size={10} className="shrink-0" />
+                            <span>{s.city}</span>
+                            {s.distanceKm != null && s.distanceKm > 0 && (
+                              <span className="text-[10px] text-muted/70">({s.distanceKm}km)</span>
+                            )}
+                          </div>
+                        ) : (
+                          <span className="text-xs text-muted/50">—</span>
+                        )}
+                      </td>
+                      <td className="py-2 pr-3 text-right">
+                        <span className={cn('data-num', isCheapest && 'font-semibold text-success')}>
+                          {formatINR(s.price)}
+                        </span>
+                        {isCheapest && cmp.suppliers.length > 1 && (
+                          <span className="ml-1 text-[10px] text-success">lowest</span>
+                        )}
+                      </td>
+                      <td className="py-2 pr-3 text-right data-num text-ink-soft">
+                        {formatINR(s.lineTotal)}
+                      </td>
+                      <td className="py-2 pr-3 text-right text-xs text-muted">
+                        {s.deliveryDays}d
+                      </td>
+                      <td className="py-2 text-right text-xs text-muted">
+                        {s.rating > 0 ? s.rating.toFixed(1) : '—'}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    );
+  } catch {
+    return null;
+  }
 }

@@ -12,6 +12,7 @@ from typing import Optional
 from bson import ObjectId
 
 from app.database import get_db
+from app.config import get_city_state
 from app.services.supplier_hub_adapter import SupplierHubProviderAdapter
 
 
@@ -89,6 +90,14 @@ class SupplierHubSearchService:
                 suppliers = [s for s in suppliers if s.get("name", "") in supplier_names]
             if not suppliers:
                 return []
+
+            # Filter to suppliers in the same state as the user's city
+            if user_city:
+                user_state = get_city_state(user_city)
+                if user_state:
+                    suppliers = [s for s in suppliers if (s.get("state") or "") == user_state]
+                if not suppliers:
+                    return []
 
             # Fetch products for each supplier in parallel
             product_tasks = [
