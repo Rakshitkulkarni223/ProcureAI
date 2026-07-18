@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Check, User as UserIcon } from 'lucide-react';
+import { Check, User as UserIcon, MapPin } from 'lucide-react';
 import type { Category, Preferences, SortOption } from '../types';
 import { api, apiError } from '../lib/api';
 import { Card, CardBody, CardHeader } from '../components/ui/Card';
@@ -17,16 +17,18 @@ const SORTS: { value: SortOption; label: string }[] = [
 export function SettingsPage() {
   const { user } = useAuth();
   const [categories, setCategories] = useState<Category[]>([]);
+  const [availableCities, setAvailableCities] = useState<string[]>([]);
   const [prefs, setPrefs] = useState<Preferences | null>(null);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState('');
 
   useEffect(() => {
-    Promise.all([api.categories(), api.preferences()])
-      .then(([c, pr]) => {
+    Promise.all([api.categories(), api.preferences(), api.cities()])
+      .then(([c, pr, citiesData]) => {
         setCategories(c);
         setPrefs(pr);
+        setAvailableCities(citiesData.cities || []);
       })
       .catch((e) => setError(apiError(e)));
   }, []);
@@ -46,6 +48,7 @@ export function SettingsPage() {
         sortPreference: prefs.sortPreference,
         weightProfile: prefs.weightProfile,
         businessType: prefs.businessType,
+        city: prefs.city,
       });
       setPrefs(updated);
       setSaved(true);
@@ -117,6 +120,26 @@ export function SettingsPage() {
                 </select>
               </div>
             </div>
+
+            {/* Delivery Location */}
+            {availableCities.length > 0 && (
+              <div className="space-y-1.5">
+                <label className="label-eyebrow flex items-center gap-1.5">
+                  <MapPin size={11} className="text-muted" /> Delivery Location
+                </label>
+                <select
+                  data-testid="pref-city"
+                  value={prefs?.city || 'Mumbai'}
+                  onChange={(e) => update({ city: e.target.value })}
+                  className="h-11 w-full appearance-none rounded-md border border-line bg-surface px-3.5 text-sm text-ink focus:border-ink focus:outline-none"
+                >
+                  {availableCities.map((city) => (
+                    <option key={city} value={city}>{city}</option>
+                  ))}
+                </select>
+                <p className="text-xs text-muted">Used for distance-based delivery estimates across all pages.</p>
+              </div>
+            )}
 
             {error && <div className="rounded-md bg-danger/10 px-3 py-2 text-sm text-danger">{error}</div>}
 

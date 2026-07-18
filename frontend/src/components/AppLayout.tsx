@@ -20,6 +20,7 @@ import {
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import { cn } from '../lib/utils';
+import { LocationDropdown } from './LocationDropdown';
 
 const NAV = [
   { to: '/', label: 'Dashboard', icon: LayoutDashboard, end: true, testid: 'nav-dashboard' },
@@ -122,6 +123,11 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
       )}
 
       <div className="lg:pl-64">
+        {/* Desktop top bar */}
+        <div className="sticky top-0 z-20 hidden h-12 items-center justify-end gap-3 border-b border-line bg-surface/80 px-5 backdrop-blur lg:flex">
+          <LocationDropdown />
+        </div>
+
         <header className="sticky top-0 z-20 flex h-16 items-center gap-3 border-b border-line bg-surface/80 px-5 backdrop-blur lg:hidden">
           <button
             data-testid="mobile-menu-button"
@@ -131,6 +137,9 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
             {open ? <X size={20} /> : <Menu size={20} />}
           </button>
           <span className="font-display text-lg font-bold tracking-tight">ProcureAI</span>
+          <div className="ml-auto">
+            <LocationDropdown />
+          </div>
         </header>
         <main className="mx-auto max-w-[1400px] px-5 py-7 lg:px-9 lg:py-9">{children}</main>
       </div>

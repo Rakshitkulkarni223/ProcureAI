@@ -90,8 +90,7 @@ export function SearchPage() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [profiles, setProfiles] = useState<WeightProfile[]>([]);
   const [recModes, setRecModes] = useState<RecommendationModeOption[]>([]);
-  const [availableCities, setAvailableCities] = useState<string[]>([]);
-  const [userCity, setUserCity] = useState<string>('');
+  const [userCity, setUserCity] = useState<string>('Mumbai');
   const [category, setCategory] = useState('');
   const [suppliers, setSuppliers] = useState<Supplier[]>([]);
   const [supplierHubSuppliers, setSupplierHubSuppliers] = useState<SupplierHubSupplierSummary[]>([]);
@@ -134,16 +133,15 @@ export function SearchPage() {
   }, [category, basketResult]);
 
   useEffect(() => {
-    Promise.all([api.categories(), api.weightProfiles(), api.recommendationModes(), api.preferences(), api.cities()])
-      .then(([cats, profs, modes, pref, citiesData]) => {
+    Promise.all([api.categories(), api.weightProfiles(), api.recommendationModes(), api.preferences()])
+      .then(([cats, profs, modes, pref]) => {
         setCategories(cats);
         setProfiles(profs);
         setRecModes(modes);
         setWeightProfile(pref.weightProfile);
         setSortPref(pref.sortPreference);
         setCategory(preset?.category || pref.defaultCategory || 'grocery');
-        setAvailableCities(citiesData.cities || []);
-        setUserCity(citiesData.default || 'Mumbai');
+        setUserCity(pref.city || 'Mumbai');
       })
       .catch((e) => setError(apiError(e)));
   }, []);
@@ -568,28 +566,11 @@ export function SearchPage() {
             </div>
           )}
 
-          {/* Delivery Location */}
-          {availableCities.length > 0 && (
-            <div>
-              <div className="label-eyebrow mb-2.5 flex items-center gap-1.5">
-                <MapPin size={12} className="text-accent" /> Delivery Location
-              </div>
-              <div className="flex items-center gap-2">
-                <select
-                  value={userCity}
-                  onChange={(e) => { try { setUserCity(e.target.value); } catch { /* silent */ } }}
-                  className="flex-1 rounded-md border border-line bg-surface px-3 py-2 text-sm text-ink focus:border-accent focus:outline-none"
-                >
-                  {availableCities.map((city) => (
-                    <option key={city} value={city}>{city}</option>
-                  ))}
-                </select>
-                {userCity && (
-                  <span className="text-xs text-muted">
-                    Distances calculated from {userCity}
-                  </span>
-                )}
-              </div>
+          {/* Delivery Location (read-only — change via top bar dropdown) */}
+          {userCity && (
+            <div className="flex items-center gap-2 text-xs text-muted">
+              <MapPin size={12} className="text-accent" />
+              <span>Delivering to <span className="font-medium text-ink">{userCity}</span></span>
             </div>
           )}
 

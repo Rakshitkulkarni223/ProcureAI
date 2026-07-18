@@ -111,6 +111,7 @@ export interface Preferences {
   sortPreference: SortOption;
   weightProfile: WeightProfileKey;
   businessType: string;
+  city?: string;
 }
 
 export interface HistoryEntry {

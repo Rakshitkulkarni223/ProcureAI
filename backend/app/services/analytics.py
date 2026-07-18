@@ -151,7 +151,7 @@ class PreferenceService:
     @staticmethod
     async def update(user_id: str, data: dict) -> dict:
         try:
-            allowed = {"defaultCategory", "enabledSuppliers", "sortPreference", "weightProfile", "businessType"}
+            allowed = {"defaultCategory", "enabledSuppliers", "sortPreference", "weightProfile", "businessType", "city"}
             clean = {k: v for k, v in data.items() if k in allowed and v is not None}
             pref = await PreferenceService._upsert(user_id, clean)
             return _doc_to_json(pref)
