@@ -24,6 +24,49 @@ def ok(data: Any) -> dict:
 
 
 # ---------------------------------------------------------------------------
+# Suppliers — static routes (MUST come before parameterized {supplier_id})
+# ---------------------------------------------------------------------------
+
+@router.get("/suppliers/cities")
+async def get_supplier_cities(user: dict = Depends(get_current_user)):
+    try:
+        docs = await SupplierHubSearchService.get_all_suppliers(user["sub"])
+        cities = set()
+        for d in docs:
+            city = d.get("city")
+            state = d.get("state")
+            if city:
+                cities.add(f"{city}, {state}" if state else city)
+        return ok(sorted(list(cities)))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/suppliers/by-category/{category}")
+async def suppliers_by_category(category: str, user: dict = Depends(get_current_user)):
+    try:
+        docs = await SupplierHubSearchService.get_suppliers_for_category(user["sub"], category)
+        data = [
+            {
+                "id": str(d.get("_id", "")),
+                "name": d.get("name", ""),
+                "supplierType": d.get("supplierType", ""),
+                "city": d.get("city"),
+                "state": d.get("state"),
+                "deliveryDays": d.get("deliveryDays"),
+                "creditPeriod": d.get("creditPeriod"),
+                "reliabilityScore": d.get("reliabilityScore"),
+                "preferredCategories": d.get("preferredCategories", []),
+                "active": d.get("active", True),
+            }
+            for d in docs
+        ]
+        return ok(data)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# ---------------------------------------------------------------------------
 # Suppliers CRUD
 # ---------------------------------------------------------------------------
 
@@ -132,49 +175,6 @@ async def delete_product(supplier_id: str, product_id: str, user: dict = Depends
         return ok({"deleted": True})
     except HTTPException:
         raise
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-
-# ---------------------------------------------------------------------------
-# Supplier Hub — Search Integration
-# ---------------------------------------------------------------------------
-
-@router.get("/suppliers/by-category/{category}")
-async def suppliers_by_category(category: str, user: dict = Depends(get_current_user)):
-    try:
-        docs = await SupplierHubSearchService.get_suppliers_for_category(user["sub"], category)
-        data = [
-            {
-                "id": str(d.get("_id", "")),
-                "name": d.get("name", ""),
-                "supplierType": d.get("supplierType", ""),
-                "city": d.get("city"),
-                "state": d.get("state"),
-                "deliveryDays": d.get("deliveryDays"),
-                "creditPeriod": d.get("creditPeriod"),
-                "reliabilityScore": d.get("reliabilityScore"),
-                "preferredCategories": d.get("preferredCategories", []),
-                "active": d.get("active", True),
-            }
-            for d in docs
-        ]
-        return ok(data)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-
-@router.get("/suppliers/cities")
-async def get_supplier_cities(user: dict = Depends(get_current_user)):
-    try:
-        docs = await SupplierHubSearchService.get_all_suppliers(user["sub"])
-        cities = set()
-        for d in docs:
-            city = d.get("city")
-            state = d.get("state")
-            if city:
-                cities.add(f"{city}, {state}" if state else city)
-        return ok(sorted(list(cities)))
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

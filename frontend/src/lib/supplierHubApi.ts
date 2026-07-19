@@ -32,11 +32,24 @@ API.interceptors.response.use(
 const unwrap = <T>(p: Promise<{ data: { data: T } }>): Promise<T> => p.then((r) => r.data.data);
 
 export function supplierHubApiError(e: any): string {
-  const data = e?.response?.data;
-  if (!data) return e?.message || 'Something went wrong.';
-  if (typeof data.detail === 'string') return data.detail;
-  if (typeof data.error === 'string') return data.error;
-  return 'Something went wrong.';
+  try {
+    const data = e?.response?.data;
+    if (!data) return e?.message || 'Something went wrong.';
+    if (typeof data.detail === 'string') return data.detail;
+    // Handle Pydantic 422 validation errors (detail is an array)
+    if (Array.isArray(data.detail) && data.detail.length > 0) {
+      return data.detail
+        .map((err: any) => {
+          const field = (err.loc || []).filter((l: any) => l !== 'body').join('.');
+          return field ? `${field}: ${err.msg}` : err.msg;
+        })
+        .join('; ');
+    }
+    if (typeof data.error === 'string') return data.error;
+    return 'Something went wrong.';
+  } catch {
+    return 'Something went wrong.';
+  }
 }
 
 export const supplierHubApi = {
