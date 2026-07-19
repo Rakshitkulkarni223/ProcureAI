@@ -350,6 +350,36 @@ async def _tool_optimize_basket(args: dict, user_id: str) -> dict:
         if not items:
             return {"error": "At least one item is required"}
 
+        # Auto-fetch existing basket history and use as base
+        try:
+            from bson import ObjectId
+            from app.database import get_db
+            db = get_db()
+            latest_basket = await db.baskethistories.find_one(
+                {"userId": ObjectId(user_id), "category": category},
+                sort=[("createdAt", -1)],
+            )
+            if latest_basket and latest_basket.get("items"):
+                history_items = [
+                    {"query": i.get("query", ""), "quantity": i.get("quantity", 1)}
+                    for i in latest_basket["items"] if i.get("query")
+                ]
+                # Start with history items as the base
+                merged = list(history_items)
+                history_queries_lower = [i["query"].lower() for i in history_items]
+                # Add new items only if they don't overlap with history
+                for new_item in items:
+                    nq = new_item.get("query", "").lower().strip()
+                    is_duplicate = any(
+                        nq in hq or hq in nq
+                        for hq in history_queries_lower
+                    )
+                    if not is_duplicate and nq:
+                        merged.append(new_item)
+                items = merged
+        except Exception:
+            pass  # If history fetch fails, proceed with just the requested items
+
         suppliers = CATEGORY_SUPPLIERS.get(category, [])
         req = {
             "category": category,
