@@ -2,7 +2,8 @@
   <img src="screenshots/dashboard.png" alt="ProcureAI Dashboard" width="800" />
 </p>
 
-# 🚀 ProcureAI — Procurement Decision Intelligence Platform
+# 🚀 ProcureAI
+### Intelligent Procurement Platform
 
 > Procurement platform that combines an **explainable multi-factor decision engine** with an **AI procurement assistant** to help businesses make faster and smarter purchasing decisions.
 
