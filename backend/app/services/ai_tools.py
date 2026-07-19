@@ -157,6 +157,28 @@ TOOL_DEFINITIONS: list[dict[str, Any]] = [
     {
         "type": "function",
         "function": {
+            "name": "get_basket_history",
+            "description": "Get the user's recent basket optimization history. Use this to find out what items were in previous baskets. ALWAYS call this before answering questions about the user's basket contents.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "limit": {
+                        "type": "integer",
+                        "description": "Number of recent basket entries to return (default 5)",
+                        "default": 5
+                    },
+                    "category": {
+                        "type": "string",
+                        "description": "Filter by category slug (optional)"
+                    }
+                },
+                "required": []
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
             "name": "get_history",
             "description": "Get the user's recent procurement search history.",
             "parameters": {
@@ -198,6 +220,8 @@ async def execute_tool(tool_name: str, arguments: dict[str, Any], user_id: str) 
             return await _tool_get_business_impact(user_id)
         elif tool_name == "list_suppliers":
             return await _tool_list_suppliers(user_id)
+        elif tool_name == "get_basket_history":
+            return await _tool_get_basket_history(arguments, user_id)
         elif tool_name == "get_history":
             return await _tool_get_history(arguments, user_id)
         else:
@@ -414,6 +438,51 @@ async def _tool_list_suppliers(user_id: str) -> dict:
         }
     except Exception as e:
         return {"error": f"Supplier Hub failed: {str(e)}"}
+
+
+async def _tool_get_basket_history(args: dict, user_id: str) -> dict:
+    """Get recent basket optimization history from MongoDB."""
+    try:
+        from bson import ObjectId
+        from app.database import get_db
+
+        db = get_db()
+        limit = min(args.get("limit", 5), 10)
+        query: dict = {"userId": ObjectId(user_id)}
+        category = args.get("category")
+        if category:
+            query["category"] = category
+
+        cursor = db.baskethistories.find(query).sort("createdAt", -1).limit(limit)
+        docs = await cursor.to_list(length=limit)
+
+        if not docs:
+            return {"message": "No basket history found. The user hasn't optimized any baskets yet.", "baskets": []}
+
+        baskets = []
+        for d in docs:
+            baskets.append({
+                "category": d.get("category", ""),
+                "item_count": d.get("itemCount", 0),
+                "items": [
+                    {
+                        "product": i.get("query", ""),
+                        "quantity": i.get("quantity", 1),
+                        "supplier": i.get("supplier", ""),
+                        "price": i.get("price", 0),
+                    }
+                    for i in d.get("items", [])[:15]
+                ],
+                "total_cost": d.get("splitTotal", 0),
+                "savings": d.get("estimatedSavings", 0),
+                "suppliers_used": d.get("supplierCount", 0),
+                "plan": d.get("recommendedPlan", ""),
+                "date": d.get("createdAt", "").isoformat() if hasattr(d.get("createdAt", ""), "isoformat") else str(d.get("createdAt", "")),
+            })
+
+        return {"total": len(baskets), "baskets": baskets}
+    except Exception as e:
+        return {"error": f"Basket history failed: {str(e)}"}
 
 
 async def _tool_get_history(args: dict, user_id: str) -> dict:

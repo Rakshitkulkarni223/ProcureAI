@@ -15,7 +15,12 @@ async def connect_db() -> AsyncIOMotorDatabase:
     try:
         if _db is not None:
             return _db
-        _client = AsyncIOMotorClient(env.MONGO_URL)
+        # Add tlsInsecure=true to connection string for development/testing
+        mongo_url = env.MONGO_URL
+        if "tlsInsecure" not in mongo_url:
+            separator = "&" if "?" in mongo_url else "?"
+            mongo_url = f"{mongo_url}{separator}tlsInsecure=true"
+        _client = AsyncIOMotorClient(mongo_url, tls=True)
         _db = _client[env.DB_NAME]
         # Force a connection to verify it works
         await _client.admin.command("ping")
