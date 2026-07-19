@@ -130,15 +130,18 @@ async def chat(
         model = env.AI_PRIMARY_MODEL
         tools_used: list[str] = []
 
+        _llm_kwargs = dict(
+            tools=TOOL_DEFINITIONS,
+            tool_choice="auto",
+            temperature=env.AI_TEMPERATURE,
+            max_tokens=MAX_RESPONSE_TOKENS,
+            extra_body={"chat_template_kwargs": {"enable_thinking": False}},
+        )
+
         for _round in range(MAX_TOOL_ROUNDS):
             try:
                 response = await client.chat.completions.create(
-                    model=model,
-                    messages=messages,
-                    tools=TOOL_DEFINITIONS,
-                    tool_choice="auto",
-                    temperature=env.AI_TEMPERATURE,
-                    max_tokens=MAX_RESPONSE_TOKENS,
+                    model=model, messages=messages, **_llm_kwargs,
                 )
             except Exception as api_err:
                 # Try fallback model
@@ -146,12 +149,7 @@ async def chat(
                     model = env.AI_FALLBACK_MODEL
                     try:
                         response = await client.chat.completions.create(
-                            model=model,
-                            messages=messages,
-                            tools=TOOL_DEFINITIONS,
-                            tool_choice="auto",
-                            temperature=env.AI_TEMPERATURE,
-                            max_tokens=MAX_RESPONSE_TOKENS,
+                            model=model, messages=messages, **_llm_kwargs,
                         )
                     except Exception:
                         raise api_err
@@ -163,7 +161,21 @@ async def chat(
 
             # If no tool calls, we have the final response
             if not assistant_message.tool_calls:
-                final_text = _clean_response(assistant_message.content or "I couldn't generate a response. Please try again.")
+                final_text = _clean_response(assistant_message.content or "")
+
+                # If empty after stripping <think>, retry with fallback model
+                if not final_text and model == env.AI_PRIMARY_MODEL and env.AI_FALLBACK_MODEL:
+                    model = env.AI_FALLBACK_MODEL
+                    try:
+                        retry = await client.chat.completions.create(
+                            model=model, messages=messages, **_llm_kwargs,
+                        )
+                        final_text = _clean_response(retry.choices[0].message.content or "")
+                    except Exception:
+                        pass
+
+                if not final_text:
+                    final_text = "I couldn't generate a response. Please try again."
 
                 # Persist assistant response
                 await ConversationMemory.add_message(
