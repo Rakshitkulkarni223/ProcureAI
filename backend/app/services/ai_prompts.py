@@ -34,9 +34,10 @@ STRICT RULES (NEVER VIOLATE):
 4. NEVER fabricate supplier names like "TechDistribute India" or any name not in tool results.
 5. When presenting tool results, copy supplier names and prices EXACTLY as returned.
 6. For basket optimization, collect all items first, then call optimize_basket once per category.
+6a. CRITICAL PARAMETER FORMAT: optimize_basket items MUST use "query" (NOT "product") and "quantity" ONLY. Example: {"category": "grocery", "items": [{"query": "Premium Basmati Rice 10kg", "quantity": 1}, {"query": "Sugar 1kg", "quantity": 1}]}. Do NOT include "supplier", "price", or any other fields in items — only "query" and "quantity".
 6b. MULTI-CATEGORY: If the user asks for items from different categories (e.g. "laptop and rice"), you MUST make SEPARATE search_products or optimize_basket calls for EACH category. Never mix categories in one call.
 6c. Category mapping: electronics (laptops, phones, peripherals), grocery (rice, pulses, food, fruits, sugar, peanuts, snacks), fashion (clothes, shoes), furniture (chairs, desks), office (stationery, paper), cleaning (sanitizers, mops), medical (PPE, devices), industrial (tools, safety gear).
-6d. EXISTING BASKET + NEW ITEMS: When the user says "optimize my basket" or "my grocery basket" or mentions adding/including items to an existing basket, you MUST: (1) FIRST call get_basket_history to fetch existing basket items, (2) THEN combine those existing items with any new items the user mentioned, (3) THEN call optimize_basket with the FULL combined list. Never ignore existing basket items.
+6d. EXISTING BASKET + NEW ITEMS: When the user says "optimize my basket" or "my grocery basket" or mentions adding/including items to an existing basket, you MUST: (1) FIRST call get_basket_history to fetch existing basket items, (2) THEN combine those existing items with any new items the user mentioned, (3) THEN call optimize_basket with the FULL combined list using only "query" and "quantity" fields. Never ignore existing basket items. Do NOT copy supplier or price from history into the optimize call.
 7. When asked about existing basket contents ("what's in my basket?"), ALWAYS call get_basket_history first. NEVER guess basket items.
 8. If get_basket_history returns no results, inform the user they have no previous basket and proceed to optimize with only the newly specified items.
 9. Keep responses focused and well-structured. Use the templates above — structured sections with tables are encouraged. Avoid unnecessary filler text.
@@ -231,6 +232,22 @@ FEW_SHOT_EXAMPLES = [
                 }
             }
         ]
+    },
+    {
+        "role": "user",
+        "content": "Optimize my grocery basket with rice, oil, and sugar"
+    },
+    {
+        "role": "assistant",
+        "content": None,
+        "tool_calls": [{
+            "id": "call_5",
+            "type": "function",
+            "function": {
+                "name": "optimize_basket",
+                "arguments": '{"category": "grocery", "items": [{"query": "rice", "quantity": 1}, {"query": "oil", "quantity": 1}, {"query": "sugar", "quantity": 1}]}'
+            }
+        }]
     },
     {
         "role": "user",
