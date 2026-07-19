@@ -128,7 +128,7 @@ The Procurement AI Assistant is a conversational interface powered by **Groq** (
 
 > Full walkthrough (~4 min): Login → Dashboard → Business Impact → Search & Compare → Basket Optimizer → AI Assistant → Supplier Hub → Analytics → History → Watchlist → Settings → Dark Mode → Docs
 
-[Demo Video](https://github.com/user-attachments/assets/80705382-ff09-4438-9ee8-7c09f00f426b)
+[Demo Video]()
 
 <details>
 <summary>Can't see the video? Click to expand.</summary>
