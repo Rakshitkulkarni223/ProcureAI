@@ -36,7 +36,7 @@ export function SplashScreen({ onFinish }: { onFinish: () => void }) {
 
       {/* Subtitle */}
       <p className="mt-2 text-xs font-semibold uppercase tracking-[0.2em] text-emerald-400">
-        Vendor Intelligence Platform
+        Intelligent Procurement Platform
       </p>
 
       {/* Tagline */}
