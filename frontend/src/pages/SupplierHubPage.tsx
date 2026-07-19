@@ -387,7 +387,7 @@ export function SupplierHubPage() {
                   <div key={p.id} className="rounded-md border border-line p-3 space-y-1">
                     {editingProductId === p.id ? (
                       <ProductForm
-                        form={p}
+                        form={productForm}
                         onChange={updateProductForm}
                         onSave={saveProduct}
                         onCancel={() => { setEditingProductId(null); setProductForm(EMPTY_PRODUCT); }}
