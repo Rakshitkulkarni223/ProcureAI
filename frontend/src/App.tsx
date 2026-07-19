@@ -17,7 +17,6 @@ import { WatchlistPage } from './pages/WatchlistPage';
 import { BusinessImpactPage } from './pages/BusinessImpactPage';
 import { SupplierHubPage } from './pages/SupplierHubPage';
 import { SplashScreen } from './components/SplashScreen';
-import { PresentationPage } from './pages/PresentationPage';
 
 const protectedRoute = (el: React.ReactNode) => (
   <ProtectedRoute>
@@ -64,7 +63,6 @@ export default function App() {
           <Route path="/impact" element={protectedRoute(<BusinessImpactPage />)} />
           <Route path="/supplier-hub" element={protectedRoute(<SupplierHubPage />)} />
           <Route path="/docs" element={protectedRoute(<DocsPage />)} />
-          <Route path="/presentation" element={<PresentationPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
