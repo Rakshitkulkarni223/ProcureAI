@@ -78,24 +78,24 @@ This allows buyers to interact with procurement data using natural language whil
 
 ## 📸 Screenshots
 
-| Dashboard | Search & Compare | Explanation Panel |
+| Dashboard | Search & Compare | AI Explanation |
 |---|---|---|
 | ![Dashboard](screenshots/dashboard.png) | ![Search](screenshots/search-compare.png) | ![AI](screenshots/ai-explanation.png) |
 
-| Basket Optimization | Business Impact | ROI Calculator |
+| Basket Optimization | AI Assistant | Supplier Hub |
 |---|---|---|
-| ![Basket](screenshots/basket-optimization.png) | ![Impact](screenshots/business-impact.png) | ![ROI](screenshots/roi-calculator.png) |
+| ![Basket](screenshots/basket-optimization.png) | ![AI Chat](screenshots/ai-assistant.png) | ![Suppliers](screenshots/supplier-hub.png) |
 
 <details>
 <summary>More screenshots</summary>
 
-| Analytics | Search History | Watchlist |
+| Business Impact | Analytics | Search History |
 |---|---|---|
-| ![Analytics](screenshots/analytics.png) | ![History](screenshots/history.png) | ![Watchlist](screenshots/watchlist.png) |
+| ![Impact](screenshots/business-impact.png) | ![Analytics](screenshots/analytics.png) | ![History](screenshots/history.png) |
 
-| Settings | Documentation |
-|---|---|
-| ![Settings](screenshots/settings.png) | ![Docs](screenshots/docs.png) |
+| Watchlist | Settings | Documentation |
+|---|---|---|
+| ![Watchlist](screenshots/watchlist.png) | ![Settings](screenshots/settings.png) | ![Docs](screenshots/docs.png) |
 
 </details>
 
@@ -126,7 +126,7 @@ The Procurement AI Assistant is a conversational interface powered by **Groq** (
 
 ## 🎬 Demo Video
 
-> Full walkthrough: Login → Dashboard → Business Impact → Search & Compare → Basket Optimizer → Analytics → History → Watchlist → Settings → Docs → Dark Mode
+> Full walkthrough (~4 min): Login → Dashboard → Business Impact → Search & Compare → Basket Optimizer → AI Assistant → Supplier Hub → Analytics → History → Watchlist → Settings → Dark Mode → Docs
 
 [Demo Video](https://github.com/user-attachments/assets/80705382-ff09-4438-9ee8-7c09f00f426b)
 

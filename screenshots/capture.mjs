@@ -1,122 +1,194 @@
 /**
- * Capture screenshots for README
- * Usage: node screenshots/capture.mjs
+ * Capture screenshots for README — covers all pages + AI Assistant
+ * Usage: node screenshots/capture.mjs [base_url]
+ *
+ * Flow mirrors the demo recorder:
+ *   1. SplashScreen auto-dismisses in ~3.2s
+ *   2. Login page pre-fills credentials — click submit
+ *   3. Search page defaults to basket mode with grocery presets
+ *   4. data-testid is directly on <input> elements
  */
 import { chromium } from 'playwright';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const BASE = 'https://buywise-compare-1.preview.emergentagent.com';
-const CREDS = { email: 'demo@procureai.com', password: 'Demo@123' };
+const BASE = process.argv[2] || 'https://buywise-compare-1.preview.emergentagent.com';
 
-const wait = (ms) => new Promise(r => setTimeout(r, ms));
+const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+
+const shot = async (page, name) => {
+  try {
+    await page.screenshot({ path: path.join(__dirname, name), fullPage: false });
+    console.log(`  ✅ ${name}`);
+  } catch (e) {
+    console.warn(`  ⚠ ${name}: ${e.message}`);
+  }
+};
+
+const scroll = async (page, top) => {
+  try {
+    await page.evaluate((t) => window.scrollTo({ top: t, behavior: 'smooth' }), top);
+    await wait(1200);
+  } catch { /* ignore */ }
+};
+
+const nav = async (page, testid) => {
+  try {
+    const link = page.locator(`[data-testid="${testid}"]`);
+    await link.waitFor({ state: 'visible', timeout: 5000 });
+    await link.click();
+    await wait(2500);
+  } catch (e) {
+    console.warn(`  nav(${testid}): ${e.message}`);
+  }
+};
 
 (async () => {
-  console.log('📸 Capturing screenshots...');
+  console.log(`📸 Capturing screenshots from ${BASE} …\n`);
   const browser = await chromium.launch({ headless: false });
   const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
-  page.setDefaultTimeout(30000);
+  page.setDefaultTimeout(25_000);
 
   try {
-    // Login
-    await page.goto(BASE, { waitUntil: 'load', timeout: 60000 });
-    await wait(3000);
-    await page.fill('input[type="email"]', CREDS.email);
-    await page.fill('input[type="password"]', CREDS.password);
-    await page.click('button[type="submit"]');
-    await page.waitForURL('**/', { timeout: 30000 });
+    // ── Login ──
+    console.log('▸ Login');
+    await page.goto(BASE, { waitUntil: 'load', timeout: 60_000 });
+    await wait(5000); // splash screen
+    const submitBtn = page.locator('[data-testid="login-submit"]');
+    await submitBtn.waitFor({ state: 'visible', timeout: 10_000 });
+    await submitBtn.click();
+    await page.locator('[data-testid="nav-dashboard"]').waitFor({ state: 'visible', timeout: 20_000 });
     await wait(3000);
 
-    // 1. Dashboard
-    await page.screenshot({ path: path.join(__dirname, 'dashboard.png'), fullPage: false });
-    console.log('✅ dashboard.png');
+    // 1 ── Dashboard ──
+    console.log('▸ Dashboard');
+    await shot(page, 'dashboard.png');
 
-    // 2. Search & Compare
-    await page.click('[data-testid="nav-search"]');
-    await wait(2000);
+    // 2 ── Business Impact ──
+    console.log('▸ Business Impact');
+    await nav(page, 'nav-impact');
+    await shot(page, 'business-impact.png');
+
+    // 3 ── ROI Calculator (scroll down) ──
+    await scroll(page, 1000);
+    await wait(1000);
+    await shot(page, 'roi-calculator.png');
+
+    // ═══════════════════════════════════════════════════
+    //  SEARCH PAGE — basket first (default), then single
+    // ═══════════════════════════════════════════════════
+    console.log('▸ Search & Compare');
+    await nav(page, 'nav-search');
+    await wait(1500);
+
+    // 4 ── Basket Optimization (default mode, grocery presets auto-filled) ──
+    console.log('▸ Basket Optimization');
     try {
-      await page.click('[data-testid="category-electronics"]', { timeout: 5000 });
+      await page.locator('[data-testid="basket-optimize-button"]').click();
+      await page.locator('[data-testid="basket-results"]').waitFor({ state: 'visible', timeout: 30_000 });
+      await wait(1500);
+      await shot(page, 'basket-optimization.png');
+
+      // 5 ── Procurement Intelligence Summary ──
+      await scroll(page, 600);
+      await shot(page, 'procurement-intelligence.png');
+
+      // 6 ── AI Advisor Insights ──
+      await scroll(page, 1000);
+      await shot(page, 'ai-advisor-insights.png');
+    } catch (e) {
+      console.warn('  basket:', e.message);
+    }
+
+    // 7 ── Single Search ──
+    console.log('▸ Single Search');
+    await scroll(page, 0);
+    await wait(500);
+    try {
+      await page.locator('[data-testid="mode-single"]').click();
+      await wait(1000);
+
+      const searchInput = page.locator('[data-testid="search-input"]');
+      await searchInput.click();
+      await searchInput.fill('Premium Basmati Rice 10kg');
       await wait(500);
-    } catch {}
-    try {
-      const input = page.locator('[data-testid="search-input"] input, input[placeholder*="e.g"]').first();
-      await input.fill('UltraBook Laptop');
-      await wait(300);
-      await page.click('[data-testid="search-submit-button"]');
-      await wait(5000);
-    } catch (e) { console.warn('search:', e.message); }
-    await page.screenshot({ path: path.join(__dirname, 'search-compare.png'), fullPage: false });
-    console.log('✅ search-compare.png');
-
-    // 3. AI Explanation
-    try {
-      const whyBtn = page.locator('button:has-text("Why this"), button:has-text("why")').first();
-      if (await whyBtn.isVisible({ timeout: 3000 })) {
-        await whyBtn.click();
-        await wait(2000);
-        await page.screenshot({ path: path.join(__dirname, 'ai-explanation.png'), fullPage: false });
-        console.log('✅ ai-explanation.png');
-      }
-    } catch { console.warn('skipped ai-explanation'); }
-
-    // 4. Basket Optimization
-    await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'smooth' }));
-    await wait(800);
-    try {
-      await page.click('[data-testid="mode-basket"]', { timeout: 3000 });
-      await page.click('[data-testid="category-grocery"]', { timeout: 3000 });
+      await page.locator('[data-testid="search-submit-button"]').click();
+      await page.locator('text=AI Recommendation').first().waitFor({ state: 'visible', timeout: 30_000 }).catch(() => {});
       await wait(2000);
-      await page.screenshot({ path: path.join(__dirname, 'basket-optimization.png'), fullPage: false });
-      console.log('✅ basket-optimization.png');
-    } catch { console.warn('skipped basket'); }
 
-    // 5. Business Impact (matches nav order: Dashboard → Search → Business Impact)
-    await page.click('[data-testid="nav-impact"]');
-    await wait(3000);
-    await page.screenshot({ path: path.join(__dirname, 'business-impact.png'), fullPage: false });
-    console.log('✅ business-impact.png');
+      // 8 ── AI Recommendation ──
+      await shot(page, 'search-compare.png');
 
-    // 6. ROI Calculator (scroll down on Business Impact page)
-    await page.evaluate(() => window.scrollTo({ top: 1000, behavior: 'smooth' }));
-    await wait(2000);
-    await page.screenshot({ path: path.join(__dirname, 'roi-calculator.png'), fullPage: false });
-    console.log('✅ roi-calculator.png');
+      // 9 ── Procurement Insights + Long-Term Recommendation ──
+      await scroll(page, 500);
+      await shot(page, 'ai-explanation.png');
 
-    // 7. Analytics
-    await page.click('[data-testid="nav-analytics"]');
-    await wait(3000);
-    await page.screenshot({ path: path.join(__dirname, 'analytics.png'), fullPage: false });
-    console.log('✅ analytics.png');
+      // 10 ── Supplier Comparison Matrix ──
+      await scroll(page, 1300);
+      await shot(page, 'supplier-comparison.png');
+    } catch (e) {
+      console.warn('  single search:', e.message);
+    }
 
-    // 8. Search History
-    await page.click('[data-testid="nav-history"]');
-    await wait(3000);
-    await page.screenshot({ path: path.join(__dirname, 'history.png'), fullPage: false });
-    console.log('✅ history.png');
+    // 11 ── AI Assistant ──
+    console.log('▸ AI Assistant');
+    try {
+      const aiBtn = page.locator('button:has-text("Ask ProcureAI")');
+      await aiBtn.click({ timeout: 5000 });
+      await wait(1500);
 
-    // 9. Watchlist
-    await page.click('[data-testid="nav-watchlist"]');
-    await wait(3000);
-    await page.screenshot({ path: path.join(__dirname, 'watchlist.png'), fullPage: false });
-    console.log('✅ watchlist.png');
+      const chatInput = page.locator('textarea[placeholder="Ask about procurement..."]');
+      await chatInput.fill('Compare laptop prices across suppliers');
+      await wait(500);
 
-    // 10. Settings
-    await page.click('[data-testid="nav-settings"]');
-    await wait(3000);
-    await page.screenshot({ path: path.join(__dirname, 'settings.png'), fullPage: false });
-    console.log('✅ settings.png');
+      const sendButton = page.locator('button:right-of(textarea) >> visible=true').first();
+      await sendButton.click();
+      await wait(8000);
+      await shot(page, 'ai-assistant.png');
 
-    // 11. Documentation
-    await page.click('[data-testid="nav-docs"]');
-    await wait(3000);
-    await page.screenshot({ path: path.join(__dirname, 'docs.png'), fullPage: false });
-    console.log('✅ docs.png');
+      // Close panel
+      const closeBtn = page.locator('button:has(.lucide-x)').first();
+      await closeBtn.click();
+      await wait(500);
+    } catch (e) {
+      console.warn('  ai-assistant:', e.message);
+    }
+
+    // 12 ── Supplier Hub ──
+    console.log('▸ Supplier Hub');
+    await nav(page, 'nav-supplier-hub');
+    await shot(page, 'supplier-hub.png');
+
+    // 13 ── Analytics ──
+    console.log('▸ Analytics');
+    await nav(page, 'nav-analytics');
+    await shot(page, 'analytics.png');
+
+    // 14 ── Search History ──
+    console.log('▸ History');
+    await nav(page, 'nav-history');
+    await shot(page, 'history.png');
+
+    // 15 ── Watchlist ──
+    console.log('▸ Watchlist');
+    await nav(page, 'nav-watchlist');
+    await shot(page, 'watchlist.png');
+
+    // 16 ── Settings ──
+    console.log('▸ Settings');
+    await nav(page, 'nav-settings');
+    await shot(page, 'settings.png');
+
+    // 17 ── Documentation ──
+    console.log('▸ Documentation');
+    await nav(page, 'nav-docs');
+    await shot(page, 'docs.png');
 
   } catch (e) {
-    console.error('Error:', e.message);
+    console.error('❌ Fatal error:', e.message);
   }
 
   await browser.close();
-  console.log('🎉 All screenshots captured in screenshots/ folder');
+  console.log('\n🎉 All screenshots saved to screenshots/');
 })();

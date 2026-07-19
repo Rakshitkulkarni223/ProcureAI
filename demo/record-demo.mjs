@@ -1,23 +1,42 @@
 /**
- * ProcureAI — Demo Video Recorder
+ * ProcureAI — Demo Video Recorder (~4 min)
  *
- * Records a full walkthrough with Netflix-style captions.
- * Usage:  node demo/record-demo.mjs
+ * Records a full walkthrough with captions, covering ALL features.
+ * Usage:  node demo/record-demo.mjs [base_url]
  * Output: demo/procureai-demo.webm
+ *
+ * How it works:
+ *   1. SplashScreen auto-dismisses in ~3.2s (sessionStorage-gated)
+ *   2. Login page pre-fills demo credentials — just click submit
+ *   3. Desktop sidebar (visible at lg:1024px+) has NavLink <a> tags
+ *      with data-testid="nav-*"
+ *   4. SearchSuggestions puts data-testid directly on the <input>, not a wrapper
+ *   5. Selecting "grocery" in basket mode auto-fills 3 preset items
+ *   6. AI Chat floating button bottom-right, textarea placeholder "Ask about procurement..."
+ *   7. Theme toggle: data-testid="theme-toggle" in sidebar bottom
  */
 
 import { chromium } from 'playwright';
 import path from 'path';
-import fs from 'fs';
 import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-
-const BASE = 'https://buywise-compare-1.preview.emergentagent.com';
+const BASE = process.argv[2] || 'https://buywise-compare-1.preview.emergentagent.com';
 const CREDS = { email: 'demo@procureai.com', password: 'Demo@123' };
 const VIDEO_DIR = path.resolve(__dirname);
 
-/* ── Caption overlay ── */
+/* ── Helpers ── */
+
+async function wait(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+async function scroll(page, top) {
+  try {
+    await page.evaluate((t) => window.scrollTo({ top: t, behavior: 'smooth' }), top);
+    await wait(1200);
+  } catch { /* ignore */ }
+}
+
+/** Show Netflix-style caption overlay */
 async function caption(page, text, ms = 3500) {
   try {
     await page.evaluate(({ text, ms }) => {
@@ -44,23 +63,23 @@ async function caption(page, text, ms = 3500) {
   } catch (e) { console.warn('caption:', e.message); }
 }
 
-async function wait(ms) { return new Promise(r => setTimeout(r, ms)); }
-
-/* ── Navigate via sidebar ── */
+/** Click a sidebar nav link by its data-testid (e.g. "nav-search") */
 async function nav(page, testid) {
   try {
-    await page.click(`[data-testid="${testid}"]`);
+    const link = page.locator(`[data-testid="${testid}"]`);
+    await link.waitFor({ state: 'visible', timeout: 5000 });
+    await link.click();
     await wait(2500);
-  } catch {
-    console.warn(`nav fallback for ${testid}`);
+  } catch (e) {
+    console.warn(`nav(${testid}): ${e.message}`);
   }
 }
 
-/* ══════════════════════════════════════════════
-   MAIN FLOW
-   ══════════════════════════════════════════════ */
+/* ══════════════════════════════════════════════════════════════════
+   MAIN RECORDING FLOW — matches demo/DEMO_SCRIPT.md
+   ══════════════════════════════════════════════════════════════════ */
 (async () => {
-  console.log('🎬 Starting ProcureAI demo recording...');
+  console.log(`🎬 Recording ProcureAI demo from ${BASE} …`);
 
   const browser = await chromium.launch({ headless: false });
   const context = await browser.newContext({
@@ -68,240 +87,254 @@ async function nav(page, testid) {
     recordVideo: { dir: VIDEO_DIR, size: { width: 1440, height: 900 } },
   });
   const page = await context.newPage();
-  page.setDefaultTimeout(30000);
+  page.setDefaultTimeout(25_000);
 
   try {
-    /* ── 1. LOGIN ── */
-    await page.goto(BASE, { waitUntil: 'load', timeout: 60000 });
+    // ─────────────────────── 0:00  SPLASH + LOGIN ───────────────────────
+    console.log('▸ Login');
+    await page.goto(BASE, { waitUntil: 'load', timeout: 60_000 });
+
+    // SplashScreen replaces entire app for ~3.2s, then login page renders
     await wait(5000);
-    await caption(page, '🔐 Logging in to ProcureAI with secure credentials', 3500);
 
-    await page.fill('input[type="email"]', CREDS.email);
-    await wait(500);
-    await page.fill('input[type="password"]', CREDS.password);
-    await wait(500);
-    await page.click('button[type="submit"]');
-    await page.waitForURL('**/', { timeout: 30000 });
+    // Login page should now be visible with pre-filled credentials
+    const submitBtn = page.locator('[data-testid="login-submit"]');
+    await submitBtn.waitFor({ state: 'visible', timeout: 10_000 });
+    await caption(page, '🔐 Logging in to ProcureAI', 2500);
+    await submitBtn.click();
+
+    // Wait for sidebar nav to confirm dashboard loaded (not waitForURL which matches any URL)
+    await page.locator('[data-testid="nav-dashboard"]').waitFor({ state: 'visible', timeout: 20_000 });
     await wait(3000);
 
-    /* ── 2. DASHBOARD ── */
-    await caption(page, '📊 Home Dashboard — Real-time procurement KPIs, savings estimates, and AI insights', 5000);
-    await wait(2000);
-    await page.evaluate(() => window.scrollTo({ top: 350, behavior: 'smooth' }));
-    await wait(2500);
-    await caption(page, '🤖 AI Insights — Smart suggestions generated from your procurement patterns', 4500);
-    await wait(2000);
+    // ─────────────────────── 0:10  DASHBOARD ────────────────────────────
+    console.log('▸ Dashboard');
+    await caption(page, '📊 Dashboard — Real-time KPIs, savings trend, and AI insights', 4500);
+    await scroll(page, 350);
+    await wait(1500);
+    await scroll(page, 0);
 
-    // Date range filter
-    await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'smooth' }));
-    await wait(1000);
-    await caption(page, '📅 Date Range Filter — Instantly view KPIs for any period (7/30/90 days or custom)', 4500);
-    try {
-      await page.locator('button:has-text("Last 30 days")').click({ timeout: 3000 });
-      await wait(3000);
-      await caption(page, '✅ All metrics, charts, and insights dynamically update to the selected period', 4500);
-      await page.locator('button:has-text("All Time")').click({ timeout: 3000 });
-      await wait(2000);
-    } catch { /* skip */ }
+    // ─────────────────────── 0:30  BUSINESS IMPACT ──────────────────────
+    console.log('▸ Business Impact');
+    await nav(page, 'nav-impact');
+    await caption(page, '📊 Business Impact — Savings, Hours Saved, AI Accuracy, Efficiency Score', 5000);
+    await scroll(page, 500);
 
-    // Scroll to Business Impact summary on Dashboard
-    await page.evaluate(() => window.scrollTo({ top: 600, behavior: 'smooth' }));
-    await wait(2000);
-    await caption(page, '💰 Business Impact Summary — Total Saved, Hours Saved, Efficiency & AI Accuracy right on the Dashboard', 5500);
-    await wait(2500);
-
-    /* ── 3. BUSINESS IMPACT (via Dashboard button) ── */
-    try {
-      const impactBtn = page.locator('button:has-text("View Full Business Impact")');
-      if (await impactBtn.isVisible({ timeout: 3000 })) {
-        await caption(page, '👆 Click "View Full Business Impact" for the detailed drill-down', 3500);
-        await impactBtn.click();
-        await wait(3000);
-      } else {
-        await nav(page, 'nav-impact');
-        await wait(2500);
-      }
-    } catch {
-      await nav(page, 'nav-impact');
-      await wait(2500);
-    }
-
-    await caption(page, '📊 Six key metrics: Total Savings, Hours Saved, AI Accuracy, Efficiency Score & more', 5500);
-    await page.evaluate(() => window.scrollTo({ top: 350, behavior: 'smooth' }));
-    await wait(2500);
-
-    // Date range on impact page
-    try {
-      await page.locator('button:has-text("Last 30 days")').click({ timeout: 3000 });
-      await wait(3000);
-      await caption(page, '📅 Filter by date — See business impact for any period at a glance', 4000);
-      await page.locator('button:has-text("All Time")').click({ timeout: 3000 });
-      await wait(2000);
-    } catch { /* skip */ }
-
-    // Scroll to Before vs After
-    await page.evaluate(() => window.scrollTo({ top: 700, behavior: 'smooth' }));
-    await wait(2000);
-    await caption(page, '⚡ Before vs After — 8-step manual process (45 min) → 5-step AI workflow (3 min) = 93% faster', 5500);
-    await wait(3000);
-
-    // Scroll to ROI Calculator
-    await page.evaluate(() => window.scrollTo({ top: 1100, behavior: 'smooth' }));
-    await wait(2000);
-    await caption(page, '🧮 ROI Calculator — Input your team size, hourly cost, and purchases to project savings', 5500);
-
-    // Interact with a slider
+    // ROI Calculator
+    await scroll(page, 1000);
+    await caption(page, '🧮 ROI Calculator — Estimate monthly savings with interactive sliders', 4500);
     try {
       const slider = page.locator('input[type="range"]').first();
       if (await slider.isVisible({ timeout: 2000 })) {
         await slider.fill('500');
         await wait(2000);
-        await caption(page, '💵 Real-time projections: Monthly hours saved, salary savings, and annual cost reduction', 5000);
-        await wait(2000);
       }
     } catch { /* skip */ }
 
-    await wait(1500);
-
-    /* ── 4. SEARCH & COMPARE ── */
-    await caption(page, '🔍 Search & Compare — The core of ProcureAI', 3000);
+    // ═══════════════════════════════════════════════════════════════════
+    //  SEARCH PAGE — opens in basket mode by default with grocery presets
+    // ═══════════════════════════════════════════════════════════════════
+    console.log('▸ Search & Compare');
     await nav(page, 'nav-search');
     await wait(1500);
 
-    await caption(page, '🔍 One search queries Amazon, Flipkart, and more — replacing hours of manual comparison', 4500);
-
-    // Pick electronics category
+    // ── STEP 1: BASKET OPTIMISER (default state) ─────────────────────
+    console.log('▸ Basket Optimization');
     try {
-      await page.click('[data-testid="category-electronics"]', { timeout: 5000 });
-      await wait(1000);
-    } catch { /* first category auto-selected */ }
+      // Page already shows Basket Optimiser with 3 grocery items pre-filled
+      await caption(page, '🛒 Basket Optimiser — 3 grocery items pre-filled, ready to optimize', 4000);
 
-    // Type query into search suggestions input
-    try {
-      const input = page.locator('[data-testid="search-input"] input, input[placeholder*="e.g"]').first();
-      await input.click();
-      await input.fill('');
-      await wait(300);
-      await input.type('UltraBook Laptop', { delay: 90 });
-      await wait(1200);
-      await caption(page, '⌨️ Smart autocomplete suggests products as you type', 3000);
+      // Click Optimise Basket directly
+      await page.locator('[data-testid="basket-optimize-button"]').click();
+      await caption(page, '⏳ Searching all suppliers for the best basket split…', 3000);
+      // Wait for results to load
+      await page.locator('[data-testid="basket-results"]').waitFor({ state: 'visible', timeout: 30_000 });
       await wait(1500);
-    } catch (e) { console.warn('search input:', e.message); }
 
-    // Submit search
+      // 1a. Show basket summary (savings headline, optimised total, you save)
+      await caption(page, '📦 Basket Summary — Optimised total, savings, and delivery estimate', 4500);
+      await wait(2000);
+
+      // 1b. Scroll to Procurement Intelligence Summary (8 metric cards)
+      await scroll(page, 600);
+      await caption(page, '� Procurement Intelligence Summary — Cost, Savings, AI Score, Risk, Delivery', 5000);
+      await wait(2500);
+
+      // 1c. Scroll to AI Advisor Insights (INSIGHT / ACTION / OUTLOOK)
+      await scroll(page, 1000);
+      await caption(page, '� AI Advisor Insights — Strategic Insight · Recommended Action · Forward Outlook', 5000);
+      await wait(2500);
+
+      // 1d. Scroll further to see Supplier Intelligence cards
+      await scroll(page, 1400);
+      await caption(page, '🏢 Supplier Intelligence — Per-supplier reliability, delivery, and cost breakdown', 4500);
+      await wait(2500);
+
+      // 1e. Scroll to bottom — Supplier Mix (grouped items by supplier)
+      await scroll(page, 1800);
+      await caption(page, '📋 Supplier Mix — Which items from which supplier for optimal procurement', 4500);
+      await wait(2000);
+    } catch (e) { console.warn('basket:', e.message); }
+
+    // ── STEP 2: SINGLE SEARCH ────────────────────────────────────────
+    console.log('▸ Single Search');
+    await scroll(page, 0);
+    await wait(500);
+
     try {
-      await page.click('[data-testid="search-submit-button"]');
-      await wait(6000);
-    } catch (e) { console.warn('search submit:', e.message); }
+      // Switch to Single Search mode
+      await page.locator('[data-testid="mode-single"]').click();
+      await wait(1000);
+      await caption(page, '🔍 Single Search — Compare one product across all suppliers', 3500);
 
-    await caption(page, '🏆 AI Recommendation — Best supplier identified with confidence score and estimated savings', 5000);
-    await page.evaluate(() => window.scrollTo({ top: 350, behavior: 'smooth' }));
+      // Type "Premium Basmati Rice 10kg" (data-testid is directly on the <input>)
+      const searchInput = page.locator('[data-testid="search-input"]');
+      await searchInput.click();
+      await searchInput.fill('');
+      await wait(200);
+      await searchInput.type('Premium Basmati Rice 10kg', { delay: 60 });
+      await wait(1000);
+
+      // Click Search & Compare
+      await page.locator('[data-testid="search-submit-button"]').click();
+      await caption(page, '⏳ Connecting to supplier network…', 3000);
+      // Wait for results
+      await page.locator('text=AI Recommendation').first().waitFor({ state: 'visible', timeout: 30_000 }).catch(() => {});
+      await wait(2000);
+
+      // 2a. AI Recommendation card (top of results)
+      await caption(page, '🏆 AI Recommendation — Best supplier with confidence score and savings', 4500);
+      await wait(2000);
+
+      // 2b. Scroll to Intelligence panels (Procurement Insights + Long-Term Recommendation)
+      await scroll(page, 500);
+      await caption(page, '📊 Procurement Insights — Market trends, health score, and actionable intelligence', 5000);
+      await wait(2500);
+
+      // 2c. Long-Term Recommendation
+      await scroll(page, 900);
+      await caption(page, '🎯 Long-Term Procurement Recommendation — AI picks the best partner for sustained value', 5000);
+      await wait(2500);
+
+      // 2d. Supplier Comparison Matrix
+      await scroll(page, 1300);
+      await caption(page, '📋 Supplier Comparison Matrix — Price, rating, delivery side by side', 4500);
+      await wait(2500);
+
+      // 2e. Scroll to bottom — detailed comparison table with export
+      await scroll(page, 1700);
+      await caption(page, '📊 Full Comparison Table — Sort, filter, export CSV/PDF', 4500);
+      await wait(2000);
+    } catch (e) { console.warn('single search:', e.message); }
+
+    // ─────────────────────── 2:10  AI ASSISTANT ─────────────────────────
+    console.log('▸ AI Assistant');
+    try {
+      // Click floating "Ask ProcureAI" button
+      const aiTrigger = page.locator('button:has-text("Ask ProcureAI")');
+      await aiTrigger.click({ timeout: 5000 });
+      await wait(1500);
+      await caption(page, '🤖 AI Assistant — Chat with your procurement data', 4000);
+
+      // Show the empty state with suggestion cards
+      await wait(2000);
+
+      // Type and send a question
+      const chatInput = page.locator('textarea[placeholder="Ask about procurement..."]');
+      await chatInput.fill('Compare laptop prices across suppliers');
+      await wait(500);
+
+      // Click send button (the round button next to textarea)
+      const sendButton = page.locator('button:right-of(textarea) >> visible=true').first();
+      await sendButton.click();
+      await wait(8000);
+      await caption(page, '✅ AI fetches real data via 8 backend tools — never hallucinated', 5000);
+      await wait(2000);
+
+      // Show conversation history
+      try {
+        const historyBtn = page.locator('button[title="Chat history"]');
+        if (await historyBtn.isVisible({ timeout: 2000 })) {
+          await historyBtn.click();
+          await wait(1500);
+          await caption(page, '💬 Conversation history — Resume any past chat', 3000);
+          await wait(1500);
+        }
+      } catch { /* skip */ }
+
+      // Close the panel via X button in the header
+      const closeBtn = page.locator('button:has(.lucide-x)').first();
+      await closeBtn.click();
+      await wait(500);
+    } catch (e) { console.warn('ai-assistant:', e.message); }
+
+    // ─────────────────────── 2:35  SUPPLIER HUB ─────────────────────────
+    console.log('▸ Supplier Hub');
+    await nav(page, 'nav-supplier-hub');
+    await caption(page, '🏢 Supplier Hub — Build your private supplier network', 4000);
+    await wait(2500);
+    await caption(page, '➕ Add suppliers with delivery details — they appear in search results', 4000);
+    await wait(2000);
+
+    // ─────────────────────── 2:55  ANALYTICS ────────────────────────────
+    console.log('▸ Analytics');
+    await nav(page, 'nav-analytics');
+    await caption(page, '📈 Analytics — Spend breakdown, savings trends, supplier performance', 4500);
+    await scroll(page, 400);
+    await wait(1500);
+    await scroll(page, 0);
+
+    // ─────────────────────── 3:15  HISTORY ──────────────────────────────
+    console.log('▸ History');
+    await nav(page, 'nav-history');
+    await caption(page, '📜 Search History — Every procurement search logged with details', 4000);
     await wait(2500);
 
-    // "Why this recommendation?" panel
-    try {
-      const whyBtn = page.locator('button:has-text("Why this"), button:has-text("why")').first();
-      if (await whyBtn.isVisible({ timeout: 3000 })) {
-        await whyBtn.click();
-        await wait(2000);
-        await caption(page, '🧠 Explainable AI — Radar chart shows factor scores: price, delivery, rating, discount', 5000);
-        await page.evaluate(() => window.scrollTo({ top: 500, behavior: 'smooth' }));
-        await wait(2500);
-        await caption(page, '📊 Supplier Scoreboard — Every vendor ranked with weighted scores out of 100', 4500);
-        await wait(2500);
-      }
-    } catch { /* skip */ }
-
-    // Scroll to comparison table & watchlist
-    await page.evaluate(() => window.scrollTo({ top: 700, behavior: 'smooth' }));
-    await wait(2000);
-    await caption(page, '📋 Full comparison table — Sort by price, rating, delivery. Export as CSV or PDF', 5000);
-    await wait(2000);
-
-    // Add first product to watchlist
-    try {
-      const eyeBtn = page.locator('button[title="Add to watchlist"]').first();
-      if (await eyeBtn.isVisible({ timeout: 3000 })) {
-        await eyeBtn.click();
-        await wait(1000);
-        await caption(page, '👁️ Product added to Watchlist — Set target prices and track across sessions', 4000);
-        await wait(1500);
-      }
-    } catch { /* skip */ }
-
-    await wait(1000);
-
-    /* ── 5. BASKET OPTIMISER ── */
-    await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'smooth' }));
-    await wait(1000);
-    try {
-      await page.click('[data-testid="mode-basket"]', { timeout: 3000 });
-      await wait(1000);
-      await page.click('[data-testid="category-grocery"]', { timeout: 3000 });
-      await wait(1500);
-      await caption(page, '🛒 Basket Optimiser — Buy multiple items? AI finds the cheapest way to split across suppliers', 5500);
-      await wait(3000);
-      await caption(page, '💡 Split Plan vs Consolidate — AI decides: buy from multiple vendors or one for best value', 5000);
-      await wait(2500);
-    } catch { /* skip */ }
-
-    /* ── 6. ANALYTICS ── */
-    await caption(page, '📈 Analytics — Deep-dive into spending patterns and supplier performance', 3500);
-    await nav(page, 'nav-analytics');
-    await caption(page, '📈 Visual charts: Spend Trend, Category Breakdown, Supplier Usage, Savings over time', 5500);
-    await page.evaluate(() => window.scrollTo({ top: 400, behavior: 'smooth' }));
-    await wait(3000);
-    await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'smooth' }));
-    await wait(1500);
-
-    /* ── 7. HISTORY ── */
-    await caption(page, '📜 Search History — Every successful procurement search, automatically logged', 3500);
-    await nav(page, 'nav-history');
-    await caption(page, '📜 Browse past searches, expand basket details — paginated at 15 per page', 4500);
-    await wait(3000);
-
-    /* ── 8. WATCHLIST ── */
-    await caption(page, '👁️ Price Watchlist — Monitor products and get notified when prices drop', 3500);
+    // ─────────────────────── 3:20  WATCHLIST ────────────────────────────
+    console.log('▸ Watchlist');
     await nav(page, 'nav-watchlist');
-    await wait(2000);
-    await caption(page, '🎯 Set target prices for any product — items hitting target are highlighted green', 4500);
-    await wait(3000);
+    await caption(page, '👁️ Price Watchlist — Track products and set target price alerts', 4000);
+    await wait(2500);
 
-    /* ── 9. SETTINGS ── */
-    await caption(page, '⚙️ Settings — Customize ProcureAI for your business type', 3000);
+    // ─────────────────────── 3:30  SETTINGS & DARK MODE ─────────────────
+    console.log('▸ Settings');
     await nav(page, 'nav-settings');
-    await caption(page, '⚙️ Weight Profiles: Balanced, Startup, Hospital, Restaurant — AI adapts to your priorities', 5000);
-    await wait(3000);
+    await caption(page, '⚙️ Settings — Weight profiles, city, recommendation mode preferences', 4500);
+    await wait(2500);
 
-    /* ── 10. DOCS ── */
-    await caption(page, '📖 Built-in Documentation — No external wiki needed', 3000);
-    await nav(page, 'nav-docs');
-    await caption(page, '📖 General guide for business users + Developer API reference with code examples', 5000);
-    await wait(3000);
-
-    // Toggle dark mode
+    // Toggle dark mode via sidebar button
     try {
-      const themeBtn = page.locator('button[title="Toggle theme"], button:has-text("🌙"), button:has-text("☀")').first();
-      if (await themeBtn.isVisible({ timeout: 2000 })) {
-        await themeBtn.click();
-        await wait(2000);
-        await caption(page, '🌙 Dark Mode — Full theme system with CSS variables for seamless switching', 4500);
-        await wait(2500);
-      }
+      const themeBtn = page.locator('[data-testid="theme-toggle"]');
+      await themeBtn.click({ timeout: 3000 });
+      await wait(2000);
+      await caption(page, '🌙 Dark Mode — Full theme support with CSS variable theming', 4000);
+      await wait(1500);
+
+      // Show dashboard in dark mode
+      await nav(page, 'nav-dashboard');
+      await caption(page, '📊 Dashboard in dark mode — Seamless theme switching', 3500);
+      await wait(2000);
     } catch { /* skip */ }
 
-    /* ── OUTRO ── */
-    await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'smooth' }));
-    await wait(1000);
-    await caption(page, '✨ ProcureAI — Transforming procurement with AI. 93% faster. Smarter decisions. Real savings.', 6000);
+    // ─────────────────────── 3:45  DOCS ─────────────────────────────────
+    console.log('▸ Documentation');
+    await nav(page, 'nav-docs');
+    await caption(page, '📖 Built-in Documentation — User guide + developer API reference', 4000);
+    await scroll(page, 300);
+    await wait(2000);
+
+    // ─────────────────────── 3:55  OUTRO ────────────────────────────────
+    console.log('▸ Outro');
+    await nav(page, 'nav-dashboard');
+    await caption(page, '✨ ProcureAI — Intelligent Procurement. Smarter decisions. Real savings.', 5000);
     await wait(3500);
 
   } catch (e) {
-    console.error('Demo error:', e.message);
+    console.error('❌ Fatal error:', e.message);
   }
 
   await context.close();
   await browser.close();
 
-  console.log('✅ Demo recorded! Check demo/ folder for the .webm file.');
+  console.log('\n✅ Demo recorded! Check demo/ folder for the .webm file.');
 })();
