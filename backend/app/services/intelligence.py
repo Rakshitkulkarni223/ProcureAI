@@ -977,7 +977,7 @@ class BasketIntelligenceService:
                 parts.append(
                     f"INSIGHT: {dominant_supplier} holds the entire basket spend, "
                     f"creating single-supplier dependency risk despite "
-                    f"{consolidation_label.lower()} consolidation."
+                    f"{consolidation_label.lower()}."
                 )
             elif supplier_count > 2:
                 parts.append(

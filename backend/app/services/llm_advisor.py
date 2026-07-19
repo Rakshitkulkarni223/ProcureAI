@@ -58,6 +58,9 @@ async def _groq_completion(prompt: str, max_tokens: int = 512, model: str | None
         text = re.sub(r"<think>.*", "", text, flags=re.DOTALL).strip()
         # Clean up any markdown the model might add
         text = text.replace("**", "").replace("*", "").replace("#", "").strip()
+        # If primary model produced only <think> content, retry with fallback
+        if not text and model is None and env.AI_FALLBACK_MODEL:
+            return await _groq_completion(prompt, max_tokens, model=env.AI_FALLBACK_MODEL)
         return text
     except Exception as e:
         # If primary model fails, try fallback
