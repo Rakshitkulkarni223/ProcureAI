@@ -21,6 +21,7 @@ import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import { cn } from '../lib/utils';
 import { LocationDropdown } from './LocationDropdown';
+import { AIChatPanel } from './AIChatPanel';
 
 const NAV = [
   { to: '/', label: 'Dashboard', icon: LayoutDashboard, end: true, testid: 'nav-dashboard' },
@@ -143,6 +144,9 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
         </header>
         <main className="mx-auto max-w-[1400px] px-5 py-7 lg:px-9 lg:py-9">{children}</main>
       </div>
+
+      {/* AI Assistant floating panel */}
+      <AIChatPanel />
     </div>
   );
 }

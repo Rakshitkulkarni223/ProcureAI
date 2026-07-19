@@ -1,13 +1,68 @@
 """
-LLM Procurement Advisor — Gemini-powered natural language explanations.
+LLM Procurement Advisor — Groq-powered natural language explanations.
 
 Generates human-readable AI procurement advice from recommendation data
-using Google Gemini 2.0 Flash. Falls back to template-based explanation
-if no API key is set or if the API call fails.
+using Groq API (Qwen3 32B / Llama 3.3 70B). Falls back to template-based
+explanation if no API key is set or if the API call fails.
 """
 from __future__ import annotations
 
+import asyncio
+from openai import AsyncOpenAI
+
 from app.config import env
+
+# ---------------------------------------------------------------------------
+# Groq client (lazy init — only created when GROQ_API_KEY is set)
+# ---------------------------------------------------------------------------
+_groq_client: AsyncOpenAI | None = None
+
+
+def _get_groq_client() -> AsyncOpenAI | None:
+    """Return a shared AsyncOpenAI client pointed at Groq, or None."""
+    global _groq_client
+    try:
+        if not env.GROQ_API_KEY:
+            return None
+        if _groq_client is None:
+            _groq_client = AsyncOpenAI(
+                api_key=env.GROQ_API_KEY,
+                base_url="https://api.groq.com/openai/v1",
+            )
+        return _groq_client
+    except Exception:
+        return None
+
+
+async def _groq_completion(prompt: str, max_tokens: int = 512, model: str | None = None) -> str:
+    """Call Groq chat completion. Returns empty string on failure."""
+    try:
+        client = _get_groq_client()
+        if client is None:
+            return ""
+        chosen_model = model or env.AI_PRIMARY_MODEL
+        response = await client.chat.completions.create(
+            model=chosen_model,
+            messages=[
+                {"role": "system", "content": "You are a procurement advisor for ProcureAI. Be professional, concise, and use specific numbers. Never use markdown formatting."},
+                {"role": "user", "content": prompt},
+            ],
+            temperature=env.AI_TEMPERATURE,
+            max_tokens=max_tokens,
+        )
+        text = (response.choices[0].message.content or "").strip()
+        # Clean up any markdown the model might add
+        text = text.replace("**", "").replace("*", "").replace("#", "").strip()
+        return text
+    except Exception as e:
+        # If primary model fails, try fallback
+        if model is None and env.AI_FALLBACK_MODEL:
+            try:
+                return await _groq_completion(prompt, max_tokens, model=env.AI_FALLBACK_MODEL)
+            except Exception:
+                pass
+        print(f"[WARN] Groq completion failed: {e}")
+        return ""
 
 
 def _format_inr(amount: float) -> str:
@@ -23,7 +78,7 @@ def _format_inr(amount: float) -> str:
 
 
 def _build_prompt(recommendation: dict, products: list[dict], mode: str) -> str:
-    """Build a structured prompt for Gemini from recommendation data."""
+    """Build a structured prompt from recommendation data."""
     try:
         best = recommendation.get("product", {})
         supplier = recommendation.get("supplier", "Unknown")
@@ -89,7 +144,7 @@ Write the explanation now. Keep it under 80 words. Start with the supplier name.
 
 
 def _template_fallback(recommendation: dict, products: list[dict], mode: str) -> str:
-    """Generate a template-based explanation when Gemini is unavailable."""
+    """Generate a template-based explanation when Groq is unavailable."""
     try:
         supplier = recommendation.get("supplier", "Unknown")
         best = recommendation.get("product", {})
@@ -142,38 +197,41 @@ def _template_fallback(recommendation: dict, products: list[dict], mode: str) ->
 async def generate_explanation(recommendation: dict, products: list[dict], mode: str = "balanced") -> str:
     """Generate a natural language AI explanation for a procurement recommendation.
 
-    Uses Google Gemini if GEMINI_API_KEY is set, otherwise falls back to template.
-    Never raises — returns empty string on failure.
+    Uses Groq API if GROQ_API_KEY is set, falls back to Gemini if GEMINI_API_KEY
+    is set, otherwise falls back to template. Never raises — returns empty string
+    on failure.
     """
     try:
-        api_key = env.GEMINI_API_KEY
-        if not api_key:
-            return _template_fallback(recommendation, products, mode)
-
         prompt = _build_prompt(recommendation, products, mode)
         if not prompt:
             return _template_fallback(recommendation, products, mode)
 
-        from google import genai
+        # Try Groq first
+        if env.GROQ_API_KEY:
+            text = await _groq_completion(prompt, max_tokens=512)
+            if text:
+                return text
 
-        client = genai.Client(api_key=api_key)
-        response = client.models.generate_content(
-            model="gemini-2.0-flash",
-            contents=prompt,
-        )
+        # Gemini legacy fallback (remove once Groq is confirmed working)
+        if env.GEMINI_API_KEY:
+            try:
+                from google import genai
+                client = genai.Client(api_key=env.GEMINI_API_KEY)
+                response = client.models.generate_content(
+                    model="gemini-2.0-flash",
+                    contents=prompt,
+                )
+                text = response.text.strip() if response.text else ""
+                if text:
+                    text = text.replace("**", "").replace("*", "").replace("#", "").strip()
+                    return text
+            except Exception as gemini_err:
+                print(f"[WARN] Gemini fallback failed: {gemini_err}")
 
-        text = response.text.strip() if response.text else ""
-
-        if not text:
-            return _template_fallback(recommendation, products, mode)
-
-        # Clean up any markdown formatting the model might add
-        text = text.replace("**", "").replace("*", "").replace("#", "").strip()
-
-        return text
+        return _template_fallback(recommendation, products, mode)
 
     except Exception as e:
-        print(f"[WARN] Gemini API failed, using template fallback: {e}")
+        print(f"[WARN] LLM explanation failed, using template fallback: {e}")
         try:
             return _template_fallback(recommendation, products, mode)
         except Exception:
@@ -185,7 +243,7 @@ async def generate_explanation(recommendation: dict, products: list[dict], mode:
 # ---------------------------------------------------------------------------
 
 def _build_basket_prompt(intelligence: dict) -> str:
-    """Build a Gemini prompt from basket intelligence data."""
+    """Build a prompt from basket intelligence data."""
     try:
         savings = intelligence.get("savings", {})
         risk = intelligence.get("risk", {})
@@ -242,35 +300,41 @@ Write a procurement-focused summary now. Start with "Your basket"."""
 async def generate_basket_explanation(intelligence: dict) -> str:
     """Generate an AI explanation for basket optimization.
 
-    Uses Gemini if available, otherwise returns the existing template aiSummary.
+    Uses Groq if available, falls back to Gemini, then template aiSummary.
     """
     try:
         existing_summary = intelligence.get("aiSummary", "")
-        api_key = env.GEMINI_API_KEY
-        if not api_key:
-            return existing_summary
 
         prompt = _build_basket_prompt(intelligence)
         if not prompt:
             return existing_summary
 
-        from google import genai
+        # Try Groq first
+        if env.GROQ_API_KEY:
+            text = await _groq_completion(prompt, max_tokens=512)
+            if text:
+                return text
 
-        client = genai.Client(api_key=api_key)
-        response = client.models.generate_content(
-            model="gemini-2.0-flash",
-            contents=prompt,
-        )
+        # Gemini legacy fallback
+        if env.GEMINI_API_KEY:
+            try:
+                from google import genai
+                client = genai.Client(api_key=env.GEMINI_API_KEY)
+                response = client.models.generate_content(
+                    model="gemini-2.0-flash",
+                    contents=prompt,
+                )
+                text = response.text.strip() if response.text else ""
+                if text:
+                    text = text.replace("**", "").replace("*", "").replace("#", "").strip()
+                    return text
+            except Exception as gemini_err:
+                print(f"[WARN] Gemini basket fallback failed: {gemini_err}")
 
-        text = response.text.strip() if response.text else ""
-        if not text:
-            return existing_summary
-
-        text = text.replace("**", "").replace("*", "").replace("#", "").strip()
-        return text
+        return existing_summary
 
     except Exception as e:
-        print(f"[WARN] Gemini basket summary failed: {e}")
+        print(f"[WARN] Basket summary LLM failed: {e}")
         try:
             return intelligence.get("aiSummary", "")
         except Exception:
@@ -282,7 +346,7 @@ async def generate_basket_explanation(intelligence: dict) -> str:
 # ---------------------------------------------------------------------------
 
 def _build_longterm_prompt(long_term: dict, products: list[dict]) -> str:
-    """Build a Gemini prompt for long-term recommendation."""
+    """Build a prompt for long-term recommendation."""
     try:
         supplier = long_term.get("supplier", "Unknown")
         score = long_term.get("longTermScore", 0)
@@ -327,37 +391,42 @@ Write the explanation now. Start with the supplier name."""
 async def generate_longterm_explanation(long_term: dict, products: list[dict]) -> str:
     """Generate an AI explanation for long-term recommendation.
 
-    Uses Gemini if available, otherwise returns reasons joined as text.
+    Uses Groq if available, falls back to Gemini, then template.
     """
     try:
         reasons = long_term.get("reasons", [])
         fallback = " ".join(reasons) if reasons else ""
 
-        api_key = env.GEMINI_API_KEY
-        if not api_key:
-            return fallback
-
         prompt = _build_longterm_prompt(long_term, products)
         if not prompt:
             return fallback
 
-        from google import genai
+        # Try Groq first
+        if env.GROQ_API_KEY:
+            text = await _groq_completion(prompt, max_tokens=512)
+            if text:
+                return text
 
-        client = genai.Client(api_key=api_key)
-        response = client.models.generate_content(
-            model="gemini-2.0-flash",
-            contents=prompt,
-        )
+        # Gemini legacy fallback
+        if env.GEMINI_API_KEY:
+            try:
+                from google import genai
+                client = genai.Client(api_key=env.GEMINI_API_KEY)
+                response = client.models.generate_content(
+                    model="gemini-2.0-flash",
+                    contents=prompt,
+                )
+                text = response.text.strip() if response.text else ""
+                if text:
+                    text = text.replace("**", "").replace("*", "").replace("#", "").strip()
+                    return text
+            except Exception as gemini_err:
+                print(f"[WARN] Gemini long-term fallback failed: {gemini_err}")
 
-        text = response.text.strip() if response.text else ""
-        if not text:
-            return fallback
-
-        text = text.replace("**", "").replace("*", "").replace("#", "").strip()
-        return text
+        return fallback
 
     except Exception as e:
-        print(f"[WARN] Gemini long-term explanation failed: {e}")
+        print(f"[WARN] Long-term LLM failed: {e}")
         try:
             return " ".join(long_term.get("reasons", []))
         except Exception:

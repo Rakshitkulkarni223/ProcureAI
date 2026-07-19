@@ -40,6 +40,12 @@ class Env:
     NODE_ENV: str = os.getenv("NODE_ENV", "development")
     SERPAPI_KEY: str = os.getenv("SERPAPI_KEY", "")
     GEMINI_API_KEY: str = os.getenv("GEMINI_API_KEY", "")
+    # Groq AI (replaces Gemini — free tier, OpenAI-compatible)
+    GROQ_API_KEY: str = os.getenv("GROQ_API_KEY", "")
+    AI_PRIMARY_MODEL: str = os.getenv("AI_PRIMARY_MODEL", "qwen/qwen3-32b")
+    AI_FALLBACK_MODEL: str = os.getenv("AI_FALLBACK_MODEL", "llama-3.3-70b-versatile")
+    AI_TEMPERATURE: float = float(os.getenv("AI_TEMPERATURE", "0.3"))
+    AI_MAX_TOKENS: int = int(os.getenv("AI_MAX_TOKENS", "1024"))
 
 
 env = Env()

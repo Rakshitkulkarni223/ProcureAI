@@ -14,6 +14,7 @@ from app.config import env
 from app.database import close_db, connect_db
 from app.routes import router
 from app.routes_supplier import router as supplier_router
+from app.routes_ai import router as ai_router
 from app.seed import run_seed
 
 
@@ -58,6 +59,7 @@ app.add_middleware(
 # Mount all API routes under /api
 app.include_router(router, prefix="/api")
 app.include_router(supplier_router, prefix="/api")
+app.include_router(ai_router, prefix="/api")
 
 
 # -----------------------------------------------------------------------
