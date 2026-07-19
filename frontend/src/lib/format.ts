@@ -37,3 +37,19 @@ export function deliveryLabel(days: number): string {
   if (days === 1) return 'Next day';
   return `${days} days`;
 }
+
+/** Strip <think> blocks (complete + truncated) and stray markdown from AI text. */
+export function cleanAIText(text: string): string {
+  try {
+    let cleaned = text;
+    // Strip complete <think>...</think> blocks
+    cleaned = cleaned.replace(/<think>[\s\S]*?<\/think>/gi, '');
+    // Strip truncated/unclosed <think> blocks
+    cleaned = cleaned.replace(/<think>[\s\S]*/gi, '');
+    // Remove stray markdown bold/italic/heading markers
+    cleaned = cleaned.replace(/\*\*/g, '').replace(/##?\s*/g, '');
+    return cleaned.trim();
+  } catch {
+    return text;
+  }
+}

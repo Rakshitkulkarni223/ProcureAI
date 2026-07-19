@@ -5,7 +5,7 @@ import {
   CheckCircle2, Zap, Package, CircleDot,
 } from 'lucide-react';
 import type { BasketIntelligence } from '../types';
-import { formatINR } from '../lib/format';
+import { formatINR, cleanAIText } from '../lib/format';
 import { cn } from '../lib/utils';
 
 function MetricCard({
@@ -50,8 +50,10 @@ function complexityTone(level: string): 'success' | 'info' | 'warning' | 'danger
 }
 
 /** Parses AI summary (INSIGHT/ACTION/OUTLOOK format) into a beautifully formatted insights card. */
-function AISummaryCard({ summary }: { summary: string }) {
+function AISummaryCard({ summary: rawSummary }: { summary: string }) {
   try {
+    const summary = cleanAIText(rawSummary);
+    if (!summary) return null;
     const insightConfigs: { key: string; label: string; icon: React.ElementType; bg: string; text: string; iconBg: string }[] = [
       { key: 'INSIGHT', label: 'Strategic Insight', icon: Sparkles, bg: 'bg-accent-soft/30', text: 'text-accent', iconBg: 'bg-accent/10' },
       { key: 'ACTION', label: 'Recommended Action', icon: CheckCircle2, bg: 'bg-success-bg/50', text: 'text-emerald-700', iconBg: 'bg-emerald-500/10' },
@@ -124,7 +126,7 @@ function AISummaryCard({ summary }: { summary: string }) {
           <Sparkles size={16} className="text-accent" />
           <span className="label-eyebrow text-accent">AI Advisor Insights</span>
         </div>
-        <p className="text-sm leading-relaxed text-ink-soft">{summary}</p>
+        <p className="text-sm leading-relaxed text-ink-soft">{rawSummary}</p>
       </div>
     );
   }

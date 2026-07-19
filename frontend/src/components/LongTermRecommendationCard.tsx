@@ -4,7 +4,7 @@ import { Clock, Check, Shield, TrendingUp, MessageSquareText } from 'lucide-reac
 import type { LongTermRecommendation } from '../types';
 import { Badge } from './ui/Badge';
 import { SupplierLogo } from './SupplierLogo';
-import { formatINR } from '../lib/format';
+import { formatINR, cleanAIText } from '../lib/format';
 import { cn } from '../lib/utils';
 
 export function LongTermRecommendationCard({
@@ -46,13 +46,13 @@ export function LongTermRecommendationCard({
             </div>
           </div>
 
-          {rec.aiExplanation && (
+          {rec.aiExplanation && cleanAIText(rec.aiExplanation) && (
             <div className="mt-4 rounded-md border border-accent/25 bg-accent/5 p-3.5">
               <div className="mb-2 flex items-center gap-1.5">
                 <MessageSquareText size={13} className="text-accent" />
                 <span className="text-[10px] font-semibold uppercase tracking-wider text-accent">AI Procurement Advisor</span>
               </div>
-              <p className="text-sm leading-relaxed text-ink-soft">{rec.aiExplanation}</p>
+              <p className="text-sm leading-relaxed text-ink-soft">{cleanAIText(rec.aiExplanation)}</p>
             </div>
           )}
 
