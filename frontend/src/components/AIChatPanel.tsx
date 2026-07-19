@@ -11,10 +11,6 @@ import {
   ChevronLeft,
   Wrench,
   Sparkles,
-  Search,
-  ShoppingCart,
-  TrendingUp,
-  Truck,
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import {
@@ -53,22 +49,22 @@ function FormattedMessage({ content }: { content: string }) {
         const flushTable = () => {
           if (tableHeader.length > 0 || tableRows.length > 0) {
             result.push(
-              <div key={key++} className="my-2.5 overflow-x-auto rounded-lg border border-line shadow-sm">
+              <div key={key++} className="my-2 overflow-x-auto rounded-lg border border-line">
                 <table className="w-full text-xs">
                   {tableHeader.length > 0 && (
                     <thead>
-                      <tr className="bg-accent/10 border-b border-accent/20">
+                      <tr className="bg-accent/5 border-b border-line">
                         {tableHeader.map((h, i) => (
-                          <th key={i} className="px-3 py-2 text-left font-bold text-ink text-[11px] uppercase tracking-wider whitespace-nowrap">{h.trim()}</th>
+                          <th key={i} className="px-2.5 py-1.5 text-left font-semibold text-ink whitespace-nowrap">{h.trim()}</th>
                         ))}
                       </tr>
                     </thead>
                   )}
                   <tbody>
                     {tableRows.map((row, ri) => (
-                      <tr key={ri} className={cn(ri % 2 === 0 ? 'bg-bg/30' : 'bg-surface', 'border-b border-line/30 last:border-0 hover:bg-accent/5 transition-colors')}>
+                      <tr key={ri} className={cn(ri % 2 === 0 ? 'bg-bg/50' : '', 'border-b border-line/50 last:border-0')}>
                         {row.map((cell, ci) => (
-                          <td key={ci} className="px-3 py-1.5 text-ink-soft whitespace-nowrap">{formatInline(cell.trim())}</td>
+                          <td key={ci} className="px-2.5 py-1.5 text-ink-soft whitespace-nowrap">{formatInline(cell.trim())}</td>
                         ))}
                       </tr>
                     ))}
@@ -125,11 +121,11 @@ function FormattedMessage({ content }: { content: string }) {
             continue;
           }
 
-          // Horizontal rule — thin accent divider
+          // Horizontal rule
           if (/^[-—]{3,}$/.test(trimmed)) {
             flushList();
             flushTable();
-            result.push(<hr key={key++} className="my-2.5 border-line/40" />);
+            result.push(<hr key={key++} className="my-2 border-line/60" />);
             continue;
           }
 
@@ -156,9 +152,9 @@ function FormattedMessage({ content }: { content: string }) {
             if (listType !== 'ul') flushList();
             listType = 'ul';
             listItems.push(
-              <div key={key++} className="flex gap-2 items-start py-0.5">
-                <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-accent/70 flex-shrink-0" />
-                <span className="text-ink-soft leading-relaxed text-[13px]">{formatInline(ulMatch[1])}</span>
+              <div key={key++} className="flex gap-2 items-start">
+                <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-accent flex-shrink-0" />
+                <span className="text-ink-soft leading-relaxed">{formatInline(ulMatch[1])}</span>
               </div>
             );
             continue;
@@ -182,19 +178,19 @@ function FormattedMessage({ content }: { content: string }) {
           // Not a list — flush
           flushList();
 
-          // Heading: ### text — section header with accent left border
+          // Heading: ### text
           if (trimmed.startsWith('### ')) {
             result.push(
-              <div key={key++} className="mt-3 mb-1.5 flex items-center gap-2 border-l-[3px] border-accent pl-2.5 py-0.5 bg-accent/5 rounded-r-md">
-                <p className="font-bold text-ink text-[13px] tracking-tight">{formatInline(trimmed.slice(4))}</p>
+              <div key={key++} className="mt-3 mb-1">
+                <p className="font-semibold text-ink text-[13px]">{formatInline(trimmed.slice(4))}</p>
               </div>
             );
             continue;
           }
-          // Heading: ## text — major section
+          // Heading: ## text
           if (trimmed.startsWith('## ')) {
             result.push(
-              <div key={key++} className="mt-3 mb-1.5 pb-1.5 border-b border-accent/30">
+              <div key={key++} className="mt-3 mb-1 pb-1 border-b border-line/40">
                 <p className="font-bold text-ink text-sm">{formatInline(trimmed.slice(3))}</p>
               </div>
             );
@@ -213,7 +209,7 @@ function FormattedMessage({ content }: { content: string }) {
       }
     }, [content]);
 
-    return <div className="space-y-0.5 break-words overflow-hidden text-[13px]">{elements}</div>;
+    return <div className="space-y-0.5 break-words overflow-hidden">{elements}</div>;
   } catch {
     return <div className="whitespace-pre-wrap">{content}</div>;
   }
@@ -388,7 +384,7 @@ export function AIChatPanel() {
               'max-w-[85%] sm:max-w-[80%] rounded-xl px-3 py-2.5 sm:px-4 sm:py-3 text-sm leading-relaxed',
               isUser
                 ? 'bg-accent text-white rounded-br-sm'
-                : 'bg-bg text-ink border border-line rounded-bl-sm max-h-[420px] overflow-y-auto scrollbar-thin',
+                : 'bg-bg text-ink border border-line rounded-bl-sm',
             )}
           >
             {isUser ? (
@@ -426,7 +422,7 @@ export function AIChatPanel() {
         )}
       >
         <Sparkles size={20} />
-        <span className="font-semibold text-sm hidden sm:inline">Ask ProcureAI</span>
+        <span className="font-semibold text-sm hidden sm:inline">AI Assistant</span>
       </button>
 
       {/* Backdrop */}
@@ -448,14 +444,11 @@ export function AIChatPanel() {
       >
         {/* Header */}
         <div className="flex items-center gap-3 px-4 h-14 border-b border-line flex-shrink-0">
-          <div className="flex items-center gap-2 flex-1 min-w-0">
-            <Bot size={20} className="text-accent flex-shrink-0" />
-            <div className="min-w-0">
-              <span className="font-display font-bold text-ink text-sm leading-tight block">ProcureAI Advisor</span>
-              <span className="text-[10px] text-muted leading-tight block truncate">Compare · Optimize · Explain</span>
-            </div>
+          <div className="flex items-center gap-2 flex-1">
+            <Bot size={20} className="text-accent" />
+            <span className="font-display font-bold text-ink">AI Assistant</span>
             {toolsUsed.length > 0 && (
-              <span className="flex items-center gap-1 text-[10px] text-muted bg-bg px-1.5 py-0.5 rounded-full flex-shrink-0">
+              <span className="flex items-center gap-1 text-xs text-muted bg-bg px-2 py-0.5 rounded-full">
                 <Wrench size={10} />
                 {toolsUsed.length} tool{toolsUsed.length > 1 ? 's' : ''}
               </span>
@@ -494,28 +487,26 @@ export function AIChatPanel() {
               {messages.length === 0 && !loading && (
                 <div className="flex flex-col items-center justify-center h-full text-center text-muted px-6">
                   <Sparkles size={40} className="text-accent/40 mb-4" />
-                  <p className="font-bold text-ink mb-1 text-base">ProcureAI Advisor</p>
-                  <p className="text-xs text-muted mb-1">Compare suppliers · Optimize baskets · Explain recommendations</p>
-                  <p className="text-sm text-ink-soft mb-6">
-                    Ask me anything about procurement — I'll fetch real data and explain the results.
+                  <p className="font-semibold text-ink mb-2">ProcureAI Assistant</p>
+                  <p className="text-sm mb-6">
+                    Ask me anything about procurement — compare suppliers, optimize baskets, check savings, or get recommendations.
                   </p>
                   <div className="space-y-2 w-full">
                     {[
-                      { icon: Search, text: 'Compare laptop prices across suppliers' },
-                      { icon: ShoppingCart, text: 'Optimize my grocery basket' },
-                      { icon: TrendingUp, text: 'How much have I saved this month?' },
-                      { icon: Truck, text: 'Find the fastest delivery for office chairs' },
-                    ].map(({ icon: Icon, text }) => (
+                      'Compare laptop prices across suppliers',
+                      'Optimize my grocery basket',
+                      'How much have I saved this month?',
+                      'Find the fastest delivery for office chairs',
+                    ].map((q) => (
                       <button
-                        key={text}
+                        key={q}
                         onClick={() => {
-                          setInput(text);
+                          setInput(q);
                           setTimeout(() => inputRef.current?.focus(), 50);
                         }}
-                        className="w-full flex items-center gap-3 text-left text-sm px-4 py-2.5 rounded-lg border border-line bg-bg hover:bg-accent/5 hover:border-accent/30 text-ink transition-colors"
+                        className="w-full text-left text-sm px-4 py-2.5 rounded-lg border border-line bg-bg hover:bg-accent/5 hover:border-accent/30 text-ink transition-colors"
                       >
-                        <Icon size={15} className="text-accent/60 flex-shrink-0" />
-                        {text}
+                        {q}
                       </button>
                     ))}
                   </div>
@@ -572,7 +563,7 @@ export function AIChatPanel() {
                 </button>
               </div>
               <div className="text-center mt-2">
-                <span className="text-[10px] text-muted/50">Powered by AI · Responses may be approximate</span>
+                <span className="text-[10px] text-muted/50">Powered by Groq · AI responses may be approximate</span>
               </div>
             </div>
           </>
