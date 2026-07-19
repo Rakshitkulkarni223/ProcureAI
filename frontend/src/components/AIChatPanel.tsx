@@ -125,11 +125,11 @@ function FormattedMessage({ content }: { content: string }) {
             continue;
           }
 
-          // Horizontal rule
+          // Horizontal rule — thin accent divider
           if (/^[-—]{3,}$/.test(trimmed)) {
             flushList();
             flushTable();
-            result.push(<hr key={key++} className="my-2 border-line/60" />);
+            result.push(<hr key={key++} className="my-2.5 border-line/40" />);
             continue;
           }
 
@@ -182,19 +182,19 @@ function FormattedMessage({ content }: { content: string }) {
           // Not a list — flush
           flushList();
 
-          // Heading: ### text
+          // Heading: ### text — section header with accent left border
           if (trimmed.startsWith('### ')) {
             result.push(
-              <div key={key++} className="mt-3 mb-1">
-                <p className="font-semibold text-ink text-[13px]">{formatInline(trimmed.slice(4))}</p>
+              <div key={key++} className="mt-3 mb-1.5 flex items-center gap-2 border-l-2 border-accent pl-2">
+                <p className="font-bold text-ink text-[13px] tracking-tight">{formatInline(trimmed.slice(4))}</p>
               </div>
             );
             continue;
           }
-          // Heading: ## text
+          // Heading: ## text — major section
           if (trimmed.startsWith('## ')) {
             result.push(
-              <div key={key++} className="mt-3 mb-1 pb-1 border-b border-line/40">
+              <div key={key++} className="mt-3 mb-1.5 pb-1 border-b border-accent/30">
                 <p className="font-bold text-ink text-sm">{formatInline(trimmed.slice(3))}</p>
               </div>
             );
