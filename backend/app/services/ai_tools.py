@@ -337,9 +337,11 @@ async def _tool_get_recommendation(args: dict, user_id: str) -> dict:
 
 
 async def _tool_optimize_basket(args: dict, user_id: str) -> dict:
-    """Optimize a multi-item basket."""
+    """Optimize a multi-item basket. Auto-merges existing basket history items."""
     try:
         from app.services.basket import BasketOptimizationService
+        from bson import ObjectId
+        from app.database import get_db
 
         category = args.get("category", "")
         items = args.get("items", [])
@@ -349,6 +351,23 @@ async def _tool_optimize_basket(args: dict, user_id: str) -> dict:
             return {"error": "'category' is required"}
         if not items:
             return {"error": "At least one item is required"}
+
+        # Auto-fetch existing basket history and merge with requested items
+        try:
+            db = get_db()
+            latest_basket = await db.baskethistories.find_one(
+                {"userId": ObjectId(user_id), "category": category},
+                sort=[("createdAt", -1)],
+            )
+            if latest_basket and latest_basket.get("items"):
+                existing_queries = {i.get("query", "").lower().strip() for i in items}
+                for hist_item in latest_basket["items"]:
+                    hist_query = hist_item.get("query", "")
+                    if hist_query.lower().strip() not in existing_queries:
+                        items.append({"query": hist_query, "quantity": hist_item.get("quantity", 1)})
+                        existing_queries.add(hist_query.lower().strip())
+        except Exception:
+            pass  # If history fetch fails, proceed with just the requested items
 
         suppliers = CATEGORY_SUPPLIERS.get(category, [])
         req = {
@@ -368,11 +387,17 @@ async def _tool_optimize_basket(args: dict, user_id: str) -> dict:
         not_found = [i for i in all_items if not i.get("supplier")]
         intel = result.get("intelligence", {})
 
+        # Build supplier name list
+        supplier_names = list({i.get("supplier", "") for i in fulfilled if i.get("supplier")})
+
         response: dict[str, Any] = {
             "plan": result.get("recommendedPlan", "split"),
             "total_cost": result.get("splitTotal", 0),
+            "baseline_cost": result.get("baseline", {}).get("total", 0),
             "suppliers_used": result.get("supplierCount", 0),
+            "supplier_names": supplier_names,
             "savings": result.get("estimatedSavings", 0),
+            "savings_pct": round(result.get("estimatedSavings", 0) / max(result.get("baseline", {}).get("total", 1), 1) * 100, 1),
             "delivery": result.get("estimatedDelivery", ""),
             "found_items": [
                 {
@@ -385,6 +410,9 @@ async def _tool_optimize_basket(args: dict, user_id: str) -> dict:
             ],
             "ai_summary": intel.get("aiSummary", ""),
             "risk_level": intel.get("risk", {}).get("level", ""),
+            "risk_detail": intel.get("risk", {}).get("detail", ""),
+            "action": intel.get("risk", {}).get("recommendation", ""),
+            "outlook": intel.get("outlook", ""),
         }
 
         if not_found:
