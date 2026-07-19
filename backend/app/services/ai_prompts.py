@@ -131,17 +131,17 @@ FEW_SHOT_EXAMPLES = [
     },
     {
         "role": "user",
-        "content": "Optimize my grocery basket with rice and oil"
+        "content": "Optimize my grocery basket"
     },
     {
         "role": "assistant",
-        "content": None,
+        "content": "Let me fetch your existing basket items first.",
         "tool_calls": [{
             "id": "call_3",
             "type": "function",
             "function": {
-                "name": "optimize_basket",
-                "arguments": '{"category": "grocery", "items": [{"query": "rice", "quantity": 1}, {"query": "oil", "quantity": 1}]}'
+                "name": "get_basket_history",
+                "arguments": '{"category": "grocery", "limit": 1}'
             }
         }]
     },
