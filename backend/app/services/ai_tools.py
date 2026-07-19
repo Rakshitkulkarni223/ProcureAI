@@ -288,6 +288,7 @@ async def _tool_search_products(args: dict, user_id: str) -> dict:
             "total_results": result.get("count", 0),
             "products": summary_products,
             "recommendation": recommendation_summary,
+            "_note": "ONLY use supplier names and prices from this result. Do NOT invent or modify any values.",
         }
     except Exception as e:
         return {"error": f"Search failed: {str(e)}"}
@@ -361,17 +362,19 @@ async def _tool_optimize_basket(args: dict, user_id: str) -> dict:
         }
         result = await BasketOptimizationService.optimize(user_id, req)
 
-        # Summarise
-        fulfilled = [i for i in result.get("items", []) if i.get("supplier")]
+        # Separate found vs not-found items
+        all_items = result.get("items", [])
+        fulfilled = [i for i in all_items if i.get("supplier")]
+        not_found = [i for i in all_items if not i.get("supplier")]
         intel = result.get("intelligence", {})
 
-        return {
+        response: dict[str, Any] = {
             "plan": result.get("recommendedPlan", "split"),
             "total_cost": result.get("splitTotal", 0),
             "suppliers_used": result.get("supplierCount", 0),
             "savings": result.get("estimatedSavings", 0),
             "delivery": result.get("estimatedDelivery", ""),
-            "items": [
+            "found_items": [
                 {
                     "product": i.get("query", ""),
                     "supplier": i.get("supplier", ""),
@@ -383,6 +386,15 @@ async def _tool_optimize_basket(args: dict, user_id: str) -> dict:
             "ai_summary": intel.get("aiSummary", ""),
             "risk_level": intel.get("risk", {}).get("level", ""),
         }
+
+        if not_found:
+            response["not_found_items"] = [
+                {"product": i.get("query", ""), "note": "NOT FOUND in catalog — do not make up a price or supplier"}
+                for i in not_found
+            ]
+            response["warning"] = f"{len(not_found)} item(s) were NOT found in the catalog. Report them as unavailable."
+
+        return response
     except Exception as e:
         return {"error": f"Basket optimization failed: {str(e)}"}
 
