@@ -11,6 +11,10 @@ import {
   ChevronLeft,
   Wrench,
   Sparkles,
+  Search,
+  ShoppingCart,
+  TrendingUp,
+  Truck,
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import {
@@ -448,7 +452,7 @@ export function AIChatPanel() {
             <Bot size={20} className="text-accent flex-shrink-0" />
             <div className="min-w-0">
               <span className="font-display font-bold text-ink text-sm leading-tight block">ProcureAI Advisor</span>
-              <span className="text-[10px] text-muted leading-tight block truncate">Compare suppliers · Optimize baskets · Explain recommendations</span>
+              <span className="text-[10px] text-muted leading-tight block truncate">Compare · Optimize · Explain</span>
             </div>
             {toolsUsed.length > 0 && (
               <span className="flex items-center gap-1 text-[10px] text-muted bg-bg px-1.5 py-0.5 rounded-full flex-shrink-0">
@@ -497,20 +501,21 @@ export function AIChatPanel() {
                   </p>
                   <div className="space-y-2 w-full">
                     {[
-                      'Compare laptop prices across suppliers',
-                      'Optimize my grocery basket',
-                      'How much have I saved this month?',
-                      'Find the fastest delivery for office chairs',
-                    ].map((q) => (
+                      { icon: Search, text: 'Compare laptop prices across suppliers' },
+                      { icon: ShoppingCart, text: 'Optimize my grocery basket' },
+                      { icon: TrendingUp, text: 'How much have I saved this month?' },
+                      { icon: Truck, text: 'Find the fastest delivery for office chairs' },
+                    ].map(({ icon: Icon, text }) => (
                       <button
-                        key={q}
+                        key={text}
                         onClick={() => {
-                          setInput(q);
+                          setInput(text);
                           setTimeout(() => inputRef.current?.focus(), 50);
                         }}
-                        className="w-full text-left text-sm px-4 py-2.5 rounded-lg border border-line bg-bg hover:bg-accent/5 hover:border-accent/30 text-ink transition-colors"
+                        className="w-full flex items-center gap-3 text-left text-sm px-4 py-2.5 rounded-lg border border-line bg-bg hover:bg-accent/5 hover:border-accent/30 text-ink transition-colors"
                       >
-                        {q}
+                        <Icon size={15} className="text-accent/60 flex-shrink-0" />
+                        {text}
                       </button>
                     ))}
                   </div>
@@ -567,7 +572,7 @@ export function AIChatPanel() {
                 </button>
               </div>
               <div className="text-center mt-2">
-                <span className="text-[10px] text-muted/50">Powered by Groq · AI responses may be approximate</span>
+                <span className="text-[10px] text-muted/50">Powered by AI · Responses may be approximate</span>
               </div>
             </div>
           </>
