@@ -1,5 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
-import ReactMarkdown from 'react-markdown';
+import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import {
   MessageSquare,
   X,
@@ -21,6 +20,122 @@ import {
   deleteConversation,
 } from '../lib/aiApi';
 import type { AIChatMessage, AIConversationListItem } from '../types_ai';
+
+/** Lightweight markdown-to-React formatter — no external dependencies. */
+function FormattedMessage({ content }: { content: string }) {
+  try {
+    const elements = useMemo(() => {
+      try {
+        const lines = content.split('\n');
+        const result: React.ReactNode[] = [];
+        let listItems: React.ReactNode[] = [];
+        let listType: 'ul' | 'ol' | null = null;
+        let key = 0;
+
+        const flushList = () => {
+          if (listItems.length > 0 && listType) {
+            const Tag = listType;
+            result.push(
+              <Tag key={key++} className={cn(
+                'my-1.5 pl-4 space-y-0.5',
+                listType === 'ul' ? 'list-disc' : 'list-decimal',
+              )}>
+                {listItems}
+              </Tag>
+            );
+            listItems = [];
+            listType = null;
+          }
+        };
+
+        const formatInline = (text: string): React.ReactNode[] => {
+          try {
+            const nodes: React.ReactNode[] = [];
+            // Match **bold**, *italic*, `code`
+            const regex = /(\*\*(.+?)\*\*|\*(.+?)\*|`(.+?)`)/g;
+            let lastIndex = 0;
+            let match;
+            let i = 0;
+            while ((match = regex.exec(text)) !== null) {
+              if (match.index > lastIndex) {
+                nodes.push(text.slice(lastIndex, match.index));
+              }
+              if (match[2]) {
+                nodes.push(<strong key={`b${i}`} className="font-semibold text-ink">{match[2]}</strong>);
+              } else if (match[3]) {
+                nodes.push(<em key={`i${i}`} className="italic">{match[3]}</em>);
+              } else if (match[4]) {
+                nodes.push(<code key={`c${i}`} className="bg-line/50 px-1 py-0.5 rounded text-xs font-mono">{match[4]}</code>);
+              }
+              lastIndex = regex.lastIndex;
+              i++;
+            }
+            if (lastIndex < text.length) {
+              nodes.push(text.slice(lastIndex));
+            }
+            return nodes;
+          } catch {
+            return [text];
+          }
+        };
+
+        for (const line of lines) {
+          const trimmed = line.trim();
+
+          // Empty line — flush list, add spacing
+          if (!trimmed) {
+            flushList();
+            result.push(<div key={key++} className="h-2" />);
+            continue;
+          }
+
+          // Unordered list: - item, * item, • item
+          const ulMatch = trimmed.match(/^[-*•]\s+(.+)$/);
+          if (ulMatch) {
+            if (listType !== 'ul') flushList();
+            listType = 'ul';
+            listItems.push(<li key={key++} className="text-ink-soft">{formatInline(ulMatch[1])}</li>);
+            continue;
+          }
+
+          // Ordered list: 1. item, 2) item
+          const olMatch = trimmed.match(/^\d+[.)]\s+(.+)$/);
+          if (olMatch) {
+            if (listType !== 'ol') flushList();
+            listType = 'ol';
+            listItems.push(<li key={key++} className="text-ink-soft">{formatInline(olMatch[1])}</li>);
+            continue;
+          }
+
+          // Not a list — flush any pending list
+          flushList();
+
+          // Heading: ### text or ## text
+          if (trimmed.startsWith('### ')) {
+            result.push(<p key={key++} className="font-semibold text-ink mt-2 mb-0.5 text-sm">{formatInline(trimmed.slice(4))}</p>);
+            continue;
+          }
+          if (trimmed.startsWith('## ')) {
+            result.push(<p key={key++} className="font-semibold text-ink mt-2 mb-0.5 text-sm">{formatInline(trimmed.slice(3))}</p>);
+            continue;
+          }
+
+          // Normal paragraph
+          result.push(<p key={key++} className="my-0.5 text-ink-soft">{formatInline(trimmed)}</p>);
+        }
+
+        flushList();
+        return result;
+      } catch {
+        return [<span key="fallback">{content}</span>];
+      }
+    }, [content]);
+
+    return <div className="space-y-0 break-words overflow-hidden">{elements}</div>;
+  } catch {
+    return <div className="whitespace-pre-wrap">{content}</div>;
+  }
+}
 
 /** Floating AI Chat Drawer — appears as a slide-out panel from the right. */
 export function AIChatPanel() {
@@ -180,31 +295,29 @@ export function AIChatPanel() {
     try {
       const isUser = msg.role === 'user';
       return (
-        <div key={idx} className={cn('flex gap-3 mb-4', isUser ? 'justify-end' : 'justify-start')}>
+        <div key={idx} className={cn('flex gap-2 sm:gap-3 mb-4', isUser ? 'justify-end' : 'justify-start')}>
           {!isUser && (
-            <div className="flex-shrink-0 w-8 h-8 rounded-full bg-accent/10 flex items-center justify-center">
-              <Bot size={16} className="text-accent" />
+            <div className="flex-shrink-0 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-accent/10 flex items-center justify-center">
+              <Bot size={14} className="text-accent sm:w-4 sm:h-4" />
             </div>
           )}
           <div
             className={cn(
-              'max-w-[80%] rounded-xl px-4 py-3 text-sm leading-relaxed',
+              'max-w-[85%] sm:max-w-[80%] rounded-xl px-3 py-2.5 sm:px-4 sm:py-3 text-sm leading-relaxed',
               isUser
                 ? 'bg-accent text-white rounded-br-sm'
                 : 'bg-bg text-ink border border-line rounded-bl-sm',
             )}
           >
             {isUser ? (
-              <div className="whitespace-pre-wrap">{msg.content}</div>
+              <div className="whitespace-pre-wrap break-words">{msg.content}</div>
             ) : (
-              <div className="prose prose-sm max-w-none prose-p:my-1 prose-li:my-0.5 prose-headings:my-2 prose-strong:text-ink prose-ul:my-1 prose-ol:my-1 text-ink">
-                <ReactMarkdown>{msg.content}</ReactMarkdown>
-              </div>
+              <FormattedMessage content={msg.content ?? ''} />
             )}
           </div>
           {isUser && (
-            <div className="flex-shrink-0 w-8 h-8 rounded-full bg-accent/20 flex items-center justify-center">
-              <User size={16} className="text-accent" />
+            <div className="flex-shrink-0 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-accent/20 flex items-center justify-center">
+              <User size={14} className="text-accent sm:w-4 sm:h-4" />
             </div>
           )}
         </div>
@@ -223,14 +336,15 @@ export function AIChatPanel() {
           if (view === 'history') loadHistory();
         }}
         className={cn(
-          'fixed bottom-6 right-6 z-50 flex items-center gap-2 rounded-full bg-accent px-5 py-3.5',
+          'fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 flex items-center gap-2 rounded-full bg-accent',
+          'px-3.5 py-3 sm:px-5 sm:py-3.5',
           'text-white shadow-lg hover:bg-accent/90 transition-all duration-200',
           'hover:shadow-xl hover:scale-105',
           open && 'hidden',
         )}
       >
         <Sparkles size={20} />
-        <span className="font-semibold text-sm">AI Assistant</span>
+        <span className="font-semibold text-sm hidden sm:inline">AI Assistant</span>
       </button>
 
       {/* Backdrop */}
@@ -244,7 +358,7 @@ export function AIChatPanel() {
       {/* Chat drawer */}
       <div
         className={cn(
-          'fixed top-0 right-0 z-50 h-full w-full max-w-md bg-surface border-l border-line shadow-2xl',
+          'fixed top-0 right-0 z-50 h-full w-full sm:max-w-md bg-surface border-l border-line shadow-2xl',
           'flex flex-col transition-transform duration-300 ease-in-out',
           open ? 'translate-x-0' : 'translate-x-full',
         )}
@@ -337,7 +451,7 @@ export function AIChatPanel() {
             </div>
 
             {/* Input area */}
-            <div className="border-t border-line p-3 flex-shrink-0">
+            <div className="border-t border-line p-2.5 sm:p-3 flex-shrink-0 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
               {error && (
                 <div className="text-xs text-danger mb-2 px-1">{error}</div>
               )}
@@ -350,7 +464,7 @@ export function AIChatPanel() {
                   placeholder="Ask about procurement..."
                   rows={1}
                   className={cn(
-                    'flex-1 resize-none rounded-xl border border-line bg-bg px-4 py-3 text-sm text-ink',
+                    'flex-1 resize-none rounded-xl border border-line bg-bg px-3 py-2.5 sm:px-4 sm:py-3 text-sm text-ink',
                     'placeholder:text-muted/60 focus:outline-none focus:ring-2 focus:ring-accent/30',
                     'max-h-32',
                   )}

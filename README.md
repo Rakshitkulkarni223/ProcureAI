@@ -7,7 +7,7 @@
 > Procurement platform that combines an **explainable multi-factor decision engine** with an **AI procurement assistant** to help businesses make faster and smarter purchasing decisions.
 
 - ✅ **Multi-factor Recommendation Engine** — 7 scoring dimensions, 6 procurement strategies, confidence scores
-- ✅ **AI Procurement Assistant** — Conversational interface with backend function calling via Groq
+- ✅ **Procurement AI Assistant** — Conversational interface with backend function calling via Groq
 - ✅ Compare online + offline suppliers in one search
 - ✅ Split-cart basket optimization across all suppliers
 - ✅ Build a private supplier network (Supplier Hub)
@@ -32,6 +32,14 @@ This allows buyers to interact with procurement data using natural language whil
 
 > Every recommendation is fully explainable — users can inspect the weighted score, confidence margin, trade-offs, and business reasoning behind each decision.
 
+| Decision Engine | AI Assistant |
+|---|---|
+| Multi-factor weighted scoring | Groq (Qwen 3.6-27B) |
+| Deterministic & explainable | Conversational interface |
+| Calculates supplier rankings | Explains recommendations |
+| Produces confidence margins | Uses backend tool calling |
+| Same input → same output | Natural language responses |
+
 ---
 
 ## 🌐 Live Demo
@@ -54,7 +62,7 @@ This allows buyers to interact with procurement data using natural language whil
 | **Product Search** | Search any product across marketplace and private suppliers — results normalized, scored, and ranked |
 | **Supplier Hub** | Register offline suppliers with products, pricing, and delivery info — they appear in every search |
 | **Basket Optimization** | Split-cart optimizer finds the cheapest multi-item combination across suppliers |
-| **AI Procurement Assistant** | Conversational AI panel on every page — ask questions, compare suppliers, optimize baskets, check savings via natural language |
+| **Procurement AI Assistant** | Conversational AI panel on every page — ask questions, compare suppliers, optimize baskets, check savings via natural language |
 | **Explanation Panel** | Radar chart + scoreboard + business reasoning for every recommendation — natural-language explanations generated using Groq |
 | **6 Recommendation Modes** | Balanced, Lowest Cost, Lowest Risk, Fastest Delivery, Highest Reliability, Best Long-Term Value |
 | **Location-Aware Delivery** | Same city → 1 day, same state → 2 days, different state → 4–5 days |
@@ -94,7 +102,7 @@ This allows buyers to interact with procurement data using natural language whil
 
 ## 🤖 AI Assistant
 
-The AI Procurement Assistant is a conversational interface powered by **Groq** (Qwen 3.6-27B / Llama 3.1-8B) with backend function calling. It accesses live procurement data through 8 tools:
+The Procurement AI Assistant is a conversational interface powered by **Groq** (Qwen 3.6-27B / Llama 3.1-8B) with backend function calling. It accesses live procurement data through 8 tools:
 
 | Tool | What It Does |
 |---|---|
@@ -158,7 +166,7 @@ Download from [`demo/procureai-demo.mp4`](demo/procureai-demo.mp4) and play loca
 │  └───────────┘ └────────────┘           │
 │                                          │
 │   ┌───────────────────────────┐      │
-│   │  AI Procurement Assistant   │      │
+│   │  Procurement AI Assistant   │      │
 │   │  • 8 function-calling tools │      │
 │   │  • Conversation memory      │      │
 │   │  • Grounded responses       │      │
@@ -174,6 +182,8 @@ Download from [`demo/procureai-demo.mp4`](demo/procureai-demo.mp4) and play loca
            │ (Atlas/Local) │
            └───────────────┘
 ```
+
+The recommendation engine and AI assistant are intentionally separated. Procurement decisions are produced by the deterministic scoring engine, while the AI assistant explains results, answers questions, and orchestrates backend tools without modifying recommendation logic.
 
 ---
 
@@ -234,7 +244,7 @@ Download from [`demo/procureai-demo.mp4`](demo/procureai-demo.mp4) and play loca
 - Designed an **explainable procurement decision engine** with configurable weighted scoring, confidence metrics, and transparent trade-off analysis
 - **Location-aware delivery estimation** — city/state distance-based delivery days
 - Async aggregation with **error isolation** — one failing supplier doesn't break the search
-- **AI Procurement Assistant** with backend function calling — 8 tools, multi-turn conversations, grounded responses
+- **Procurement AI Assistant** with backend function calling — 8 tools, multi-turn conversations, grounded responses
 - Groq LLM integration (Qwen 3.6-27B) with automatic fallback to Llama 3.1-8B, then rule-based explanations
 - **Conversation memory** persisted in MongoDB with per-user scoping and auto-cleanup
 - Separation of **deterministic scoring** (decision engine) from **generative AI** (explanations + chat)
@@ -318,7 +328,7 @@ cd backend && python -m pytest tests/backend_test.py -v
 
 ## 🏅 Highlights
 
-- ✅ **AI Procurement Assistant** — Conversational interface with 8 backend function-calling tools
+- ✅ **Procurement AI Assistant** — Conversational interface with 8 backend function-calling tools
 - ✅ **Grounded AI responses** — The assistant answers only from backend procurement data and clearly reports when information is unavailable
 - ✅ **Explainable decisions** — Weighted scores, confidence margins, and business reasoning for every recommendation
 - ✅ **Conversation memory** — MongoDB-persisted, per-user, with auto-cleanup
@@ -349,6 +359,6 @@ cd backend && python -m pytest tests/backend_test.py -v
 ---
 
 <p align="center">
-  <b>ProcureAI</b> — Transforming procurement from comparing prices to making intelligent business decisions.<br/>
+  <b>ProcureAI</b> — Helping businesses move from price comparison to explainable procurement decisions.<br/>
   <a href="https://github.com/Rakshitkulkarni223/ProcureAI">GitHub</a>
 </p>
