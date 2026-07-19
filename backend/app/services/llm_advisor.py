@@ -50,7 +50,6 @@ async def _groq_completion(prompt: str, max_tokens: int = 512, model: str | None
             ],
             temperature=env.AI_TEMPERATURE,
             max_tokens=max_tokens,
-            extra_body={"chat_template_kwargs": {"enable_thinking": False}},
         )
         text = (response.choices[0].message.content or "").strip()
         # Strip Qwen <think>...</think> chain-of-thought blocks (complete)

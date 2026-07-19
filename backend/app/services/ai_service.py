@@ -135,7 +135,6 @@ async def chat(
             tool_choice="auto",
             temperature=env.AI_TEMPERATURE,
             max_tokens=MAX_RESPONSE_TOKENS,
-            extra_body={"chat_template_kwargs": {"enable_thinking": False}},
         )
 
         for _round in range(MAX_TOOL_ROUNDS):
