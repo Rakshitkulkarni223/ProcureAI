@@ -56,16 +56,19 @@ export function LongTermRecommendationCard({
             </div>
           )}
 
-          <ul className="mt-4 space-y-2">
-            {rec.reasons.map((reason, i) => (
-              <li key={i} className="flex items-start gap-2.5 text-sm text-ink-soft">
-                <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-accent-soft text-accent">
-                  <Check size={11} strokeWidth={3} />
-                </span>
-                {reason}
-              </li>
-            ))}
-          </ul>
+          {/* Show deterministic reasons only when AI explanation is absent */}
+          {!(rec.aiExplanation && cleanAIText(rec.aiExplanation)) && rec.reasons.length > 0 && (
+            <ul className="mt-4 space-y-2">
+              {rec.reasons.map((reason, i) => (
+                <li key={i} className="flex items-start gap-2.5 text-sm text-ink-soft">
+                  <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-accent-soft text-accent">
+                    <Check size={11} strokeWidth={3} />
+                  </span>
+                  {reason}
+                </li>
+              ))}
+            </ul>
+          )}
 
           <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
             <div className="rounded-md border border-line bg-bg/30 p-2.5">
