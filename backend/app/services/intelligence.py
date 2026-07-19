@@ -970,31 +970,63 @@ class BasketIntelligenceService:
                           ai_score: int, dominant_supplier: Optional[str],
                           consolidation_label: str) -> str:
         try:
-            parts = []
-            parts.append(
-                f"Your basket has been optimized across {supplier_count} supplier"
-                f"{'s' if supplier_count != 1 else ''}."
-            )
-            if savings > 0:
-                parts.append(f"Estimated savings: {format_inr(savings)} ({savings_pct}%).")
-            parts.append(f"Supplier diversification: {consolidation_label.lower()}.")
-            parts.append(f"Risk: {risk_level}.")
-            parts.append(f"Expected delivery: within {latest_delivery} day{'s' if latest_delivery != 1 else ''}.")
-            parts.append(f"Procurement complexity: {complexity_level}.")
+            parts: list[str] = []
+
+            # INSIGHT — strategic observation
             if dominant_supplier:
                 parts.append(
-                    f"⚠ {dominant_supplier} dominates the basket — consider diversifying to reduce dependency."
+                    f"INSIGHT: {dominant_supplier} holds the entire basket spend, "
+                    f"creating single-supplier dependency risk despite "
+                    f"{consolidation_label.lower()} consolidation."
                 )
-            if ai_score >= 80:
-                parts.append("Recommendation: Proceed with this purchase.")
-                parts.append("Reason: Best balance of cost, delivery, and supplier reliability.")
-            elif ai_score >= 60:
-                parts.append("Recommendation: Proceed with minor adjustments.")
-                parts.append("Reason: Good optimization with acceptable trade-offs.")
+            elif supplier_count > 2:
+                parts.append(
+                    f"INSIGHT: Basket is distributed across {supplier_count} suppliers, "
+                    f"improving resilience but increasing procurement overhead."
+                )
             else:
-                parts.append("Recommendation: Review alternatives before proceeding.")
-                parts.append("Reason: Significant trade-offs between cost and convenience.")
-            return " ".join(parts)
+                parts.append(
+                    f"INSIGHT: With {consolidation_label.lower()} consolidation and "
+                    f"{risk_level.lower()} risk, this basket balances cost efficiency "
+                    f"and supply chain stability well."
+                )
+
+            # ACTION — what to do next
+            if ai_score >= 80:
+                parts.append(
+                    "ACTION: Proceed confidently — this basket scores well "
+                    "across all key procurement metrics."
+                )
+            elif dominant_supplier:
+                parts.append(
+                    f"ACTION: Consider adding a secondary supplier to reduce "
+                    f"dependency on {dominant_supplier} before finalizing."
+                )
+            elif ai_score >= 60:
+                parts.append(
+                    "ACTION: Review the cost-delivery trade-offs and proceed "
+                    "if the delivery timeline meets your needs."
+                )
+            else:
+                parts.append(
+                    "ACTION: Explore alternative suppliers or adjust quantities "
+                    "to improve the overall procurement score."
+                )
+
+            # OUTLOOK — forward-looking projection
+            if savings > 0:
+                monthly = savings * 30
+                parts.append(
+                    f"OUTLOOK: At current volumes, this optimization pattern "
+                    f"could yield ~{format_inr(monthly)}/month in sustained savings."
+                )
+            else:
+                parts.append(
+                    "OUTLOOK: Monitor market prices — supplier pricing fluctuations "
+                    "could create savings opportunities in the next cycle."
+                )
+
+            return "\n".join(parts)
         except Exception:
             return ""
 
