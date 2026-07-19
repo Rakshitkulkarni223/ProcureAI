@@ -35,6 +35,31 @@ def _get_groq_client() -> AsyncOpenAI | None:
         return None
 
 
+def _strip_reasoning(text: str) -> str:
+    """Remove leaked chain-of-thought / drafting patterns from model output."""
+    try:
+        if not text:
+            return text
+        # Reasoning markers that indicate internal planning leaked into output
+        reasoning_markers = [
+            "Drafting", "Critique:", "Goal:", "Data Points:",
+            "Sentence 1", "Sentence 2", "Sentence 3",
+            "Focus on", "Let me ", "I need to", "I'll ",
+            "Here's my", "Step 1", "Step 2", "Step 3",
+        ]
+        # If the text contains multiple reasoning markers, it's leaked CoT
+        marker_count = sum(1 for m in reasoning_markers if m in text)
+        if marker_count >= 2:
+            return ""
+        # Strip everything before the first actual sentence if garbage prefix exists
+        # e.g. "` tags. Content: ..." → strip until we find a proper sentence start
+        text = re.sub(r"^[`\s]*tags\.?\s*", "", text).strip()
+        text = re.sub(r"^Content:\s*", "", text).strip()
+        return text
+    except Exception:
+        return text
+
+
 async def _groq_completion(prompt: str, max_tokens: int = 512, model: str | None = None) -> str:
     """Call Groq chat completion. Returns empty string on failure."""
     try:
@@ -45,7 +70,7 @@ async def _groq_completion(prompt: str, max_tokens: int = 512, model: str | None
         response = await client.chat.completions.create(
             model=chosen_model,
             messages=[
-                {"role": "system", "content": "You are a procurement advisor for ProcureAI. Be professional, concise, and use specific numbers. Never use markdown formatting. Do NOT use <think> tags or any chain-of-thought wrapper."},
+                {"role": "system", "content": "You are a procurement advisor for ProcureAI. Be professional, concise, and use specific numbers. Never use markdown formatting. Do NOT use <think> tags or any chain-of-thought wrapper. Output ONLY the final answer — never show reasoning, planning, drafting steps, critiques, or internal notes."},
                 {"role": "user", "content": prompt},
             ],
             temperature=env.AI_TEMPERATURE,
@@ -58,6 +83,8 @@ async def _groq_completion(prompt: str, max_tokens: int = 512, model: str | None
         text = re.sub(r"<think>.*", "", text, flags=re.DOTALL).strip()
         # Clean up any markdown the model might add
         text = text.replace("**", "").replace("*", "").replace("#", "").strip()
+        # Strip leaked chain-of-thought reasoning (no <think> tags but visible planning)
+        text = _strip_reasoning(text)
         # If primary model produced only <think> content, retry with fallback
         if not text and model is None and env.AI_FALLBACK_MODEL:
             return await _groq_completion(prompt, max_tokens, model=env.AI_FALLBACK_MODEL)

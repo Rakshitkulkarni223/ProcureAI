@@ -38,7 +38,7 @@ export function deliveryLabel(days: number): string {
   return `${days} days`;
 }
 
-/** Strip <think> blocks (complete + truncated) and stray markdown from AI text. */
+/** Strip <think> blocks, leaked chain-of-thought reasoning, and stray markdown from AI text. */
 export function cleanAIText(text: string): string {
   try {
     let cleaned = text;
@@ -48,6 +48,12 @@ export function cleanAIText(text: string): string {
     cleaned = cleaned.replace(/<think>[\s\S]*/gi, '');
     // Remove stray markdown bold/italic/heading markers
     cleaned = cleaned.replace(/\*\*/g, '').replace(/##?\s*/g, '');
+    // Detect leaked chain-of-thought reasoning (no <think> tags but visible planning)
+    const reasoningMarkers = ['Drafting', 'Critique:', 'Goal:', 'Data Points:', 'Sentence 1', 'Sentence 2', 'Step 1', 'Step 2', 'Let me ', 'I need to'];
+    const markerCount = reasoningMarkers.filter(m => cleaned.includes(m)).length;
+    if (markerCount >= 2) return '';
+    // Strip garbage prefixes like "` tags. Content: ..."
+    cleaned = cleaned.replace(/^[`\s]*tags\.?\s*/i, '').replace(/^Content:\s*/i, '');
     return cleaned.trim();
   } catch {
     return text;
