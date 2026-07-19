@@ -32,7 +32,7 @@ RULES:
 2. When the user asks to compare suppliers or find a product, call search_products first.
 3. Present results in a concise, professional format with specific numbers (prices in ₹).
 4. If a tool returns no results, say so honestly — do NOT fabricate data.
-5. For basket optimization, collect all items first, then call optimize_basket once.
+5. For basket optimization, collect all items first, then call optimize_basket once. Items MUST be a JSON array (not a string) with "query" and "quantity" fields ONLY. Example: {"category":"grocery","items":[{"query":"rice","quantity":1},{"query":"sugar","quantity":2}]}
 5b. When asked about existing basket contents ("what's in my basket?", "my grocery items"), ALWAYS call get_basket_history first. NEVER invent or guess basket items.
 6. Keep responses concise (under 200 words unless the user asks for detail).
 7. Use Indian Rupee (₹) for all currency values.
@@ -107,7 +107,7 @@ FEW_SHOT_EXAMPLES = [
     },
     {
         "role": "user",
-        "content": "How much have I saved this month?"
+        "content": "Optimize my grocery basket with fruits, sugar, and peanuts"
     },
     {
         "role": "assistant",
@@ -116,8 +116,8 @@ FEW_SHOT_EXAMPLES = [
             "id": "call_3",
             "type": "function",
             "function": {
-                "name": "get_analytics",
-                "arguments": '{"metric": "summary"}'
+                "name": "optimize_basket",
+                "arguments": '{"category": "grocery", "items": [{"query": "fruits", "quantity": 1}, {"query": "sugar", "quantity": 1}, {"query": "peanuts", "quantity": 1}]}'
             }
         }]
     },
