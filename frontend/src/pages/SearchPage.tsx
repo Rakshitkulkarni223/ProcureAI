@@ -764,16 +764,16 @@ function EmptyState({ mode }: { mode: Mode }) {
 function SearchLoader({ basket }: { basket?: boolean }) {
   const lines = basket
     ? [
-      'Fetching every item across suppliers in parallel…',
-      'Scoring each item × supplier with the weighted engine…',
-      'Comparing split-optimal vs single-supplier baseline…',
-      'Balancing item savings against delivery consolidation…',
+      'Searching all suppliers for your items…',
+      'Evaluating price, delivery, and reliability for each option…',
+      'Comparing single-supplier vs multi-supplier strategies…',
+      'Optimizing your basket for the best procurement outcome…',
     ]
     : [
-      'Resolving enabled provider adapters…',
-      'Querying suppliers in parallel (Promise.allSettled)…',
-      'Normalizing products to common schema…',
-      'Scoring suppliers with weighted decision engine…',
+      'Connecting to supplier network…',
+      'Fetching prices and availability across suppliers…',
+      'Comparing products and standardizing results…',
+      'Ranking suppliers using AI-powered scoring…',
     ];
   return (
     <Card data-testid="search-loader">
