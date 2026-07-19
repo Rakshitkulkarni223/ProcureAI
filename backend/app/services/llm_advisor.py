@@ -8,6 +8,7 @@ explanation if no API key is set or if the API call fails.
 from __future__ import annotations
 
 import asyncio
+import re
 from openai import AsyncOpenAI
 
 from app.config import env
@@ -51,6 +52,8 @@ async def _groq_completion(prompt: str, max_tokens: int = 512, model: str | None
             max_tokens=max_tokens,
         )
         text = (response.choices[0].message.content or "").strip()
+        # Strip Qwen <think>...</think> chain-of-thought blocks
+        text = re.sub(r"<think>.*?</think>", "", text, flags=re.DOTALL).strip()
         # Clean up any markdown the model might add
         text = text.replace("**", "").replace("*", "").replace("#", "").strip()
         return text

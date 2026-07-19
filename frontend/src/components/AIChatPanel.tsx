@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
+import ReactMarkdown from 'react-markdown';
 import {
   MessageSquare,
   X,
@@ -193,7 +194,13 @@ export function AIChatPanel() {
                 : 'bg-bg text-ink border border-line rounded-bl-sm',
             )}
           >
-            <div className="whitespace-pre-wrap">{msg.content}</div>
+            {isUser ? (
+              <div className="whitespace-pre-wrap">{msg.content}</div>
+            ) : (
+              <div className="prose prose-sm max-w-none prose-p:my-1 prose-li:my-0.5 prose-headings:my-2 prose-strong:text-ink prose-ul:my-1 prose-ol:my-1 text-ink">
+                <ReactMarkdown>{msg.content}</ReactMarkdown>
+              </div>
+            )}
           </div>
           {isUser && (
             <div className="flex-shrink-0 w-8 h-8 rounded-full bg-accent/20 flex items-center justify-center">

@@ -7,6 +7,7 @@ Uses Groq (OpenAI-compatible) with function calling on Qwen3 32B / Llama 3.3 70B
 from __future__ import annotations
 
 import json
+import re
 import time
 from datetime import datetime
 from typing import Any
@@ -48,6 +49,18 @@ def _get_client() -> AsyncOpenAI:
 MAX_TOOL_ROUNDS = 5          # Max tool-call loops per user message
 MAX_RESPONSE_TOKENS = 1024   # Max tokens for final response
 TOOL_RESULT_MAX_CHARS = 3000 # Truncate tool results to keep within context
+
+# Regex to strip Qwen <think>...</think> chain-of-thought blocks
+_THINK_RE = re.compile(r"<think>.*?</think>", re.DOTALL)
+
+
+def _clean_response(text: str) -> str:
+    """Strip <think> blocks and clean up LLM output."""
+    try:
+        text = _THINK_RE.sub("", text).strip()
+        return text
+    except Exception:
+        return text
 
 
 # ---------------------------------------------------------------------------
@@ -148,7 +161,7 @@ async def chat(
 
             # If no tool calls, we have the final response
             if not assistant_message.tool_calls:
-                final_text = assistant_message.content or "I couldn't generate a response. Please try again."
+                final_text = _clean_response(assistant_message.content or "I couldn't generate a response. Please try again.")
 
                 # Persist assistant response
                 await ConversationMemory.add_message(
