@@ -51,13 +51,15 @@ MAX_RESPONSE_TOKENS = 1024   # Max tokens for final response
 TOOL_RESULT_MAX_CHARS = 3000 # Truncate tool results to keep within context
 
 # Regex to strip Qwen <think>...</think> chain-of-thought blocks
-_THINK_RE = re.compile(r"<think>.*?</think>", re.DOTALL)
+_THINK_CLOSED_RE = re.compile(r"<think>.*?</think>", re.DOTALL)
+_THINK_OPEN_RE = re.compile(r"<think>.*", re.DOTALL)
 
 
 def _clean_response(text: str) -> str:
-    """Strip <think> blocks and clean up LLM output."""
+    """Strip <think> blocks (complete and truncated) and clean up LLM output."""
     try:
-        text = _THINK_RE.sub("", text).strip()
+        text = _THINK_CLOSED_RE.sub("", text).strip()
+        text = _THINK_OPEN_RE.sub("", text).strip()
         return text
     except Exception:
         return text

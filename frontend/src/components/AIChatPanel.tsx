@@ -21,7 +21,7 @@ import {
 } from '../lib/aiApi';
 import type { AIChatMessage, AIConversationListItem } from '../types_ai';
 
-/** Lightweight markdown-to-React formatter — no external dependencies. */
+/** Lightweight markdown-to-React formatter — beautiful formatting, zero dependencies. */
 function FormattedMessage({ content }: { content: string }) {
   try {
     const elements = useMemo(() => {
@@ -30,29 +30,58 @@ function FormattedMessage({ content }: { content: string }) {
         const result: React.ReactNode[] = [];
         let listItems: React.ReactNode[] = [];
         let listType: 'ul' | 'ol' | null = null;
+        let tableRows: string[][] = [];
+        let tableHeader: string[] = [];
         let key = 0;
 
         const flushList = () => {
           if (listItems.length > 0 && listType) {
-            const Tag = listType;
             result.push(
-              <Tag key={key++} className={cn(
-                'my-1.5 pl-4 space-y-0.5',
-                listType === 'ul' ? 'list-disc' : 'list-decimal',
-              )}>
+              <div key={key++} className="my-2 ml-1 space-y-1.5">
                 {listItems}
-              </Tag>
+              </div>
             );
             listItems = [];
             listType = null;
           }
         };
 
+        const flushTable = () => {
+          if (tableHeader.length > 0 || tableRows.length > 0) {
+            result.push(
+              <div key={key++} className="my-2 overflow-x-auto rounded-lg border border-line">
+                <table className="w-full text-xs">
+                  {tableHeader.length > 0 && (
+                    <thead>
+                      <tr className="bg-accent/5 border-b border-line">
+                        {tableHeader.map((h, i) => (
+                          <th key={i} className="px-2.5 py-1.5 text-left font-semibold text-ink whitespace-nowrap">{h.trim()}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                  )}
+                  <tbody>
+                    {tableRows.map((row, ri) => (
+                      <tr key={ri} className={cn(ri % 2 === 0 ? 'bg-bg/50' : '', 'border-b border-line/50 last:border-0')}>
+                        {row.map((cell, ci) => (
+                          <td key={ci} className="px-2.5 py-1.5 text-ink-soft whitespace-nowrap">{formatInline(cell.trim())}</td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            );
+            tableHeader = [];
+            tableRows = [];
+          }
+        };
+
         const formatInline = (text: string): React.ReactNode[] => {
           try {
             const nodes: React.ReactNode[] = [];
-            // Match **bold**, *italic*, `code`
-            const regex = /(\*\*(.+?)\*\*|\*(.+?)\*|`(.+?)`)/g;
+            // Match **bold**, *italic*, `code`, ₹amounts
+            const regex = /(\*\*(.+?)\*\*|\*(.+?)\*|`(.+?)`|(₹[\d,]+(?:\.\d{1,2})?))/g;
             let lastIndex = 0;
             let match;
             let i = 0;
@@ -63,9 +92,11 @@ function FormattedMessage({ content }: { content: string }) {
               if (match[2]) {
                 nodes.push(<strong key={`b${i}`} className="font-semibold text-ink">{match[2]}</strong>);
               } else if (match[3]) {
-                nodes.push(<em key={`i${i}`} className="italic">{match[3]}</em>);
+                nodes.push(<em key={`i${i}`} className="italic text-ink-soft">{match[3]}</em>);
               } else if (match[4]) {
-                nodes.push(<code key={`c${i}`} className="bg-line/50 px-1 py-0.5 rounded text-xs font-mono">{match[4]}</code>);
+                nodes.push(<code key={`c${i}`} className="bg-accent/8 text-accent px-1 py-0.5 rounded text-xs font-mono">{match[4]}</code>);
+              } else if (match[5]) {
+                nodes.push(<span key={`r${i}`} className="font-semibold text-accent">{match[5]}</span>);
               }
               lastIndex = regex.lastIndex;
               i++;
@@ -82,56 +113,103 @@ function FormattedMessage({ content }: { content: string }) {
         for (const line of lines) {
           const trimmed = line.trim();
 
-          // Empty line — flush list, add spacing
+          // Empty line — flush pending elements
           if (!trimmed) {
             flushList();
-            result.push(<div key={key++} className="h-2" />);
+            flushTable();
+            result.push(<div key={key++} className="h-1.5" />);
             continue;
+          }
+
+          // Horizontal rule
+          if (/^[-—]{3,}$/.test(trimmed)) {
+            flushList();
+            flushTable();
+            result.push(<hr key={key++} className="my-2 border-line/60" />);
+            continue;
+          }
+
+          // Table row: | col1 | col2 |
+          if (trimmed.startsWith('|') && trimmed.endsWith('|')) {
+            flushList();
+            const cells = trimmed.slice(1, -1).split('|');
+            // Skip separator rows like |---|---|
+            if (cells.every(c => /^[\s:-]+$/.test(c))) continue;
+            if (tableHeader.length === 0 && tableRows.length === 0) {
+              tableHeader = cells;
+            } else {
+              tableRows.push(cells);
+            }
+            continue;
+          } else {
+            flushTable();
           }
 
           // Unordered list: - item, * item, • item
           const ulMatch = trimmed.match(/^[-*•]\s+(.+)$/);
           if (ulMatch) {
+            flushTable();
             if (listType !== 'ul') flushList();
             listType = 'ul';
-            listItems.push(<li key={key++} className="text-ink-soft">{formatInline(ulMatch[1])}</li>);
+            listItems.push(
+              <div key={key++} className="flex gap-2 items-start">
+                <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-accent flex-shrink-0" />
+                <span className="text-ink-soft leading-relaxed">{formatInline(ulMatch[1])}</span>
+              </div>
+            );
             continue;
           }
 
           // Ordered list: 1. item, 2) item
-          const olMatch = trimmed.match(/^\d+[.)]\s+(.+)$/);
+          const olMatch = trimmed.match(/^(\d+)[.)]\s+(.+)$/);
           if (olMatch) {
+            flushTable();
             if (listType !== 'ol') flushList();
             listType = 'ol';
-            listItems.push(<li key={key++} className="text-ink-soft">{formatInline(olMatch[1])}</li>);
+            listItems.push(
+              <div key={key++} className="flex gap-2 items-start">
+                <span className="text-accent font-semibold text-xs mt-0.5 w-4 flex-shrink-0 text-right">{olMatch[1]}.</span>
+                <span className="text-ink-soft leading-relaxed">{formatInline(olMatch[2])}</span>
+              </div>
+            );
             continue;
           }
 
-          // Not a list — flush any pending list
+          // Not a list — flush
           flushList();
 
-          // Heading: ### text or ## text
+          // Heading: ### text
           if (trimmed.startsWith('### ')) {
-            result.push(<p key={key++} className="font-semibold text-ink mt-2 mb-0.5 text-sm">{formatInline(trimmed.slice(4))}</p>);
+            result.push(
+              <div key={key++} className="mt-3 mb-1">
+                <p className="font-semibold text-ink text-[13px]">{formatInline(trimmed.slice(4))}</p>
+              </div>
+            );
             continue;
           }
+          // Heading: ## text
           if (trimmed.startsWith('## ')) {
-            result.push(<p key={key++} className="font-semibold text-ink mt-2 mb-0.5 text-sm">{formatInline(trimmed.slice(3))}</p>);
+            result.push(
+              <div key={key++} className="mt-3 mb-1 pb-1 border-b border-line/40">
+                <p className="font-bold text-ink text-sm">{formatInline(trimmed.slice(3))}</p>
+              </div>
+            );
             continue;
           }
 
           // Normal paragraph
-          result.push(<p key={key++} className="my-0.5 text-ink-soft">{formatInline(trimmed)}</p>);
+          result.push(<p key={key++} className="my-0.5 text-ink-soft leading-relaxed">{formatInline(trimmed)}</p>);
         }
 
         flushList();
+        flushTable();
         return result;
       } catch {
         return [<span key="fallback">{content}</span>];
       }
     }, [content]);
 
-    return <div className="space-y-0 break-words overflow-hidden">{elements}</div>;
+    return <div className="space-y-0.5 break-words overflow-hidden">{elements}</div>;
   } catch {
     return <div className="whitespace-pre-wrap">{content}</div>;
   }

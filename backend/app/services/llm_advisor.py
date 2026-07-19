@@ -45,15 +45,18 @@ async def _groq_completion(prompt: str, max_tokens: int = 512, model: str | None
         response = await client.chat.completions.create(
             model=chosen_model,
             messages=[
-                {"role": "system", "content": "You are a procurement advisor for ProcureAI. Be professional, concise, and use specific numbers. Never use markdown formatting."},
+                {"role": "system", "content": "You are a procurement advisor for ProcureAI. Be professional, concise, and use specific numbers. Never use markdown formatting. Do NOT use <think> tags or any chain-of-thought wrapper."},
                 {"role": "user", "content": prompt},
             ],
             temperature=env.AI_TEMPERATURE,
             max_tokens=max_tokens,
+            extra_body={"chat_template_kwargs": {"enable_thinking": False}},
         )
         text = (response.choices[0].message.content or "").strip()
-        # Strip Qwen <think>...</think> chain-of-thought blocks
+        # Strip Qwen <think>...</think> chain-of-thought blocks (complete)
         text = re.sub(r"<think>.*?</think>", "", text, flags=re.DOTALL).strip()
+        # Strip truncated/unclosed <think> blocks (model hit max_tokens before closing)
+        text = re.sub(r"<think>.*", "", text, flags=re.DOTALL).strip()
         # Clean up any markdown the model might add
         text = text.replace("**", "").replace("*", "").replace("#", "").strip()
         return text

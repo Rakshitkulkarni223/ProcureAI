@@ -72,7 +72,13 @@ DEVELOPER_PROMPT = """CONTEXT:
   * industrial → Tools, safety equipment, hardware
 - Marketplace suppliers vary by category (e.g. Amazon/Flipkart for electronics, BigBasket/Blinkit for grocery).
 - Users can also add private suppliers via Supplier Hub.
-- Recommendation modes: balanced, lowest_cost, lowest_risk, fastest_delivery, highest_reliability, best_long_term_value
+- Recommendation modes (always use the LABEL when talking to users, use the KEY only in tool calls):
+  * balanced → "Balanced"
+  * lowest_cost → "Lowest Cost"
+  * lowest_risk → "Lowest Risk"
+  * fastest_delivery → "Fastest Delivery"
+  * highest_reliability → "Highest Reliability"
+  * best_long_term_value → "Best Long-Term Value"
 
 FORMATTING:
 - Use ₹ symbol for prices (e.g. ₹1,500)
