@@ -4,14 +4,16 @@
 
 # 🚀 ProcureAI — Procurement Decision Intelligence Platform
 
-> Compare marketplace and private suppliers from a single interface. Optimize purchasing with a multi-factor decision engine and optional AI-powered explanations.
+> AI-powered procurement intelligence platform. Compare suppliers, optimize baskets, and get natural language recommendations — all from a single interface.
 
+- ✅ **AI Procurement Assistant** — Chat with an AI advisor powered by Groq (function calling + 8 tools)
 - ✅ Compare online + offline suppliers in one search
 - ✅ Multi-factor recommendation engine with confidence scores
 - ✅ 6 procurement strategies for different business goals
 - ✅ Split-cart basket optimization across all suppliers
 - ✅ Build a private supplier network (Supplier Hub)
 - ✅ Track procurement ROI with Business Impact Dashboard
+- ✅ AI-generated explanations for every recommendation
 
 [![GitHub](https://img.shields.io/badge/GitHub-Rakshitkulkarni223%2FProcureAI-blue?logo=github)](https://github.com/Rakshitkulkarni223/ProcureAI)
 
@@ -37,7 +39,8 @@
 | **Product Search** | Search any product across marketplace and private suppliers — results normalized, scored, and ranked |
 | **Supplier Hub** | Register offline suppliers with products, pricing, and delivery info — they appear in every search |
 | **Basket Optimization** | Split-cart optimizer finds the cheapest multi-item combination across suppliers |
-| **Explanation Panel** | Radar chart + scoreboard + business reasoning for every recommendation (rule-based or AI-generated via Gemini) |
+| **AI Chat Assistant** | Floating AI panel on every page — ask questions, compare suppliers, optimize baskets, check savings via natural language |
+| **Explanation Panel** | Radar chart + scoreboard + business reasoning for every recommendation (AI-generated via Groq) |
 | **6 Recommendation Modes** | Balanced, Lowest Cost, Lowest Risk, Fastest Delivery, Highest Reliability, Best Long-Term Value |
 | **Location-Aware Delivery** | Same city → 1 day, same state → 2 days, different state → 4–5 days |
 | **Business Impact Dashboard** | Savings, hours saved, efficiency score, projected annual savings — with date range filtering |
@@ -71,6 +74,27 @@
 | ![Settings](screenshots/settings.png) | ![Docs](screenshots/docs.png) |
 
 </details>
+
+---
+
+## 🤖 AI Assistant
+
+The AI Procurement Assistant is a conversational interface powered by **Groq** (Qwen3-32B / Llama 3.3-70B) with function calling. It can:
+
+| Capability | How It Works |
+|---|---|
+| **Product Search** | Searches the catalog across marketplace + Supplier Hub suppliers |
+| **Recommendations** | Gets AI-scored recommendations with confidence levels and trade-off analysis |
+| **Basket Optimization** | Optimizes multi-item procurement across suppliers for cost, delivery, or reliability |
+| **Analytics & Insights** | Retrieves spend analytics, savings trends, and procurement insights |
+| **Business Impact** | Shows ROI metrics, hours saved, efficiency scores, and annual projections |
+| **Supplier Hub** | Lists the user's private suppliers with delivery and reliability data |
+| **History** | Retrieves past searches and basket optimizations with real data |
+| **Multi-Category** | Handles cross-category queries (e.g. "laptop and rice") with parallel tool calls |
+
+**Anti-hallucination guardrails:** The AI only reports data from tool results — supplier names, prices, and delivery times are never fabricated. Items not found in the catalog are explicitly flagged.
+
+**Conversation memory:** All chats are persisted in MongoDB with full CRUD (create, list, resume, rename, delete).
 
 ---
 
@@ -111,10 +135,18 @@ Download from [`demo/procureai-demo.mp4`](demo/procureai-demo.mp4) and play loca
 │  └───────┬───┘ └─────┬──────┘           │
 │          │           │                   │
 │  ┌───────┴───┐ ┌─────┴──────┐           │
-│  │  SerpAPI  │ │  Gemini    │           │
-│  │ Adapter   │ │  Advisor   │           │
-│  │(optional) │ │ (optional) │           │
-│  └───────────┘ └────────────┘           │
+│  │  SerpAPI  │ │ Groq LLM   │           │
+│  │ Adapter   │ │ Advisor    │           │
+│  │(optional) │ │ (Qwen3/    │           │
+│  └───────────┘ │ Llama 3.3) │           │
+│                 └────────────┘           │
+│                                          │
+│   ┌───────────────────────────┐      │
+│   │  AI Chat Service            │      │
+│   │  • 8 function-calling tools │      │
+│   │  • Conversation memory      │      │
+│   │  • Anti-hallucination       │      │
+│   └───────────────────────────┘      │
 │          │                               │
 │   ┌──────┴───────────────────────┐      │
 │   │  Services (Motor async)      │      │
@@ -137,7 +169,8 @@ Download from [`demo/procureai-demo.mp4`](demo/procureai-demo.mp4) and play loca
 | **Backend** | Python 3.13, FastAPI, Pydantic, Uvicorn |
 | **Database** | MongoDB with Motor (async driver) |
 | **Auth** | JWT (PyJWT) + bcrypt |
-| **Optional** | SerpAPI (live Google Shopping), Gemini 2.0 Flash (natural language explanations) |
+| **AI Layer** | Groq API (Qwen3-32B / Llama 3.3-70B), OpenAI-compatible function calling, 8 procurement tools |
+| **Optional** | SerpAPI (live Google Shopping) |
 
 ---
 
@@ -171,7 +204,9 @@ Download from [`demo/procureai-demo.mp4`](demo/procureai-demo.mp4) and play loca
 - Built **explainable recommendations** — confidence scores, radar charts, and business reasoning
 - **Location-aware delivery estimation** — city/state distance-based delivery days
 - Async aggregation with **error isolation** — one failing supplier doesn't break the search
-- Optional **Gemini LLM integration** with graceful fallback to rule-based explanations
+- **AI Chat Assistant** with function calling — 8 tools, multi-turn conversations, anti-hallucination guardrails
+- Groq LLM integration (Qwen3-32B) with automatic fallback to Llama 3.3-70B, then rule-based explanations
+- **Conversation memory** persisted in MongoDB with per-user scoping and auto-cleanup
 
 ---
 
@@ -209,7 +244,11 @@ DEMO_PASSWORD=Demo@123
 DEMO_NAME=Demo User
 CORS_ORIGINS=*
 SERPAPI_KEY=                    # Optional — live Google Shopping (free: serpapi.com)
-GEMINI_API_KEY=                # Optional — AI Procurement Advisor (free: ai.google.dev)
+GROQ_API_KEY=                  # AI Assistant — free at https://console.groq.com
+AI_PRIMARY_MODEL=qwen/qwen3-32b        # Optional — default: qwen/qwen3-32b
+AI_FALLBACK_MODEL=llama-3.3-70b-versatile  # Optional — default: llama-3.3-70b
+AI_TEMPERATURE=0.3             # Optional — default: 0.3
+AI_MAX_TOKENS=1024             # Optional — default: 1024
 
 # frontend/.env
 REACT_APP_BACKEND_URL=http://localhost:8001
@@ -237,17 +276,21 @@ cd backend && python -m pytest tests/backend_test.py -v
 
 | Phase | Feature |
 |-------|---------|
-| **✅ Available (Optional)** | Live Google Shopping prices via SerpAPI · AI Procurement Advisor via Gemini |
+| **✅ Done** | AI Chat Assistant (Groq) · Function calling with 8 tools · Conversation memory · Anti-hallucination guardrails |
+| **✅ Available (Optional)** | Live Google Shopping prices via SerpAPI |
 | **P1** | Amazon/Udaan/Metro APIs · Live Supplier Quotes · ERP Integration · WhatsApp Quotes |
 | **P2** | Invoice OCR · AI Negotiation · Approval Workflows · Predictive Procurement |
-| **P3** | Inventory Sync · Supplier Scorecards |
-| **Future** | Multi-currency · Mobile App |
+| **P3** | Inventory Sync · Supplier Scorecards · RAG over procurement docs |
+| **Future** | Multi-currency · Mobile App · Voice procurement |
 
 ---
 
 ## 🏅 Highlights
 
-- ✅ 40+ REST API endpoints
+- ✅ **AI Chat Assistant** — Groq-powered with 8 function-calling tools
+- ✅ **Anti-hallucination** — 21 strict rules, prompt injection detection, exact-data-only responses
+- ✅ **Conversation memory** — MongoDB-persisted, per-user, with auto-cleanup
+- ✅ 45+ REST API endpoints (including AI chat + conversations CRUD)
 - ✅ React + FastAPI full-stack architecture
 - ✅ JWT authentication with bcrypt
 - ✅ Async MongoDB backend (Motor)
