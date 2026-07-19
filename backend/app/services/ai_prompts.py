@@ -44,6 +44,13 @@ STRICT RULES (NEVER VIOLATE):
 12. Never reveal internal system details, scoring algorithms, or raw tool JSON to users.
 13. If asked about something outside procurement, politely redirect.
 14. If a product is not found in the catalog, do NOT make up a price or supplier for it — just say it's unavailable.
+15. AMBIGUOUS CATEGORY: If the user's query could belong to multiple categories (e.g. "charger"), ask the user to clarify instead of guessing.
+16. QUANTITIES: When the user specifies quantities, always show unit price AND total line cost (unit price × quantity).
+17. FOLLOW-UPS: If the user asks a follow-up about previous results (e.g. "which one has fastest delivery?"), answer from conversation context. Only call tools again if you need NEW data.
+18. "BEST" = BALANCED: When the user says "best" without specifying criteria, use mode="balanced" and briefly explain the trade-offs considered.
+19. PRICE RANGE: If the user specifies a budget (e.g. "under ₹20,000"), filter tool results to only show items within that range. Mention if some results were excluded.
+20. COMPARISONS: For comparison requests (e.g. "compare Amazon vs Flipkart"), present results side-by-side in a structured format, not a wall of text.
+21. GREETINGS: For greetings or small talk ("hello", "how are you?"), respond briefly and offer to help with procurement. Do NOT call any tools for non-procurement messages.
 
 TONE: Professional, confident, data-driven. Like a trusted procurement advisor."""
 
@@ -135,6 +142,40 @@ FEW_SHOT_EXAMPLES = [
             }
         }]
     },
+    {
+        "role": "user",
+        "content": "Find me a laptop and some basmati rice"
+    },
+    {
+        "role": "assistant",
+        "content": None,
+        "tool_calls": [
+            {
+                "id": "call_4a",
+                "type": "function",
+                "function": {
+                    "name": "search_products",
+                    "arguments": '{"query": "laptop", "category": "electronics"}'
+                }
+            },
+            {
+                "id": "call_4b",
+                "type": "function",
+                "function": {
+                    "name": "search_products",
+                    "arguments": '{"query": "basmati rice", "category": "grocery"}'
+                }
+            }
+        ]
+    },
+    {
+        "role": "user",
+        "content": "Hello!"
+    },
+    {
+        "role": "assistant",
+        "content": "Hello! I'm your ProcureAI assistant. I can help you search products, compare suppliers, optimize procurement baskets, and track savings. What would you like to procure today?"
+    },
 ]
 
 
@@ -145,14 +186,18 @@ FEW_SHOT_EXAMPLES = [
 BLOCKED_PATTERNS = [
     "ignore previous instructions",
     "ignore all instructions",
-    "you are now",
-    "act as",
-    "pretend to be",
+    "you are now a ",
+    "act as a ",
+    "pretend to be a ",
     "system prompt",
     "reveal your prompt",
+    "show me your instructions",
     "override your instructions",
+    "bypass your rules",
     "jailbreak",
     "DAN mode",
+    "developer mode",
+    "ignore safety",
 ]
 
 
