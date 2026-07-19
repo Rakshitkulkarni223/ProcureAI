@@ -112,8 +112,8 @@ The Procurement AI Assistant is a conversational interface powered by **Groq** (
 | **Analytics** | Retrieves spend analytics, savings trends, and procurement insights |
 | **Business Impact** | Shows ROI metrics, hours saved, efficiency scores, and annual projections |
 | **Supplier Hub** | Lists the user's private suppliers with delivery and reliability data |
-| **History** | Retrieves past searches and basket optimizations with real data |
-| **Decision Explanation** | Generates natural-language explanations for why a recommendation was made |
+| **Search History** | Retrieves past procurement search history |
+| **Basket History** | Retrieves past basket optimizations with actual items and results |
 
 **Grounded responses:** The AI only reports data returned by backend tools — supplier names, prices, and delivery times are never fabricated. Items not found in the catalog are explicitly flagged.
 
@@ -359,6 +359,6 @@ cd backend && python -m pytest tests/backend_test.py -v
 ---
 
 <p align="center">
-  <b>ProcureAI</b> — Helping businesses move from price comparison to explainable procurement decisions.<br/>
+  <b>ProcureAI</b> — Transforming procurement from price comparison to intelligent, explainable decision-making.<br/>
   <a href="https://github.com/Rakshitkulkarni223/ProcureAI">GitHub</a>
 </p>

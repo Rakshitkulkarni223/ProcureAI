@@ -280,7 +280,7 @@ const GENERAL_SECTIONS: DocSection[] = [
     content: (
       <div className="space-y-4 text-sm text-ink-soft leading-relaxed">
         <p>
-          Every recommendation is <strong className="text-ink">transparent and auditable</strong>. The decision engine uses rule-based weighted scoring, with optional Gemini-generated natural language explanations.
+          Every recommendation is <strong className="text-ink">transparent and auditable</strong>. The decision engine uses rule-based weighted scoring, with optional Groq-generated natural language explanations.
         </p>
         <div className="rounded-md border border-line bg-bg p-4">
           <h4 className="mb-2 font-semibold text-ink">What the Decision Engine Evaluates (7 Factors)</h4>
@@ -695,7 +695,7 @@ const DEV_SECTIONS: DocSection[] = [
               <li>• Pydantic schema validation</li>
               <li>• Multi-provider mock adapters</li>
               <li>• Optional SerpAPI (live Google Shopping prices)</li>
-              <li>• Optional Gemini AI (natural language explanations)</li>
+              <li>• Groq AI Assistant (Qwen 3.6-27B / Llama 3.1-8B)</li>
               <li>• Weighted decision engine</li>
               <li>• Date-filtered analytics (from/to query params)</li>
               <li>• Business impact API (hours saved, efficiency, ROI)</li>
@@ -727,7 +727,7 @@ const DEV_SECTIONS: DocSection[] = [
         <ul className="space-y-1 text-muted"><li>• Python 3.11+</li><li>• Node.js 18+ (frontend only)</li><li>• MongoDB 6+ (local or Atlas)</li><li>• Git</li></ul>
         <div className="space-y-3">
           <CodeBlock title="1. Clone & install" code={`git clone https://github.com/Rakshitkulkarni223/ProcureAI.git\ncd ProcureAI\n\n# Backend\ncd backend && pip install -r requirements.txt\n\n# Frontend\ncd ../frontend && npm install`} />
-          <CodeBlock title="2. Environment variables" code={`# backend/.env\nMONGO_URL=mongodb://localhost:27017/procureai\nDB_NAME=procureai\nJWT_SECRET=your-secret-key\nPORT=8001\nSERPAPI_KEY=              # Optional — live Google Shopping prices\nGEMINI_API_KEY=           # Optional — AI Procurement Advisor\n\n# frontend/.env (optional)\nREACT_APP_BACKEND_URL=http://localhost:8001`} />
+          <CodeBlock title="2. Environment variables" code={`# backend/.env\nMONGO_URL=mongodb://localhost:27017/procureai\nDB_NAME=procureai\nJWT_SECRET=your-secret-key\nPORT=8001\nSERPAPI_KEY=              # Optional — live Google Shopping prices\nGROQ_API_KEY=             # AI Assistant — free at console.groq.com\n\n# frontend/.env (optional)\nREACT_APP_BACKEND_URL=http://localhost:8001`} />
           <CodeBlock title="3. Run" code={`# Terminal 1 — Backend\ncd backend && uvicorn server:app --host 0.0.0.0 --port 8001 --reload\n\n# Terminal 2 — Frontend\ncd frontend && npm start`} />
         </div>
         <p className="text-xs text-muted">Backend: <code className="rounded bg-bg px-1.5 py-0.5 text-accent">localhost:8001</code> · Frontend: <code className="rounded bg-bg px-1.5 py-0.5 text-accent">localhost:3000</code></p>
@@ -741,7 +741,7 @@ const DEV_SECTIONS: DocSection[] = [
     content: (
       <div className="space-y-4 text-sm text-ink-soft leading-relaxed">
         <div className="grid gap-4 sm:grid-cols-2">
-          <CodeBlock title="backend/" code={`server.py              # FastAPI entry point (Uvicorn)\nrequirements.txt       # Python dependencies\napp/\n  ├── config.py        # env vars, categories, suppliers, catalog\n  ├── database.py      # Motor async MongoDB client\n  ├── auth.py          # JWT + bcrypt, auth dependency\n  ├── schemas.py       # Pydantic validation models\n  ├── routes.py        # All API routes (/api prefix)\n  ├── routes_supplier.py # Supplier Hub CRUD routes\n  ├── seed.py          # DB seeder\n  └── services/\n      ├── core.py      # PRNG, CatalogResolver, Search, Recommendation\n      ├── basket.py    # Basket optimization\n      ├── analytics.py # Dashboard, History, Preferences\n      ├── intelligence.py # Procurement intelligence engine\n      ├── supplier_hub.py # Supplier Hub CRUD service\n      ├── serpapi_adapter.py # Optional live Google Shopping\n      └── llm_advisor.py # Optional Gemini AI advisor`} />
+          <CodeBlock title="backend/" code={`server.py              # FastAPI entry point (Uvicorn)\nrequirements.txt       # Python dependencies\napp/\n  ├── config.py        # env vars, categories, suppliers, catalog\n  ├── database.py      # Motor async MongoDB client\n  ├── auth.py          # JWT + bcrypt, auth dependency\n  ├── schemas.py       # Pydantic validation models\n  ├── routes.py        # All API routes (/api prefix)\n  ├── routes_supplier.py # Supplier Hub CRUD routes\n  ├── seed.py          # DB seeder\n  └── services/\n      ├── core.py      # PRNG, CatalogResolver, Search, Recommendation\n      ├── basket.py    # Basket optimization\n      ├── analytics.py # Dashboard, History, Preferences\n      ├── intelligence.py # Procurement intelligence engine\n      ├── supplier_hub.py # Supplier Hub CRUD service\n      ├── serpapi_adapter.py # Optional live Google Shopping\n      └── llm_advisor.py # Groq AI advisor (Qwen / Llama)`} />
           <CodeBlock title="frontend/" code={`src/\n  ├── components/    # reusable UI\n  │   └── ui/        # Button, Card, Badge…\n  ├── context/       # AuthContext, ThemeContext, LocationContext\n  ├── hooks/         # useSearchSuggestions, useWatchlist\n  ├── lib/           # api, bloomFilter, exportUtils\n  ├── pages/         # route-level pages\n  ├── types.ts       # TypeScript interfaces\n  ├── App.tsx        # router & providers\n  └── index.css      # Tailwind + CSS vars`} />
         </div>
       </div>

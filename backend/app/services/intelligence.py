@@ -986,7 +986,7 @@ class BasketIntelligenceService:
                 )
             else:
                 parts.append(
-                    f"INSIGHT: With {consolidation_label.lower()} consolidation and "
+                    f"INSIGHT: With {consolidation_label.lower()} and "
                     f"{risk_level.lower()} risk, this basket balances cost efficiency "
                     f"and supply chain stability well."
                 )

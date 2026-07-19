@@ -2,7 +2,7 @@
 LLM Procurement Advisor — Groq-powered natural language explanations.
 
 Generates human-readable AI procurement advice from recommendation data
-using Groq API (Qwen3 32B / Llama 3.3 70B). Falls back to template-based
+using Groq API (Qwen 3.6-27B / Llama 3.1-8B). Falls back to template-based
 explanation if no API key is set or if the API call fails.
 """
 from __future__ import annotations
@@ -205,36 +205,18 @@ def _template_fallback(recommendation: dict, products: list[dict], mode: str) ->
 async def generate_explanation(recommendation: dict, products: list[dict], mode: str = "balanced") -> str:
     """Generate a natural language AI explanation for a procurement recommendation.
 
-    Uses Groq API if GROQ_API_KEY is set, falls back to Gemini if GEMINI_API_KEY
-    is set, otherwise falls back to template. Never raises — returns empty string
-    on failure.
+    Uses Groq API if GROQ_API_KEY is set, otherwise falls back to template.
+    Never raises — returns empty string on failure.
     """
     try:
         prompt = _build_prompt(recommendation, products, mode)
         if not prompt:
             return _template_fallback(recommendation, products, mode)
 
-        # Try Groq first
         if env.GROQ_API_KEY:
             text = await _groq_completion(prompt, max_tokens=512)
             if text:
                 return text
-
-        # Gemini legacy fallback (remove once Groq is confirmed working)
-        if env.GEMINI_API_KEY:
-            try:
-                from google import genai
-                client = genai.Client(api_key=env.GEMINI_API_KEY)
-                response = client.models.generate_content(
-                    model="gemini-2.0-flash",
-                    contents=prompt,
-                )
-                text = response.text.strip() if response.text else ""
-                if text:
-                    text = text.replace("**", "").replace("*", "").replace("#", "").strip()
-                    return text
-            except Exception as gemini_err:
-                print(f"[WARN] Gemini fallback failed: {gemini_err}")
 
         return _template_fallback(recommendation, products, mode)
 
@@ -310,7 +292,7 @@ Do NOT use markdown, bullet points, or bold. Write plain text only."""
 async def generate_basket_explanation(intelligence: dict) -> str:
     """Generate an AI explanation for basket optimization.
 
-    Uses Groq if available, falls back to Gemini, then template aiSummary.
+    Uses Groq if available, falls back to deterministic template.
     """
     try:
         existing_summary = intelligence.get("aiSummary", "")
@@ -319,27 +301,10 @@ async def generate_basket_explanation(intelligence: dict) -> str:
         if not prompt:
             return existing_summary
 
-        # Try Groq first
         if env.GROQ_API_KEY:
             text = await _groq_completion(prompt, max_tokens=512)
             if text:
                 return text
-
-        # Gemini legacy fallback
-        if env.GEMINI_API_KEY:
-            try:
-                from google import genai
-                client = genai.Client(api_key=env.GEMINI_API_KEY)
-                response = client.models.generate_content(
-                    model="gemini-2.0-flash",
-                    contents=prompt,
-                )
-                text = response.text.strip() if response.text else ""
-                if text:
-                    text = text.replace("**", "").replace("*", "").replace("#", "").strip()
-                    return text
-            except Exception as gemini_err:
-                print(f"[WARN] Gemini basket fallback failed: {gemini_err}")
 
         return existing_summary
 
@@ -401,7 +366,7 @@ Write the explanation now. Start with the supplier name."""
 async def generate_longterm_explanation(long_term: dict, products: list[dict]) -> str:
     """Generate an AI explanation for long-term recommendation.
 
-    Uses Groq if available, falls back to Gemini, then template.
+    Uses Groq if available, falls back to deterministic template.
     """
     try:
         reasons = long_term.get("reasons", [])
@@ -411,27 +376,10 @@ async def generate_longterm_explanation(long_term: dict, products: list[dict]) -
         if not prompt:
             return fallback
 
-        # Try Groq first
         if env.GROQ_API_KEY:
             text = await _groq_completion(prompt, max_tokens=512)
             if text:
                 return text
-
-        # Gemini legacy fallback
-        if env.GEMINI_API_KEY:
-            try:
-                from google import genai
-                client = genai.Client(api_key=env.GEMINI_API_KEY)
-                response = client.models.generate_content(
-                    model="gemini-2.0-flash",
-                    contents=prompt,
-                )
-                text = response.text.strip() if response.text else ""
-                if text:
-                    text = text.replace("**", "").replace("*", "").replace("#", "").strip()
-                    return text
-            except Exception as gemini_err:
-                print(f"[WARN] Gemini long-term fallback failed: {gemini_err}")
 
         return fallback
 

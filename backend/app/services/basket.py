@@ -316,7 +316,7 @@ class BasketOptimizationService:
                 list(gathered), req.get("consolidationPenalty", 0) or 0, weight_profile, recommendation_mode
             )
 
-            # Enrich basket intelligence with Gemini AI summary
+            # Enrich basket intelligence with LLM AI summary
             try:
                 intelligence = plan.get("intelligence")
                 if intelligence and intelligence.get("aiSummary"):
