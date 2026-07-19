@@ -329,7 +329,75 @@ const GENERAL_SECTIONS: DocSection[] = [
     ),
   },
 
-  /* ── 6. BASKET OPTIMIZATION ── */
+  /* ── 6. AI CHAT ASSISTANT ── */
+  {
+    id: 'g-ai-assistant',
+    title: 'AI Chat Assistant',
+    icon: Brain,
+    badge: { label: 'New', tone: 'accent' },
+    content: (
+      <div className="space-y-4 text-sm text-ink-soft leading-relaxed">
+        <p>
+          The <strong className="text-ink">ProcureAI Advisor</strong> is a conversational AI assistant available on every page.
+          It connects to your live procurement data through 8 backend tools — every answer is grounded in real supplier information.
+        </p>
+        <div className="rounded-md border border-line bg-bg p-4">
+          <h4 className="mb-3 font-semibold text-ink">How to use it</h4>
+          <ol className="space-y-2 text-xs text-muted list-decimal list-inside">
+            <li>Click the <strong className="text-ink">Ask ProcureAI</strong> button (bottom-right corner of any page).</li>
+            <li>Type your question — or use one of the suggested prompts.</li>
+            <li>The assistant fetches live data, then responds with formatted tables, summaries, and insights.</li>
+            <li>Continue the conversation — the assistant remembers context within each chat.</li>
+          </ol>
+        </div>
+        <div className="rounded-md border border-line bg-bg p-4">
+          <h4 className="mb-3 font-semibold text-ink">What you can ask</h4>
+          <div className="grid gap-2 sm:grid-cols-2">
+            {[
+              { title: 'Compare Suppliers', desc: '"Compare laptop prices across suppliers"' },
+              { title: 'Optimize Baskets', desc: '"Optimize my grocery basket"' },
+              { title: 'Check Savings', desc: '"How much have I saved this month?"' },
+              { title: 'Find Products', desc: '"Find the fastest delivery for office chairs"' },
+              { title: 'Get Analytics', desc: '"Show my spend breakdown by category"' },
+              { title: 'List Suppliers', desc: '"Which suppliers do I have in electronics?"' },
+            ].map((item) => (
+              <div key={item.title} className="flex gap-2 rounded border border-line bg-surface px-3 py-2">
+                <CheckCircle2 size={12} className="mt-0.5 shrink-0 text-success" />
+                <div><span className="text-xs font-semibold text-ink">{item.title}</span><p className="text-[11px] text-muted italic">{item.desc}</p></div>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <div className="rounded-md border border-line bg-bg p-4">
+            <h4 className="mb-2 font-semibold text-ink">Conversation History</h4>
+            <ul className="space-y-1 text-xs text-muted">
+              <li><CheckCircle2 size={11} className="mr-1 inline text-success" /> All chats are saved automatically</li>
+              <li><CheckCircle2 size={11} className="mr-1 inline text-success" /> Resume any past conversation</li>
+              <li><CheckCircle2 size={11} className="mr-1 inline text-success" /> Delete old chats you no longer need</li>
+              <li><CheckCircle2 size={11} className="mr-1 inline text-success" /> Start a new chat anytime with the <strong className="text-ink">+</strong> button</li>
+            </ul>
+          </div>
+          <div className="rounded-md border border-line bg-bg p-4">
+            <h4 className="mb-2 font-semibold text-ink">AI Optimization Strategies</h4>
+            <ul className="space-y-1 text-xs text-muted">
+              <li>• <strong className="text-ink">Lowest Cost</strong> — Minimize total spend</li>
+              <li>• <strong className="text-ink">Lowest Risk</strong> — Diversify across suppliers</li>
+              <li>• <strong className="text-ink">Fastest Delivery</strong> — Prioritize speed</li>
+              <li>• <strong className="text-ink">Highest Reliability</strong> — Favor reliable suppliers</li>
+              <li>• <strong className="text-ink">Best Long-Term Value</strong> — Sustained savings</li>
+            </ul>
+          </div>
+        </div>
+        <div className="rounded-md border border-accent/20 bg-accent-soft p-4">
+          <h4 className="mb-1 flex items-center gap-2 text-xs font-semibold text-accent"><CheckCircle2 size={14} /> Pro Tip</h4>
+          <p className="text-xs text-ink-soft">After optimizing a basket, ask the assistant to <strong className="text-ink">re-optimize using a different strategy</strong> — like "re-optimize with lowest risk" — to see how supplier allocation changes.</p>
+        </div>
+      </div>
+    ),
+  },
+
+  /* ── 7. BASKET OPTIMIZATION ── */
   {
     id: 'g-basket',
     title: 'Basket Optimization',
@@ -741,7 +809,7 @@ const DEV_SECTIONS: DocSection[] = [
     content: (
       <div className="space-y-4 text-sm text-ink-soft leading-relaxed">
         <div className="grid gap-4 sm:grid-cols-2">
-          <CodeBlock title="backend/" code={`server.py              # FastAPI entry point (Uvicorn)\nrequirements.txt       # Python dependencies\napp/\n  ├── config.py        # env vars, categories, suppliers, catalog\n  ├── database.py      # Motor async MongoDB client\n  ├── auth.py          # JWT + bcrypt, auth dependency\n  ├── schemas.py       # Pydantic validation models\n  ├── routes.py        # All API routes (/api prefix)\n  ├── routes_supplier.py # Supplier Hub CRUD routes\n  ├── seed.py          # DB seeder\n  └── services/\n      ├── core.py      # PRNG, CatalogResolver, Search, Recommendation\n      ├── basket.py    # Basket optimization\n      ├── analytics.py # Dashboard, History, Preferences\n      ├── intelligence.py # Procurement intelligence engine\n      ├── supplier_hub.py # Supplier Hub CRUD service\n      ├── serpapi_adapter.py # Optional live Google Shopping\n      └── llm_advisor.py # Groq AI advisor (Qwen / Llama)`} />
+          <CodeBlock title="backend/" code={`server.py              # FastAPI entry point (Uvicorn)\nrequirements.txt       # Python dependencies\napp/\n  ├── config.py        # env vars, categories, suppliers, catalog\n  ├── database.py      # Motor async MongoDB client\n  ├── auth.py          # JWT + bcrypt, auth dependency\n  ├── schemas.py       # Pydantic validation models\n  ├── routes.py        # All API routes (/api prefix)\n  ├── routes_supplier.py # Supplier Hub CRUD routes\n  ├── seed.py          # DB seeder\n  └── services/\n      ├── core.py      # PRNG, CatalogResolver, Search, Recommendation\n      ├── basket.py    # Basket optimization\n      ├── analytics.py # Dashboard, History, Preferences\n      ├── intelligence.py # Procurement intelligence engine\n      ├── supplier_hub.py # Supplier Hub CRUD service\n      ├── serpapi_adapter.py # Optional live Google Shopping\n      ├── llm_advisor.py # Groq AI advisor (Qwen / Llama)\n      ├── ai_service.py  # AI chat orchestrator + tool calling\n      ├── ai_tools.py    # 8 procurement function-calling tools\n      ├── ai_prompts.py  # System prompt + few-shot examples\n      └── ai_memory.py   # Conversation persistence (MongoDB)`} />
           <CodeBlock title="frontend/" code={`src/\n  ├── components/    # reusable UI\n  │   └── ui/        # Button, Card, Badge…\n  ├── context/       # AuthContext, ThemeContext, LocationContext\n  ├── hooks/         # useSearchSuggestions, useWatchlist\n  ├── lib/           # api, bloomFilter, exportUtils\n  ├── pages/         # route-level pages\n  ├── types.ts       # TypeScript interfaces\n  ├── App.tsx        # router & providers\n  └── index.css      # Tailwind + CSS vars`} />
         </div>
       </div>
@@ -812,6 +880,11 @@ const DEV_SECTIONS: DocSection[] = [
                 ['POST', '/suppliers', '✓', 'Add a Supplier Hub supplier'],
                 ['GET', '/suppliers/:id/products', '✓', 'List supplier products'],
                 ['POST', '/suppliers/:id/products', '✓', 'Add product to supplier'],
+                ['POST', '/ai/chat', '✓', 'Send message to AI assistant'],
+                ['GET', '/ai/conversations', '✓', 'List AI conversations'],
+                ['GET', '/ai/conversations/:id', '✓', 'Get conversation by ID'],
+                ['DELETE', '/ai/conversations/:id', '✓', 'Delete a conversation'],
+                ['GET', '/ai/health', '✗', 'AI service health check'],
               ].map(([method, path, auth, desc]) => (
                 <tr key={path}>
                   <td className="px-3 py-2"><span className={cn('rounded px-1.5 py-0.5 text-[10px] font-bold', method === 'GET' ? 'bg-accent-soft text-accent' : method === 'POST' ? 'bg-success-bg text-success' : method === 'PUT' ? 'bg-warning-bg text-warning' : 'bg-danger/10 text-danger')}>{method}</span></td>
@@ -919,6 +992,7 @@ const DEV_SECTIONS: DocSection[] = [
             { name: 'userpreferences', desc: 'Per-user settings and weight profiles', fields: 'userId, defaultCategory, defaultSort, weightProfile, city, weights' },
             { name: 'categories', desc: 'Product categories (seeded)', fields: 'name, label, icon, suppliers[]' },
             { name: 'suppliers', desc: 'Marketplace supplier definitions (seeded)', fields: 'name, label, category, city, state' },
+            { name: 'ai_conversations', desc: 'AI chat conversations per user', fields: 'userId, title, messages[], metadata, createdAt, updatedAt' },
           ].map((c) => (
             <div key={c.name} className="rounded-md border border-line bg-bg p-3">
               <code className="text-xs font-bold text-accent">{c.name}</code>
