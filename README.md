@@ -79,7 +79,7 @@
 
 ## 🤖 AI Assistant
 
-The AI Procurement Assistant is a conversational interface powered by **Groq** (Qwen3-32B / Llama 3.3-70B) with function calling. It can:
+The AI Procurement Assistant is a conversational interface powered by **Groq** (Qwen 3.6-27B / Llama 3.1-8B) with function calling. It can:
 
 | Capability | How It Works |
 |---|---|
@@ -169,7 +169,7 @@ Download from [`demo/procureai-demo.mp4`](demo/procureai-demo.mp4) and play loca
 | **Backend** | Python 3.13, FastAPI, Pydantic, Uvicorn |
 | **Database** | MongoDB with Motor (async driver) |
 | **Auth** | JWT (PyJWT) + bcrypt |
-| **AI Layer** | Groq API (Qwen3-32B / Llama 3.3-70B), OpenAI-compatible function calling, 8 procurement tools |
+| **AI Layer** | Groq API (Qwen 3.6-27B / Llama 3.1-8B), OpenAI-compatible function calling, 8 procurement tools |
 | **Optional** | SerpAPI (live Google Shopping) |
 
 ---
@@ -205,7 +205,7 @@ Download from [`demo/procureai-demo.mp4`](demo/procureai-demo.mp4) and play loca
 - **Location-aware delivery estimation** — city/state distance-based delivery days
 - Async aggregation with **error isolation** — one failing supplier doesn't break the search
 - **AI Chat Assistant** with function calling — 8 tools, multi-turn conversations, anti-hallucination guardrails
-- Groq LLM integration (Qwen3-32B) with automatic fallback to Llama 3.3-70B, then rule-based explanations
+- Groq LLM integration (Qwen 3.6-27B) with automatic fallback to Llama 3.1-8B, then rule-based explanations
 - **Conversation memory** persisted in MongoDB with per-user scoping and auto-cleanup
 
 ---
@@ -245,8 +245,8 @@ DEMO_NAME=Demo User
 CORS_ORIGINS=*
 SERPAPI_KEY=                    # Optional — live Google Shopping (free: serpapi.com)
 GROQ_API_KEY=                  # AI Assistant — free at https://console.groq.com
-AI_PRIMARY_MODEL=qwen/qwen3-32b        # Optional — default: qwen/qwen3-32b
-AI_FALLBACK_MODEL=llama-3.3-70b-versatile  # Optional — default: llama-3.3-70b
+AI_PRIMARY_MODEL=qwen/qwen3.6-27b          # Optional — default: qwen/qwen3.6-27b
+AI_FALLBACK_MODEL=llama-3.1-8b-instant     # Optional — default: llama-3.1-8b-instant
 AI_TEMPERATURE=0.3             # Optional — default: 0.3
 AI_MAX_TOKENS=1024             # Optional — default: 1024
 
