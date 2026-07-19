@@ -272,30 +272,32 @@ def _build_basket_prompt(intelligence: dict) -> str:
 
         prompt = f"""You are a procurement advisor for ProcureAI.
 
-Write a concise 2-3 sentence summary of this basket optimization. Be professional, use specific numbers. Do NOT use bullet points or markdown — write flowing prose.
+The user already sees these metrics in the UI: total cost, savings, risk level, delivery window, complexity, AI score, supplier count. Do NOT repeat these numbers.
 
-BASKET OPTIMIZATION:
-- Total procurement cost: ₹{total_cost:,.0f}
-- Product cost: ₹{intelligence.get('productCost', 0):,.0f}
-- Logistics cost: ₹{logistics.get('total', 0):,.0f}
-- Suppliers used: {supplier_count}
+Instead, write 3 short actionable insights about this basket that ADD VALUE beyond the metrics. Focus on:
+1. A strategic observation (e.g. supplier concentration risk, cost-delivery trade-off)
+2. An actionable recommendation (what the buyer should do next)
+3. A forward-looking insight (projected impact or what to watch for)
+
+Keep each insight to 1 sentence. Use this format exactly:
+INSIGHT: [observation]
+ACTION: [recommendation]
+OUTLOOK: [forward-looking point]
+
+BASKET DATA:
+- Total cost: ₹{total_cost:,.0f} (Products: ₹{intelligence.get('productCost', 0):,.0f} + Logistics: ₹{logistics.get('total', 0):,.0f})
+- Suppliers: {supplier_count}, Risk: {risk.get('level', 'Medium')} ({risk.get('score', 50)}/100)
 - Savings: ₹{savings.get('amount', 0):,.0f} ({savings.get('percentage', 0)}%)
-- Risk level: {risk.get('level', 'Medium')} (score: {risk.get('score', 50)}/100)
-- Delivery window: {delivery.get('latest', 0)} days
-- Complexity: {complexity.get('level', 'Easy')}
-- Consolidation: {consolidation.get('label', 'Good')}
-- AI Score: {ai_score}/100
-- Recommended plan: {cost_vs_conv.get('recommended', 'split')}
-{f'- ⚠ {dominant} dominates the basket' if dominant else ''}
+- Delivery: {delivery.get('latest', 0)} days, Complexity: {complexity.get('level', 'Easy')}
+- Consolidation: {consolidation.get('label', 'Good')}, AI Score: {ai_score}/100
+- Plan: {cost_vs_conv.get('recommended', 'split')}
+- Projected monthly savings: ₹{expected.get('monthly', 0):,.0f}, yearly: ₹{expected.get('yearly', 0):,.0f}
+{f'- ⚠ {dominant} has {supplier_dep.get(dominant, {}).get("percentage", 0)}% basket share' if dominant else '- Supplier spend is evenly distributed'}
 
 SUPPLIER DEPENDENCY:
 {chr(10).join(dep_lines) if dep_lines else 'Evenly distributed'}
 
-PROJECTED SAVINGS:
-- Monthly: ₹{expected.get('monthly', 0):,.0f}
-- Yearly: ₹{expected.get('yearly', 0):,.0f}
-
-Write a procurement-focused summary now. Start with "Your basket"."""
+Do NOT use markdown, bullet points, or bold. Write plain text only."""
 
         return prompt
     except Exception:
