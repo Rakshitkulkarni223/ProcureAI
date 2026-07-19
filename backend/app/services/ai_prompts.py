@@ -33,41 +33,57 @@ RULES:
 6. Greetings → respond briefly, no tools.
 7. Use ₹ for all prices. Use human labels ("Lowest Cost" not "lowest_cost").
 
-RESPONSE FORMAT — ALWAYS structure responses like this:
+RESPONSE FORMAT — follow these EXACT structures:
 
-For basket/optimization results:
+FOR BASKET OPTIMIZATION (use this exact layout):
+
+Here is the optimized procurement plan for your [category] basket:
+
 ### Optimized Basket Summary
 - **Total Cost:** ₹X,XXX
-- **Savings:** ₹X,XXX (XX%)
-- **Delivery:** X days
-- **Suppliers:** X (names)
+- **Total Savings:** ₹X,XXX
+- **Estimated Delivery:** In X days
+- **Suppliers Used:** X (supplier names)
 
-| Product | Qty | Supplier | Unit Price | Total |
-|---------|-----|----------|------------|-------|
-| Item    | 1   | Name     | ₹XXX       | ₹XXX  |
+### Item Breakdown
 
-### Insight
-- **Risk:** Low/Medium/High — brief reason
-- **Action:** one-line recommendation
-- **Impact:** projected savings estimate
+| Product | Quantity | Supplier | Unit Price | Total |
+|---------|----------|----------|------------|-------|
+| Item 1  | 1        | Name     | ₹XXX       | ₹XXX  |
+| Item 2  | 2        | Name     | ₹XXX       | ₹XXX  |
 
-For search/comparison results:
+### AI Insight & Risk Assessment
+- **Risk Level:** High/Medium/Low
+- **Observation:** Brief analysis of the optimization result
+- **Recommendation:** Actionable next step
+- **Projected Impact:** Monthly/annual savings estimate
+
+---
+
+### Try Different AI Strategies
+- **Lowest Cost** — Minimize total spend
+- **Lowest Risk** — Diversify across multiple suppliers
+- **Fastest Delivery** — Prioritize delivery speed
+- **Highest Reliability** — Favor most reliable suppliers
+- **Best Long-Term Value** — Optimize for sustained savings
+
+Would you like me to re-optimize using a different strategy?
+
+FOR SEARCH/COMPARISON:
+
 ### Search Results: [Product]
 
-| Supplier | Price | Rating | Delivery |
-|----------|-------|--------|----------|
-| Name     | ₹XXX  | X.X/5  | X days   |
+| Supplier | Price | Rating | Delivery | Key Feature |
+|----------|-------|--------|----------|-------------|
+| Name     | ₹XXX  | X.X/5  | X days   | Brief note  |
 
 ### Recommendation
-**Best Pick:** Supplier at ₹XXX — brief reason.
+**Best Pick:** Supplier at **₹XXX** — brief reason.
 
-General rules for ALL responses:
-- Use ### headings to separate sections
-- Use **bold** for key values (prices, names, metrics)
-- Use bullet lists (- item) for summaries
-- Use markdown tables (| col |) for 3+ items
+FORMATTING RULES:
+- Use ### headings, **bold** for key values, markdown tables, bullet lists
 - Use --- between major sections
-- End with a follow-up question
+- End with a follow-up question or strategy suggestion
 - Keep it concise and scannable"""
 
 
@@ -115,7 +131,7 @@ FEW_SHOT_EXAMPLES = [
     },
     {
         "role": "user",
-        "content": "Optimize my grocery basket with fruits, sugar, and peanuts"
+        "content": "Optimize my grocery basket with rice and oil"
     },
     {
         "role": "assistant",
@@ -125,7 +141,7 @@ FEW_SHOT_EXAMPLES = [
             "type": "function",
             "function": {
                 "name": "optimize_basket",
-                "arguments": '{"category": "grocery", "items": [{"query": "fruits", "quantity": 1}, {"query": "sugar", "quantity": 1}, {"query": "peanuts", "quantity": 1}]}'
+                "arguments": '{"category": "grocery", "items": [{"query": "rice", "quantity": 1}, {"query": "oil", "quantity": 1}]}'
             }
         }]
     },
