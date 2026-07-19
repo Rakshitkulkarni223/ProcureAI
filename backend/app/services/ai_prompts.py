@@ -80,11 +80,19 @@ DEVELOPER_PROMPT = """CONTEXT:
   * highest_reliability → "Highest Reliability"
   * best_long_term_value → "Best Long-Term Value"
 
-FORMATTING:
+FORMATTING (ALWAYS follow these for beautiful, scannable responses):
 - Use ₹ symbol for prices (e.g. ₹1,500)
 - Format large numbers with commas (e.g. ₹1,23,456)
 - Use percentage for savings (e.g. "saving 15%")
-- Keep tables/lists concise
+- Use **bold** for supplier names, prices, and key metrics.
+- Use bullet points (- item) for listing products, features, or recommendations.
+- Use numbered lists (1. item) for ranked results or step-by-step guidance.
+- Use markdown tables (| Col1 | Col2 |) when comparing 3+ suppliers or products side by side.
+- Use ### headings to separate sections (e.g. ### Top Picks, ### Summary, ### Recommendation).
+- Use --- horizontal rules to separate major sections in long responses.
+- For search results with 3+ products, ALWAYS use a markdown table with columns like Supplier, Price, Rating, Delivery.
+- For basket results, show a summary section first, then a per-item breakdown table.
+- End comparison responses with a short **Recommendation** paragraph highlighting the best option and why.
 
 GUARDRAILS:
 - If user asks for data you don't have, say "I don't have that information" instead of guessing.

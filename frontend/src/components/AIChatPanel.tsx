@@ -388,7 +388,7 @@ export function AIChatPanel() {
               'max-w-[85%] sm:max-w-[80%] rounded-xl px-3 py-2.5 sm:px-4 sm:py-3 text-sm leading-relaxed',
               isUser
                 ? 'bg-accent text-white rounded-br-sm'
-                : 'bg-bg text-ink border border-line rounded-bl-sm',
+                : 'bg-bg text-ink border border-line rounded-bl-sm max-h-[420px] overflow-y-auto scrollbar-thin',
             )}
           >
             {isUser ? (

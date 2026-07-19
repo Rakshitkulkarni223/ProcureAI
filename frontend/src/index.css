@@ -103,4 +103,14 @@ body {
     background-size: 28px 28px;
     opacity: 0.4;
   }
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 5px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb);
+    border-radius: 99px;
+  }
+  .scrollbar-thin {
+    scrollbar-width: thin;
+  }
 }
