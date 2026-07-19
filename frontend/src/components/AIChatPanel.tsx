@@ -422,7 +422,7 @@ export function AIChatPanel() {
         )}
       >
         <Sparkles size={20} />
-        <span className="font-semibold text-sm hidden sm:inline">AI Assistant</span>
+        <span className="font-semibold text-sm hidden sm:inline">Ask ProcureAI</span>
       </button>
 
       {/* Backdrop */}
@@ -444,11 +444,14 @@ export function AIChatPanel() {
       >
         {/* Header */}
         <div className="flex items-center gap-3 px-4 h-14 border-b border-line flex-shrink-0">
-          <div className="flex items-center gap-2 flex-1">
-            <Bot size={20} className="text-accent" />
-            <span className="font-display font-bold text-ink">AI Assistant</span>
+          <div className="flex items-center gap-2 flex-1 min-w-0">
+            <Bot size={20} className="text-accent flex-shrink-0" />
+            <div className="min-w-0">
+              <span className="font-display font-bold text-ink text-sm leading-tight block">ProcureAI Advisor</span>
+              <span className="text-[10px] text-muted leading-tight block truncate">Compare suppliers · Optimize baskets · Explain recommendations</span>
+            </div>
             {toolsUsed.length > 0 && (
-              <span className="flex items-center gap-1 text-xs text-muted bg-bg px-2 py-0.5 rounded-full">
+              <span className="flex items-center gap-1 text-[10px] text-muted bg-bg px-1.5 py-0.5 rounded-full flex-shrink-0">
                 <Wrench size={10} />
                 {toolsUsed.length} tool{toolsUsed.length > 1 ? 's' : ''}
               </span>
@@ -487,9 +490,10 @@ export function AIChatPanel() {
               {messages.length === 0 && !loading && (
                 <div className="flex flex-col items-center justify-center h-full text-center text-muted px-6">
                   <Sparkles size={40} className="text-accent/40 mb-4" />
-                  <p className="font-semibold text-ink mb-2">ProcureAI Assistant</p>
-                  <p className="text-sm mb-6">
-                    Ask me anything about procurement — compare suppliers, optimize baskets, check savings, or get recommendations.
+                  <p className="font-bold text-ink mb-1 text-base">ProcureAI Advisor</p>
+                  <p className="text-xs text-muted mb-1">Compare suppliers · Optimize baskets · Explain recommendations</p>
+                  <p className="text-sm text-ink-soft mb-6">
+                    Ask me anything about procurement — I'll fetch real data and explain the results.
                   </p>
                   <div className="space-y-2 w-full">
                     {[
