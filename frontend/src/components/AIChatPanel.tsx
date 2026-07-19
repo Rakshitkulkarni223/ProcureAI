@@ -53,22 +53,22 @@ function FormattedMessage({ content }: { content: string }) {
         const flushTable = () => {
           if (tableHeader.length > 0 || tableRows.length > 0) {
             result.push(
-              <div key={key++} className="my-2 overflow-x-auto rounded-lg border border-line">
+              <div key={key++} className="my-2.5 overflow-x-auto rounded-lg border border-line shadow-sm">
                 <table className="w-full text-xs">
                   {tableHeader.length > 0 && (
                     <thead>
-                      <tr className="bg-accent/5 border-b border-line">
+                      <tr className="bg-accent/10 border-b border-accent/20">
                         {tableHeader.map((h, i) => (
-                          <th key={i} className="px-2.5 py-1.5 text-left font-semibold text-ink whitespace-nowrap">{h.trim()}</th>
+                          <th key={i} className="px-3 py-2 text-left font-bold text-ink text-[11px] uppercase tracking-wider whitespace-nowrap">{h.trim()}</th>
                         ))}
                       </tr>
                     </thead>
                   )}
                   <tbody>
                     {tableRows.map((row, ri) => (
-                      <tr key={ri} className={cn(ri % 2 === 0 ? 'bg-bg/50' : '', 'border-b border-line/50 last:border-0')}>
+                      <tr key={ri} className={cn(ri % 2 === 0 ? 'bg-bg/30' : 'bg-surface', 'border-b border-line/30 last:border-0 hover:bg-accent/5 transition-colors')}>
                         {row.map((cell, ci) => (
-                          <td key={ci} className="px-2.5 py-1.5 text-ink-soft whitespace-nowrap">{formatInline(cell.trim())}</td>
+                          <td key={ci} className="px-3 py-1.5 text-ink-soft whitespace-nowrap">{formatInline(cell.trim())}</td>
                         ))}
                       </tr>
                     ))}
@@ -156,9 +156,9 @@ function FormattedMessage({ content }: { content: string }) {
             if (listType !== 'ul') flushList();
             listType = 'ul';
             listItems.push(
-              <div key={key++} className="flex gap-2 items-start">
-                <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-accent flex-shrink-0" />
-                <span className="text-ink-soft leading-relaxed">{formatInline(ulMatch[1])}</span>
+              <div key={key++} className="flex gap-2 items-start py-0.5">
+                <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-accent/70 flex-shrink-0" />
+                <span className="text-ink-soft leading-relaxed text-[13px]">{formatInline(ulMatch[1])}</span>
               </div>
             );
             continue;
@@ -185,7 +185,7 @@ function FormattedMessage({ content }: { content: string }) {
           // Heading: ### text — section header with accent left border
           if (trimmed.startsWith('### ')) {
             result.push(
-              <div key={key++} className="mt-3 mb-1.5 flex items-center gap-2 border-l-2 border-accent pl-2">
+              <div key={key++} className="mt-3 mb-1.5 flex items-center gap-2 border-l-[3px] border-accent pl-2.5 py-0.5 bg-accent/5 rounded-r-md">
                 <p className="font-bold text-ink text-[13px] tracking-tight">{formatInline(trimmed.slice(4))}</p>
               </div>
             );
@@ -194,7 +194,7 @@ function FormattedMessage({ content }: { content: string }) {
           // Heading: ## text — major section
           if (trimmed.startsWith('## ')) {
             result.push(
-              <div key={key++} className="mt-3 mb-1.5 pb-1 border-b border-accent/30">
+              <div key={key++} className="mt-3 mb-1.5 pb-1.5 border-b border-accent/30">
                 <p className="font-bold text-ink text-sm">{formatInline(trimmed.slice(3))}</p>
               </div>
             );
@@ -213,7 +213,7 @@ function FormattedMessage({ content }: { content: string }) {
       }
     }, [content]);
 
-    return <div className="space-y-0.5 break-words overflow-hidden">{elements}</div>;
+    return <div className="space-y-0.5 break-words overflow-hidden text-[13px]">{elements}</div>;
   } catch {
     return <div className="whitespace-pre-wrap">{content}</div>;
   }

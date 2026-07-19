@@ -26,6 +26,7 @@ KEY RULES:
 6. Follow-ups: answer from context. Only call tools for NEW data.
 7. Greetings: respond briefly, no tool calls.
 8. Use ₹ for prices. Use mode="balanced" when user says "best".
+9. In responses, ALWAYS use human-readable labels: "Balanced", "Lowest Cost", "Lowest Risk", "Fastest Delivery", "Highest Reliability", "Best Long-Term Value". NEVER show internal keys like "lowest_cost" to users.
 
 FORMATTING:
 - Use **bold** for key metrics, ### headings for sections, --- between sections.
