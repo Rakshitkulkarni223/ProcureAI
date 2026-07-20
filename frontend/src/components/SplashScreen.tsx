@@ -2,11 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { Boxes, Check, Sparkles } from 'lucide-react';
 
 const loadingSteps = [
-  'Building supplier intelligence',
-  'Evaluating procurement options',
-  'Optimizing your purchase basket',
-  'Calculating business impact',
-  'Launching your workspace',
+  'Initializing AI Procurement Engine',
+  'Loading procurement intelligence',
+  'Connecting core services',
+  'Preparing intelligent workflows',
+  'Launching ProcureAI',
 ];
 
 export function SplashScreen({ onFinish }: { onFinish: () => void }) {
