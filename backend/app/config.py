@@ -39,13 +39,24 @@ class Env:
     CORS_ORIGINS: str = os.getenv("CORS_ORIGINS", "*")
     NODE_ENV: str = os.getenv("NODE_ENV", "development")
     SERPAPI_KEY: str = os.getenv("SERPAPI_KEY", "")
-    # Groq AI (free tier, OpenAI-compatible)
+    AI_PROVIDER: str = os.getenv("AI_PROVIDER", "gemini").lower()
+    GEMINI_API_KEY: str = os.getenv("GEMINI_API_KEY", "")
     GROQ_API_KEY: str = os.getenv("GROQ_API_KEY", "")
-    AI_PRIMARY_MODEL: str = os.getenv("AI_PRIMARY_MODEL", "llama-3.3-70b-versatile")
-    AI_FALLBACK_MODEL: str = os.getenv("AI_FALLBACK_MODEL", "llama-3.1-8b-instant")
+    AI_API_KEY: str = GEMINI_API_KEY if AI_PROVIDER == "gemini" else GROQ_API_KEY
+    AI_BASE_URL: str = os.getenv(
+        "AI_BASE_URL",
+        "https://generativelanguage.googleapis.com/v1beta/openai/"
+        if AI_PROVIDER == "gemini"
+        else "https://api.groq.com/openai/v1",
+    )
+    AI_PRIMARY_MODEL: str = os.getenv(
+        "AI_PRIMARY_MODEL",
+        "gemini-2.5-flash" if AI_PROVIDER == "gemini" else "llama-3.3-70b-versatile",
+    )
+    AI_FALLBACK_MODEL: str = os.getenv("AI_FALLBACK_MODEL", "")
     AI_TEMPERATURE: float = float(os.getenv("AI_TEMPERATURE", "0.2"))
     AI_TOP_P: float = float(os.getenv("AI_TOP_P", "0.9"))
-    AI_MAX_TOKENS: int = int(os.getenv("AI_MAX_TOKENS", "1024"))
+    AI_MAX_TOKENS: int = int(os.getenv("AI_MAX_TOKENS", "2048"))
 
 
 env = Env()

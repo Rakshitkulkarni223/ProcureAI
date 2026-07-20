@@ -2,7 +2,7 @@
 AI Procurement Assistant — Main orchestrator.
 
 Handles the conversation loop: user message → LLM → tool calls → LLM → response.
-Uses Groq (OpenAI-compatible) with function calling on Llama 3.3 70B / Llama 3.1 8B.
+Uses the configured OpenAI-compatible AI provider with function calling.
 """
 from __future__ import annotations
 
@@ -22,21 +22,22 @@ from app.services.ai_memory import ConversationMemory
 
 
 # ---------------------------------------------------------------------------
-# Groq client (shared singleton)
+# AI client (shared singleton)
 # ---------------------------------------------------------------------------
 _client: AsyncOpenAI | None = None
 
 
 def _get_client() -> AsyncOpenAI:
-    """Return a shared AsyncOpenAI client pointed at Groq."""
+    """Return a shared client for the configured OpenAI-compatible provider."""
     global _client
     try:
         if _client is None:
-            if not env.GROQ_API_KEY:
-                raise RuntimeError("GROQ_API_KEY not set. Add it to your .env file.")
+            if not env.AI_API_KEY:
+                key_name = "GEMINI_API_KEY" if env.AI_PROVIDER == "gemini" else "GROQ_API_KEY"
+                raise RuntimeError(f"{key_name} not set. Add it to your .env file.")
             _client = AsyncOpenAI(
-                api_key=env.GROQ_API_KEY,
-                base_url="https://api.groq.com/openai/v1",
+                api_key=env.AI_API_KEY,
+                base_url=env.AI_BASE_URL,
                 timeout=90.0,
             )
         return _client

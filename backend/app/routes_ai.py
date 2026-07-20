@@ -177,10 +177,11 @@ async def delete_conversation(conversation_id: str, user: dict = Depends(get_cur
 async def ai_health():
     """Check if the AI subsystem is operational."""
     try:
-        groq_configured = bool(env.GROQ_API_KEY)
+        configured = bool(env.AI_API_KEY)
         return _ok({
-            "status": "ok" if groq_configured else "degraded",
-            "groq_configured": groq_configured,
+            "status": "ok" if configured else "degraded",
+            "provider": env.AI_PROVIDER,
+            "configured": configured,
             "primary_model": env.AI_PRIMARY_MODEL,
             "fallback_model": env.AI_FALLBACK_MODEL,
         })

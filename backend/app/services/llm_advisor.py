@@ -1,9 +1,9 @@
 """
-LLM Procurement Advisor — Groq-powered natural language explanations.
+LLM Procurement Advisor — provider-configured natural language explanations.
 
-Generates human-readable AI procurement advice from recommendation data
-using Groq API (Llama 3.3-70B / Llama 3.1-8B). Falls back to template-based
-explanation if no API key is set or if the API call fails.
+Generates human-readable AI procurement advice from recommendation data using
+an OpenAI-compatible provider. Falls back to template-based explanation if no
+API key is set or if the API call fails.
 """
 from __future__ import annotations
 
@@ -14,23 +14,23 @@ from openai import AsyncOpenAI
 from app.config import env
 
 # ---------------------------------------------------------------------------
-# Groq client (lazy init — only created when GROQ_API_KEY is set)
+# AI client (lazy initialization)
 # ---------------------------------------------------------------------------
-_groq_client: AsyncOpenAI | None = None
+_ai_client: AsyncOpenAI | None = None
 
 
-def _get_groq_client() -> AsyncOpenAI | None:
-    """Return a shared AsyncOpenAI client pointed at Groq, or None."""
-    global _groq_client
+def _get_ai_client() -> AsyncOpenAI | None:
+    """Return a shared client for the configured OpenAI-compatible provider."""
+    global _ai_client
     try:
-        if not env.GROQ_API_KEY:
+        if not env.AI_API_KEY:
             return None
-        if _groq_client is None:
-            _groq_client = AsyncOpenAI(
-                api_key=env.GROQ_API_KEY,
-                base_url="https://api.groq.com/openai/v1",
+        if _ai_client is None:
+            _ai_client = AsyncOpenAI(
+                api_key=env.AI_API_KEY,
+                base_url=env.AI_BASE_URL,
             )
-        return _groq_client
+        return _ai_client
     except Exception:
         return None
 
@@ -60,10 +60,10 @@ def _strip_reasoning(text: str) -> str:
         return text
 
 
-async def _groq_completion(prompt: str, max_tokens: int = 512, model: str | None = None) -> str:
-    """Call Groq chat completion. Returns empty string on failure."""
+async def _ai_completion(prompt: str, max_tokens: int = 512, model: str | None = None) -> str:
+    """Call the configured provider. Returns empty string on failure."""
     try:
-        client = _get_groq_client()
+        client = _get_ai_client()
         if client is None:
             return ""
         chosen_model = model or env.AI_PRIMARY_MODEL
@@ -87,16 +87,16 @@ async def _groq_completion(prompt: str, max_tokens: int = 512, model: str | None
         text = _strip_reasoning(text)
         # If primary model produced only <think> content, retry with fallback
         if not text and model is None and env.AI_FALLBACK_MODEL:
-            return await _groq_completion(prompt, max_tokens, model=env.AI_FALLBACK_MODEL)
+            return await _ai_completion(prompt, max_tokens, model=env.AI_FALLBACK_MODEL)
         return text
     except Exception as e:
         # If primary model fails, try fallback
         if model is None and env.AI_FALLBACK_MODEL:
             try:
-                return await _groq_completion(prompt, max_tokens, model=env.AI_FALLBACK_MODEL)
+                return await _ai_completion(prompt, max_tokens, model=env.AI_FALLBACK_MODEL)
             except Exception:
                 pass
-        print(f"[WARN] Groq completion failed: {e}")
+        print(f"[WARN] AI completion failed: {e}")
         return ""
 
 
@@ -240,8 +240,8 @@ async def generate_explanation(recommendation: dict, products: list[dict], mode:
         if not prompt:
             return _template_fallback(recommendation, products, mode)
 
-        if env.GROQ_API_KEY:
-            text = await _groq_completion(prompt, max_tokens=512)
+        if env.AI_API_KEY:
+            text = await _ai_completion(prompt, max_tokens=512)
             if text:
                 return text
 
@@ -328,8 +328,8 @@ async def generate_basket_explanation(intelligence: dict) -> str:
         if not prompt:
             return existing_summary
 
-        if env.GROQ_API_KEY:
-            text = await _groq_completion(prompt, max_tokens=512)
+        if env.AI_API_KEY:
+            text = await _ai_completion(prompt, max_tokens=512)
             if text:
                 return text
 
@@ -403,8 +403,8 @@ async def generate_longterm_explanation(long_term: dict, products: list[dict]) -
         if not prompt:
             return fallback
 
-        if env.GROQ_API_KEY:
-            text = await _groq_completion(prompt, max_tokens=512)
+        if env.AI_API_KEY:
+            text = await _ai_completion(prompt, max_tokens=512)
             if text:
                 return text
 
