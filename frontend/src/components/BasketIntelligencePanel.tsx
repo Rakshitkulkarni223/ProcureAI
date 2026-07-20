@@ -20,7 +20,7 @@ function MetricCard({
   const toneClass = {
     default: 'text-ink',
     success: 'text-success',
-    warning: 'text-amber-600',
+    warning: 'text-amber-600 dark:text-amber-400',
     danger: 'text-danger',
     info: 'text-accent',
   }[tone];
@@ -55,9 +55,9 @@ function AISummaryCard({ summary: rawSummary }: { summary: string }) {
     const summary = cleanAIText(rawSummary);
     if (!summary) return null;
     const insightConfigs: { key: string; label: string; icon: React.ElementType; bg: string; text: string; iconBg: string }[] = [
-      { key: 'INSIGHT', label: 'Strategic Insight', icon: Sparkles, bg: 'bg-accent-soft/30', text: 'text-accent', iconBg: 'bg-accent/10' },
-      { key: 'ACTION', label: 'Recommended Action', icon: CheckCircle2, bg: 'bg-success-bg/50', text: 'text-emerald-700', iconBg: 'bg-emerald-500/10' },
-      { key: 'OUTLOOK', label: 'Forward Outlook', icon: TrendingDown, bg: 'bg-amber-50 dark:bg-amber-950/20', text: 'text-amber-700', iconBg: 'bg-amber-500/10' },
+      { key: 'INSIGHT', label: 'Strategic Insight', icon: Sparkles, bg: 'bg-sky-50 dark:bg-sky-500/10', text: 'text-sky-700 dark:text-sky-400', iconBg: 'bg-sky-100 dark:bg-sky-500/15' },
+      { key: 'ACTION', label: 'Recommended Action', icon: CheckCircle2, bg: 'bg-emerald-50 dark:bg-emerald-500/10', text: 'text-emerald-700 dark:text-emerald-400', iconBg: 'bg-emerald-100 dark:bg-emerald-500/15' },
+      { key: 'OUTLOOK', label: 'Forward Outlook', icon: TrendingDown, bg: 'bg-amber-50 dark:bg-amber-500/10', text: 'text-amber-700 dark:text-amber-400', iconBg: 'bg-amber-100 dark:bg-amber-500/15' },
     ];
 
     // Parse INSIGHT/ACTION/OUTLOOK lines
@@ -285,8 +285,8 @@ export function BasketIntelligencePanel({
             <div className={cn(
               'rounded-md px-3 py-2 text-sm',
               costVsConvenience.recommended === 'consolidate'
-                ? 'bg-accent-soft/30 text-accent'
-                : 'bg-success-bg/50 text-emerald-700',
+                ? 'bg-sky-50 dark:bg-sky-500/10 text-sky-700 dark:text-sky-400'
+                : 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400',
             )}>
               <span className="font-semibold">
                 Recommended: {costVsConvenience.recommended === 'consolidate' ? 'Consolidate' : 'Split'}
@@ -329,7 +329,7 @@ export function BasketIntelligencePanel({
                   ))}
               </div>
               {dominantSupplier && (
-                <div className="mt-3 flex items-center gap-2 rounded-md bg-warning-bg px-3 py-2 text-xs text-amber-700">
+                <div className="mt-3 flex items-center gap-2 rounded-md bg-amber-50 dark:bg-amber-500/10 px-3 py-2 text-xs text-amber-700 dark:text-amber-400">
                   <AlertTriangle size={14} />
                   {dominantSupplier} dominates the basket — consider diversifying to reduce dependency.
                 </div>
@@ -339,10 +339,10 @@ export function BasketIntelligencePanel({
 
           {/* Expected Savings */}
           {expectedSavings.perBasket > 0 && (
-            <div className="rounded-lg border border-success/30 bg-success-bg/30 p-5 shadow-card">
+            <div className="rounded-lg border border-emerald-300 dark:border-emerald-400/30 bg-emerald-50 dark:bg-emerald-500/10 p-5 shadow-card">
               <div className="mb-3 flex items-center gap-2">
-                <Calendar size={16} className="text-emerald-600" />
-                <span className="label-eyebrow text-emerald-700">Expected Savings</span>
+                <Calendar size={16} className="text-emerald-600 dark:text-emerald-400" />
+                <span className="label-eyebrow text-emerald-700 dark:text-emerald-400">Expected Savings</span>
               </div>
               <div className="grid grid-cols-3 gap-3">
                 <div>
