@@ -78,7 +78,7 @@ export function DashboardPage() {
               <Sparkles size={12} /> Explainable AI
             </div>
             <h1 className="mt-3 font-display text-3xl font-bold tracking-tight sm:text-4xl">
-              Find the best supplier. Every time.
+              Smarter Decisions. Measurable Savings.
             </h1>
             <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-300">
               Compare suppliers, optimize purchasing decisions, and measure business impact with explainable AI.
@@ -161,7 +161,7 @@ export function DashboardPage() {
             transition={{ delay: i * 0.06 }}
             className={i === 0 ? 'sm:col-span-2 xl:col-span-2' : ''}
           >
-            <Card className={`rounded-2xl border border-line transition-all duration-200 hover:-translate-y-1 hover:border-white/20 hover:bg-[#1f2937] hover:shadow-lift ${i === 0 ? 'bg-slate-950 shadow-[0_16px_32px_rgba(15,23,42,0.15)]' : i === 1 ? 'bg-gradient-to-br from-sky-500/[0.10] via-surface to-surface shadow-card' : i === 2 ? 'bg-gradient-to-br from-emerald-500/[0.10] via-surface to-surface shadow-card' : 'bg-gradient-to-br from-violet-500/[0.08] via-surface to-surface shadow-card'}`}>  
+            <Card className={`rounded-2xl border border-line transition-all duration-200 hover:-translate-y-1 hover:border-white/20 hover:bg-[#1f2937] hover:shadow-lift ${i === 0 ? 'bg-gradient-to-br from-slate-800 via-slate-900 to-slate-950 shadow-[0_16px_32px_rgba(15,23,42,0.15)]' : i === 1 ? 'bg-gradient-to-br from-sky-500/[0.10] via-surface to-surface shadow-card' : i === 2 ? 'bg-gradient-to-br from-emerald-500/[0.10] via-surface to-surface shadow-card' : 'bg-gradient-to-br from-violet-500/[0.08] via-surface to-surface shadow-card'}`}>  
               <CardBody className="p-4 sm:p-5">
                 <div className="flex items-start justify-between gap-3">
                   <div>
