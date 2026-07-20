@@ -2,11 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { Boxes, Check, Sparkles } from 'lucide-react';
 
 const loadingSteps = [
-  'Supplier network indexed',
-  'Comparing 142 suppliers',
-  'Optimising your basket',
-  'Estimating savings',
-  'Business impact ready',
+  'Building supplier intelligence',
+  'Evaluating procurement options',
+  'Optimizing your purchase basket',
+  'Calculating business impact',
+  'Launching your workspace',
 ];
 
 export function SplashScreen({ onFinish }: { onFinish: () => void }) {
@@ -81,7 +81,7 @@ export function SplashScreen({ onFinish }: { onFinish: () => void }) {
               <div className="absolute right-0 top-0 h-40 w-40 rounded-full bg-emerald-400/10 blur-3xl" />
               <div className="relative rounded-2xl border border-white/10 bg-slate-900/70 p-5 shadow-xl shadow-black/10">
                 <div className="mb-5 flex items-center justify-between">
-                  <div><p className="text-xs font-semibold text-slate-200">AI procurement engine</p><p className="mt-1 text-xs text-slate-400">Building your intelligence layer</p></div>
+                  <div><p className="text-xs font-semibold text-slate-200">Procurement Intelligence Engine</p><p className="mt-1 text-xs text-slate-400">Building your intelligence layer</p></div>
                   <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-400/10 text-emerald-300"><Sparkles size={17} /></span>
                 </div>
                 <div className="space-y-2.5">
