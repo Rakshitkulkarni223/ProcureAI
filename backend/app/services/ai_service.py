@@ -36,6 +36,7 @@ def _get_client() -> AsyncOpenAI:
             _client = AsyncOpenAI(
                 api_key=env.GROQ_API_KEY,
                 base_url="https://api.groq.com/openai/v1",
+                timeout=30.0,
             )
         return _client
     except Exception:
@@ -46,7 +47,7 @@ def _get_client() -> AsyncOpenAI:
 # Constants
 # ---------------------------------------------------------------------------
 
-MAX_TOOL_ROUNDS = 5          # Max tool-call loops per user message
+MAX_TOOL_ROUNDS = 3          # Max tool-call loops per user message
 MAX_RESPONSE_TOKENS = 1024   # Max tokens for final response
 TOOL_RESULT_MAX_CHARS = 3000 # Truncate tool results to keep within context
 
