@@ -41,7 +41,7 @@ export function SplashScreen({ onFinish }: { onFinish: () => void }) {
 
       {/* Tagline */}
       <p className="mt-4 max-w-md text-center text-sm leading-relaxed text-slate-400">
-        AI-powered procurement comparison engine — search once, compare suppliers, get explainable recommendations.
+        AI-powered procurement platform that compares suppliers, optimizes purchasing, explains recommendations, and measures business impact.
       </p>
     </div>
   );
