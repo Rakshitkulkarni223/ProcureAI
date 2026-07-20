@@ -94,6 +94,7 @@ body {
 
 .auth-shell {
   color-scheme: dark;
+  scrollbar-width: none;
   --color-bg: #0F172A;
   --color-surface: #1E293B;
   --color-ink: #F1F5F9;
@@ -116,6 +117,9 @@ body {
 }
 
 /* Slim, crisp scrollbar */
+.auth-shell::-webkit-scrollbar {
+  display: none;
+}
 ::-webkit-scrollbar {
   width: 10px;
   height: 10px;

@@ -4,7 +4,7 @@ import { Boxes, ShieldCheck, Sparkles, TrendingDown } from 'lucide-react';
 export function AuthShell({ children }: { children: React.ReactNode }) {
   try {
     return (
-      <div className="auth-shell min-h-[100dvh] bg-[#050816] p-3 sm:p-5 lg:p-6">
+      <div className="auth-shell h-[100dvh] overflow-y-auto bg-[#050816] p-3 sm:p-5 lg:p-6">
         <div className="grid min-h-[calc(100dvh-1.5rem)] overflow-hidden rounded-[1.75rem] border border-white/10 bg-[#0b1729] shadow-[0_28px_80px_rgba(0,0,0,0.35)] sm:min-h-[calc(100dvh-2.5rem)] lg:min-h-[calc(100dvh-3rem)] xl:grid-cols-[1.05fr_0.95fr]">
         {/* Brand / image panel — always dark regardless of theme */}
         <div className="relative hidden overflow-hidden bg-[#070b1d] xl:block">
