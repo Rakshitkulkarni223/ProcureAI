@@ -94,9 +94,9 @@ export function DashboardPage() {
               <span className="hidden text-white/30 sm:inline">•</span>
               <span className="whitespace-nowrap"><strong className="data-num text-white">{formatNumber(data?.procurementRequests || 0)}</strong> decisions</span>
               <span className="hidden text-white/30 sm:inline">•</span>
-              <span className="whitespace-nowrap"><strong className="data-num text-sky-200">{impact ? `${impact.aiAccuracyPct.toFixed(0)}%` : '—'}</strong> confidence</span>
+              <span className="whitespace-nowrap"><strong className="data-num text-violet-200">{impact ? `${impact.efficiencyScore}/100` : '—'}</strong> efficiency</span>
               <span className="hidden text-white/30 sm:inline">•</span>
-              <span className="whitespace-nowrap"><strong className="data-num text-violet-200">{impact ? `${impact.hoursSaved.toFixed(0)}h` : '—'}</strong> hours saved</span>
+              <span className="whitespace-nowrap"><strong className="data-num text-sky-200">{impact ? `${impact.hoursSaved.toFixed(0)}h` : '—'}</strong> hours saved</span>
             </div>
           </div>
           <div className="flex flex-col gap-3 sm:flex-row xl:flex-col xl:items-stretch">
@@ -116,7 +116,7 @@ export function DashboardPage() {
               }}
               className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl border border-emerald-300/60 bg-white/[0.08] px-4 py-3 text-sm font-semibold text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.12)] backdrop-blur-sm transition-colors hover:bg-emerald-300/15 xl:flex-none"
             >
-              <Sparkles size={16} /> Ask ProcureAI
+              <Sparkles size={16} className="text-sky-200" /> Ask ProcureAI
             </button>
           </div>
         </div>
@@ -143,9 +143,9 @@ export function DashboardPage() {
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
             {[
               { icon: PiggyBank, label: 'Total Saved', value: formatINR(impact.totalSavings), color: 'text-accent' },
-              { icon: Clock, label: 'Hours Saved', value: `${impact.hoursSaved.toFixed(1)}h`, color: 'text-accent' },
-              { icon: Zap, label: 'Efficiency', value: `${impact.efficiencyScore}/100`, color: 'text-accent' },
-              { icon: Target, label: 'AI Accuracy', value: `${impact.aiAccuracyPct.toFixed(0)}%`, color: 'text-accent' },
+              { icon: Clock, label: 'Hours Saved', value: `${impact.hoursSaved.toFixed(1)}h`, color: 'text-sky-400' },
+              { icon: Zap, label: 'Efficiency', value: `${impact.efficiencyScore}/100`, color: 'text-violet-400' },
+              { icon: Target, label: 'Purchases Optimized', value: formatNumber(impact.optimizedPurchases), color: 'text-cyan-400' },
             ].map((m) => (
               <div key={m.label} className="rounded-2xl border border-line bg-surface/75 p-3.5 shadow-[0_8px_24px_rgba(15,23,42,0.05)]">
                 <m.icon size={16} className={m.color} />
@@ -275,8 +275,8 @@ export function DashboardPage() {
                   <AreaChart data={[...trend].reverse()} margin={{ left: -16, right: 8, top: 8 }}>
                     <defs>
                       <linearGradient id="savings" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#10B981" stopOpacity={0.35} />
-                        <stop offset="100%" stopColor="#10B981" stopOpacity={0} />
+                        <stop offset="0%" stopColor="#22C55E" stopOpacity={0.35} />
+                        <stop offset="100%" stopColor="#22C55E" stopOpacity={0} />
                       </linearGradient>
                     </defs>
                     <CartesianGrid strokeDasharray="3 3" stroke="var(--color-line)" vertical={false} />
@@ -289,7 +289,7 @@ export function DashboardPage() {
                       labelStyle={{ color: 'var(--color-ink)' }}
                       itemStyle={{ color: 'var(--color-ink)' }}
                     />
-                    <Area type="monotone" dataKey="amount" stroke="#10B981" strokeWidth={2} fill="url(#savings)" />
+                    <Area type="monotone" dataKey="amount" stroke="#38BDF8" strokeWidth={2} fill="url(#savings)" />
                   </AreaChart>
                 </ResponsiveContainer>
               ) : (
