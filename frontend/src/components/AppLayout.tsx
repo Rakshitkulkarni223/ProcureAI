@@ -39,13 +39,13 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
 
   const sidebar = (
     <div className="flex h-full flex-col">
-      <div className="flex items-center gap-2.5 px-5 h-16 border-b border-line">
-        <span className="flex h-8 w-8 items-center justify-center rounded-md bg-accent text-white">
+      <div className="flex items-center gap-2 px-3 h-16 border-b border-line">
+        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-accent text-white">
           <Boxes size={18} />
         </span>
-        <div className="leading-none">
+        <div className="min-w-0 leading-none">
           <div className="font-display text-lg font-bold tracking-tight text-ink">ProcureAI</div>
-          <div className="mt-0.5 text-[10px] font-medium uppercase tracking-[0.22em] text-slate-400">AI Procurement Platform</div>
+          <div className="mt-0.5 whitespace-nowrap text-[10px] font-medium uppercase tracking-[0.22em] text-slate-400">AI Procurement Platform</div>
         </div>
       </div>
 
@@ -116,7 +116,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="app-shell dark min-h-[100dvh] bg-bg">
       {/* Desktop sidebar */}
-      <aside className="fixed inset-y-0 left-0 z-30 hidden w-56 border-r border-line bg-[#0b1220] lg:block">
+      <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 border-r border-line bg-[#0b1220] lg:block">
         {sidebar}
       </aside>
 
@@ -128,7 +128,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
         </div>
       )}
 
-      <div className="lg:pl-56">
+      <div className="lg:pl-64">
         {/* Desktop top bar */}
         <div className="sticky top-0 z-20 hidden h-12 items-center justify-end gap-3 border-b border-line bg-[#0b1220] px-5 backdrop-blur lg:flex">
           <LocationDropdown readOnly />
