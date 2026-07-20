@@ -18,7 +18,7 @@ import {
   Target,
 } from 'lucide-react';
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
-import type { DashboardSummary, BusinessImpact } from '../types';
+import type { DashboardSummary, BusinessImpact, Insight } from '../types';
 import { api } from '../lib/api';
 import { Card, CardBody, CardHeader } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
@@ -31,6 +31,7 @@ export function DashboardPage() {
   const [data, setData] = useState<DashboardSummary | null>(null);
   const [trend, setTrend] = useState<{ month: string; amount: number }[]>([]);
   const [impact, setImpact] = useState<BusinessImpact | null>(null);
+  const [insights, setInsights] = useState<Insight[]>([]);
   const [dateRange, setDateRange] = useState<DateRange>({});
 
   const load = useCallback((range: DateRange) => {
@@ -39,6 +40,7 @@ export function DashboardPage() {
       api.dashboard(from, to).then(setData).catch(() => {});
       api.savings(from, to).then((r) => setTrend(r.savingsTrend)).catch(() => {});
       api.businessImpact(from, to).then(setImpact).catch(() => {});
+      api.insights(from, to).then((response) => setInsights(response.insights)).catch(() => {});
     } catch {
       // silent
     }
@@ -61,7 +63,7 @@ export function DashboardPage() {
         { label: 'Supplier Comparisons', value: formatNumber(data.totalSearches), icon: Search, tone: 'text-ink' },
         { label: 'Purchase Decisions', value: formatNumber(data.procurementRequests), icon: ShoppingCart, tone: 'text-ink' },
         { label: 'Est. Monthly Savings', value: formatINR(data.estimatedMonthlySavings), icon: PiggyBank, tone: 'text-success' },
-        { label: 'Procurement Categories', value: formatNumber(data.activeCategories), icon: Boxes, tone: 'text-ink' },
+        { label: 'Categories', value: formatNumber(data.activeCategories), icon: Boxes, tone: 'text-ink' },
       ]
     : [];
 
@@ -149,32 +151,6 @@ export function DashboardPage() {
         </section>
       )}
 
-      <section className="rounded-2xl border border-line bg-[#111827] p-4 shadow-card sm:p-5" data-testid="dashboard-ai-advisor">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-start gap-3">
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-accent-soft text-accent">
-              <Sparkles size={18} />
-            </span>
-            <div>
-              <h2 className="font-display text-base font-semibold text-ink">ProcureAI Advisor</h2>
-              <p className="mt-1 max-w-2xl text-sm leading-6 text-muted">Ask a procurement question, evaluate a supplier trade-off, or get help planning your next purchase.</p>
-            </div>
-          </div>
-          <button
-            type="button"
-            onClick={() => {
-              try {
-                window.dispatchEvent(new Event('open-procureai-chat'));
-              } catch {
-              }
-            }}
-            className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-accent px-4 py-2.5 text-sm font-semibold text-slate-950 transition-all hover:-translate-y-px hover:bg-accent-hover"
-          >
-            <Sparkles size={16} /> Ask ProcureAI
-          </button>
-        </div>
-      </section>
-
       {/* KPI grid */}
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5" data-testid="dashboard-stats">
         {stats.map((s, i) => (
@@ -204,10 +180,8 @@ export function DashboardPage() {
         ))}
       </div>
 
-      <div className="grid gap-5 xl:grid-cols-[minmax(0,1.5fr)_minmax(320px,0.85fr)]">
-        {/* Left: highlights + recent */}
-        <div className="space-y-5">
-          {/* Highlight cards */}
+      <div className="space-y-5">
+        {/* Highlight cards */}
           <div className="grid gap-3 sm:grid-cols-3">
             <Card className="rounded-2xl border-0 bg-gradient-to-br from-amber-500/[0.08] via-surface to-surface shadow-card">
               <CardBody className="p-4">
@@ -244,9 +218,11 @@ export function DashboardPage() {
                 </div>
               </CardBody>
             </Card>
-          </div>
+        </div>
 
-          {/* Savings trend */}
+        <div className="grid gap-5 xl:grid-cols-[minmax(0,1.5fr)_minmax(320px,0.85fr)]">
+          <div className="space-y-5">
+            {/* Savings trend */}
           <Card className="rounded-2xl border-0 bg-gradient-to-br from-sky-500/[0.06] via-surface to-surface shadow-card">
             <CardHeader className="flex items-center justify-between gap-3 border-line/60 px-4 sm:px-5">
               <div>
@@ -325,8 +301,42 @@ export function DashboardPage() {
               </div>
             </CardBody>
           </Card>
-        </div>
+          </div>
 
+          <Card className="h-fit rounded-2xl border-0 bg-accent-soft/45 shadow-card" data-testid="ai-insights">
+            <CardHeader className="flex items-center gap-2 border-accent/20 px-4 sm:px-5">
+              <Sparkles size={15} className="text-accent" />
+              <div>
+                <h3 className="font-display text-base font-semibold tracking-tight text-ink">Today&apos;s AI Recommendations</h3>
+                <p className="mt-0.5 text-xs text-muted">Actionable intelligence from your latest activity</p>
+              </div>
+            </CardHeader>
+            <CardBody className="space-y-3 p-4 sm:p-5">
+              {insights.length ? (
+                insights.slice(0, 3).map((insight, index) => (
+                  <button
+                    key={`${insight.text}-${index}`}
+                    type="button"
+                    onClick={() => {
+                      try {
+                        window.dispatchEvent(new Event('open-procureai-chat'));
+                      } catch {
+                      }
+                    }}
+                    className="flex w-full items-start gap-3 rounded-xl bg-surface/80 p-3 text-left transition-all hover:-translate-y-0.5 hover:bg-surface hover:shadow-card"
+                  >
+                    <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${insight.tone === 'success' ? 'bg-success-bg text-success' : 'bg-accent-soft text-accent'}`}>
+                      <Sparkles size={15} />
+                    </span>
+                    <p className="text-sm leading-5 text-ink-soft">{insight.text}</p>
+                  </button>
+                ))
+              ) : (
+                <p className="py-6 text-center text-sm text-muted">Recommendations will appear as procurement activity is analyzed.</p>
+              )}
+            </CardBody>
+          </Card>
+        </div>
       </div>
     </div>
   );
