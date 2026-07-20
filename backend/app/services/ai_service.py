@@ -6,6 +6,7 @@ Uses Groq (OpenAI-compatible) with function calling on Llama 3.3 70B / Llama 3.1
 """
 from __future__ import annotations
 
+import asyncio
 import json
 import re
 import time
@@ -445,9 +446,10 @@ async def chat_stream(
                 print(f"[AI-STREAM] Response was think-only ({len(raw_content)} chars). Will retry with tool_choice=none.")
 
         if final_text:
-            # Already have a clean answer — yield it in chunks
-            for i in range(0, len(final_text), 8):
-                yield _sse_event("token", final_text[i:i + 8])
+            # Already have a clean answer — yield it in chunks with delay for typewriter effect
+            for i in range(0, len(final_text), 12):
+                yield _sse_event("token", final_text[i:i + 12])
+                await asyncio.sleep(0.018)
         else:
             # No text yet (think-only response or exhausted tool rounds).
             # Make a streaming call with tool_choice="none" to force a text answer.
