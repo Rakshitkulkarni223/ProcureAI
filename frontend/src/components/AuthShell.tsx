@@ -5,7 +5,7 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
   try {
     return (
       <div className="auth-shell min-h-screen bg-[#050816] p-3 sm:p-5 lg:p-6">
-        <div className="grid min-h-[calc(100vh-1.5rem)] overflow-hidden rounded-[1.75rem] border border-white/10 bg-[#0b1729] shadow-[0_28px_80px_rgba(0,0,0,0.35)] xl:min-h-[calc(100vh-3rem)] xl:grid-cols-[1.05fr_0.95fr]">
+        <div className="grid min-h-[calc(100dvh-1.5rem)] overflow-hidden rounded-[1.75rem] border border-white/10 bg-[#0b1729] shadow-[0_28px_80px_rgba(0,0,0,0.35)] sm:min-h-[calc(100dvh-2.5rem)] lg:min-h-[calc(100dvh-3rem)] xl:grid-cols-[1.05fr_0.95fr]">
         {/* Brand / image panel — always dark regardless of theme */}
         <div className="relative hidden overflow-hidden bg-[#070b1d] xl:block">
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_10%_4%,rgba(45,212,191,0.22),transparent_38%),radial-gradient(ellipse_at_92%_80%,rgba(59,130,246,0.2),transparent_42%),radial-gradient(ellipse_at_45%_100%,rgba(139,92,246,0.12),transparent_46%),linear-gradient(145deg,#070b1d_0%,#0c1530_55%,#07101f_100%)]" />
@@ -73,7 +73,7 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
         </div>
 
         {/* Form panel — adapts to light/dark */}
-        <div className="relative flex min-h-[calc(100vh-1.5rem)] items-start justify-center overflow-hidden bg-[radial-gradient(ellipse_at_84%_12%,rgba(45,212,191,0.14),transparent_32%),radial-gradient(ellipse_at_18%_90%,rgba(59,130,246,0.12),transparent_38%),linear-gradient(145deg,#0c1530,#070b1d)] px-6 py-8 sm:items-center sm:px-10 sm:py-12 xl:min-h-0 xl:px-12">
+        <div className="relative flex min-h-[calc(100dvh-1.5rem)] items-start justify-center overflow-hidden bg-[radial-gradient(ellipse_at_84%_12%,rgba(45,212,191,0.14),transparent_32%),radial-gradient(ellipse_at_18%_90%,rgba(59,130,246,0.12),transparent_38%),linear-gradient(145deg,#0c1530,#070b1d)] px-6 py-8 sm:min-h-[calc(100dvh-2.5rem)] sm:items-center sm:px-10 sm:py-12 lg:min-h-[calc(100dvh-3rem)] xl:min-h-0 xl:px-12">
           <div className="absolute -right-24 -top-24 h-72 w-72 rounded-full border border-emerald-300/[0.09]" />
           <div className="absolute -bottom-36 -left-28 h-80 w-80 rounded-full border border-sky-300/[0.08]" />
           <div className="relative w-full max-w-lg rounded-[1.5rem] border border-white/10 bg-slate-950/25 p-7 shadow-[0_24px_60px_rgba(0,0,0,0.22)] backdrop-blur-xl sm:p-9 xl:max-w-md">{children}</div>
