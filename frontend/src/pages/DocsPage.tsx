@@ -733,136 +733,7 @@ const GENERAL_SECTIONS: DocSection[] = [
     ),
   },
 
-  /* ── 14. AI WORKFLOW PIPELINE ── */
-  {
-    id: 'g-ai-workflow',
-    title: 'AI Workflow Pipeline',
-    icon: Workflow,
-    badge: { label: 'Architecture', tone: 'accent' },
-    content: (
-      <div className="space-y-4 text-sm text-ink-soft leading-relaxed">
-        <p>
-          When you ask the <strong className="text-ink">ProcureAI Advisor</strong> a question, it follows a deterministic multi-stage pipeline — not a random guess.
-        </p>
-        <div className="space-y-2">
-          {[
-            { step: '1', title: 'User Asks', desc: 'You type a natural language question (e.g. "Compare laptop prices across suppliers").' },
-            { step: '2', title: 'Intent Detection', desc: 'The LLM identifies what you need — product search, optimization, analytics, or general procurement advice.' },
-            { step: '3', title: 'Tool Selection', desc: 'The AI selects 1–3 backend tools (from 8 available) via OpenAI-compatible function calling.' },
-            { step: '4', title: 'Backend Execution', desc: 'Selected tools execute against live services — supplier adapters, scoring engine, MongoDB history.' },
-            { step: '5', title: 'Recommendation Engine', desc: 'Results pass through the weighted decision engine with your selected procurement strategy.' },
-            { step: '6', title: 'LLM Explanation', desc: 'The LLM receives structured tool results and generates a human-readable explanation with tables and insights.' },
-            { step: '7', title: 'Formatted Response', desc: 'The response is rendered with markdown tables, lists, and formatted data — ready for decision-making.' },
-          ].map((s) => (
-            <div key={s.step} className="flex gap-3 rounded-md border border-line bg-bg p-3">
-              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-accent text-white text-xs font-bold">{s.step}</span>
-              <div>
-                <h4 className="text-xs font-semibold text-ink">{s.title}</h4>
-                <p className="mt-0.5 text-[11px] text-muted">{s.desc}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-        <div className="rounded-md border border-accent/20 bg-accent-soft p-4">
-          <h4 className="mb-1 flex items-center gap-2 text-xs font-semibold text-accent"><Lightbulb size={14} /> Key Insight</h4>
-          <p className="text-xs text-ink-soft">The AI never guesses. Every response is grounded in <strong className="text-ink">real tool results</strong> from your live procurement data — with 21 anti-hallucination rules enforced in the system prompt. Up to 5 rounds of tool calling are allowed per query for complex multi-step questions.</p>
-        </div>
-      </div>
-    ),
-  },
-
-  /* ── 15. DECISION ENGINE ── */
-  {
-    id: 'g-decision-engine',
-    title: 'Decision Engine — How Scoring Works',
-    icon: Calculator,
-    badge: { label: 'Scoring', tone: 'success' },
-    content: (
-      <div className="space-y-4 text-sm text-ink-soft leading-relaxed">
-        <p>
-          The recommendation engine uses a <strong className="text-ink">deterministic weighted scoring algorithm</strong> — not random AI output. Every supplier receives a score out of 100 based on measurable factors.
-        </p>
-        <div className="rounded-md border border-line bg-bg p-4">
-          <h4 className="mb-3 font-semibold text-ink">Balanced Profile — Default Weights</h4>
-          <div className="space-y-2">
-            {[
-              { factor: 'Price', weight: 30, color: 'bg-green-500', desc: 'Unit cost normalized against cheapest option' },
-              { factor: 'Delivery', weight: 20, color: 'bg-blue-500', desc: 'Estimated delivery days (location-aware)' },
-              { factor: 'Rating', weight: 20, color: 'bg-yellow-500', desc: 'Supplier reliability rating (0–5)' },
-              { factor: 'Discount', weight: 10, color: 'bg-purple-500', desc: 'Percentage discount from list price' },
-              { factor: 'Availability', weight: 10, color: 'bg-orange-500', desc: 'In-stock probability' },
-              { factor: 'Warranty', weight: 5, color: 'bg-teal-500', desc: 'Coverage duration in months' },
-              { factor: 'Return Policy', weight: 5, color: 'bg-pink-500', desc: 'Return window in days' },
-            ].map((f) => (
-              <div key={f.factor} className="flex items-center gap-3">
-                <span className="w-20 text-xs font-semibold text-ink">{f.factor}</span>
-                <div className="flex-1 h-5 rounded-full bg-surface overflow-hidden border border-line">
-                  <div className={cn('h-full rounded-full', f.color)} style={{ width: `${f.weight}%` }} />
-                </div>
-                <span className="w-10 text-right text-xs font-bold text-ink">{f.weight}%</span>
-              </div>
-            ))}
-          </div>
-        </div>
-        <div className="rounded-md border border-line bg-bg p-4">
-          <h4 className="mb-3 font-semibold text-ink">How Ranking Works</h4>
-          <div className="flex flex-wrap items-center justify-center gap-2 text-xs font-medium">
-            {['Normalize Factors', 'Apply Weights', 'Compute Score (0–100)', 'Rank Suppliers', 'Top = Recommendation'].map((s, i, arr) => (
-              <React.Fragment key={s}>
-                <span className="rounded-md bg-accent-soft px-3 py-1.5 text-accent whitespace-nowrap">{s}</span>
-                {i < arr.length - 1 && <ArrowRight size={12} className="text-muted shrink-0" />}
-              </React.Fragment>
-            ))}
-          </div>
-        </div>
-        <div className="rounded-md border border-accent/20 bg-accent-soft p-4">
-          <h4 className="mb-1 flex items-center gap-2 text-xs font-semibold text-accent"><Lightbulb size={14} /> Key Insight</h4>
-          <p className="text-xs text-ink-soft">Switching to a different <strong className="text-ink">procurement strategy</strong> (e.g. Lowest Cost) changes the weight distribution — the same suppliers get different scores, producing different "best" recommendations. The algorithm is fully deterministic and auditable.</p>
-        </div>
-      </div>
-    ),
-  },
-
-  /* ── 16. AI BACKEND TOOLS ── */
-  {
-    id: 'g-ai-tools',
-    title: 'AI Backend Tools (8 Functions)',
-    icon: Bot,
-    content: (
-      <div className="space-y-4 text-sm text-ink-soft leading-relaxed">
-        <p>
-          The AI assistant connects to <strong className="text-ink">8 backend tools</strong> via OpenAI-compatible function calling.
-          Every answer is grounded in real data — the AI cannot invent suppliers or prices.
-        </p>
-        <div className="grid gap-2 sm:grid-cols-2">
-          {[
-            { name: 'search_products', desc: 'Search & compare products across all marketplace suppliers with pricing, delivery, and ratings.', icon: '🔍' },
-            { name: 'get_recommendation', desc: 'Get an AI-powered supplier recommendation with scoring, reasons, and confidence level.', icon: '⭐' },
-            { name: 'optimize_basket', desc: 'Optimize a multi-item basket — finds the best split/consolidate plan across suppliers.', icon: '🛒' },
-            { name: 'get_analytics', desc: 'Retrieve procurement analytics: dashboard summary, spend breakdown, savings trends, or insights.', icon: '📊' },
-            { name: 'get_business_impact', desc: 'Get business impact metrics: total savings, hours saved, AI accuracy, and efficiency score.', icon: '💰' },
-            { name: 'list_suppliers', desc: 'List your private Supplier Hub suppliers with their products and details.', icon: '🏢' },
-            { name: 'get_basket_history', desc: 'Fetch recent basket optimization history — used before re-optimizing baskets.', icon: '📋' },
-            { name: 'get_history', desc: 'Get recent procurement search history with timestamps and results.', icon: '🕐' },
-          ].map((tool) => (
-            <div key={tool.name} className="flex gap-3 rounded-md border border-line bg-bg p-3">
-              <span className="text-lg leading-none mt-0.5">{tool.icon}</span>
-              <div>
-                <code className="text-xs font-bold text-accent">{tool.name}</code>
-                <p className="mt-0.5 text-[11px] text-muted">{tool.desc}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-        <div className="rounded-md border border-accent/20 bg-accent-soft p-4">
-          <h4 className="mb-1 flex items-center gap-2 text-xs font-semibold text-accent"><Lightbulb size={14} /> Key Insight</h4>
-          <p className="text-xs text-ink-soft">The AI can call <strong className="text-ink">multiple tools in parallel</strong> for cross-category queries (e.g. "Compare laptops and office chairs"). Up to 5 rounds of tool calling per conversation turn ensures complex questions are fully answered.</p>
-        </div>
-      </div>
-    ),
-  },
-
-  /* ── 17. PROCUREMENT JOURNEY ── */
+  /* ── 14. PROCUREMENT JOURNEY ── */
   {
     id: 'g-procurement-journey',
     title: 'Complete Procurement Journey',
@@ -1210,6 +1081,158 @@ const DEV_SECTIONS: DocSection[] = [
       </div>
     ),
   },
+  /* ── AI WORKFLOW PIPELINE ── */
+  {
+    id: 'd-ai-workflow',
+    title: 'AI Workflow Pipeline',
+    icon: Workflow,
+    badge: { label: 'Architecture', tone: 'accent' },
+    content: (
+      <div className="space-y-4 text-sm text-ink-soft leading-relaxed">
+        <p>
+          When a user asks the <strong className="text-ink">ProcureAI Advisor</strong> a question, it follows a deterministic multi-stage pipeline — not a random guess.
+        </p>
+        <div className="space-y-2">
+          {[
+            { step: '1', title: 'User Asks', desc: 'Natural language question (e.g. "Compare laptop prices across suppliers").' },
+            { step: '2', title: 'Intent Detection', desc: 'The LLM identifies the intent — product search, optimization, analytics, or general procurement advice.' },
+            { step: '3', title: 'Tool Selection', desc: 'The AI selects 1–3 backend tools (from 8 available) via OpenAI-compatible function calling.' },
+            { step: '4', title: 'Backend Execution', desc: 'Selected tools execute against live services — supplier adapters, scoring engine, MongoDB history.' },
+            { step: '5', title: 'Recommendation Engine', desc: 'Results pass through the weighted decision engine with the selected procurement strategy.' },
+            { step: '6', title: 'LLM Explanation', desc: 'The LLM receives structured tool results and generates a human-readable explanation with tables and insights.' },
+            { step: '7', title: 'Formatted Response', desc: 'The response is rendered with markdown tables, lists, and formatted data — ready for decision-making.' },
+          ].map((s) => (
+            <div key={s.step} className="flex gap-3 rounded-md border border-line bg-bg p-3">
+              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-accent text-white text-xs font-bold">{s.step}</span>
+              <div>
+                <h4 className="text-xs font-semibold text-ink">{s.title}</h4>
+                <p className="mt-0.5 text-[11px] text-muted">{s.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="rounded-md border border-accent/20 bg-accent-soft p-4">
+          <h4 className="mb-1 flex items-center gap-2 text-xs font-semibold text-accent"><Lightbulb size={14} /> Implementation Details</h4>
+          <p className="text-xs text-ink-soft">Orchestrated by <code className="rounded bg-bg px-1 text-accent">ai_service.py</code>. 21 anti-hallucination rules in <code className="rounded bg-bg px-1 text-accent">ai_prompts.py</code>. Max 5 rounds of tool calling per turn. Primary model: <strong className="text-ink">Qwen 3.6-27B</strong> (Groq), fallback: <strong className="text-ink">Llama 3.1-8B</strong>.</p>
+        </div>
+      </div>
+    ),
+  },
+
+  /* ── DECISION ENGINE ── */
+  {
+    id: 'd-decision-engine',
+    title: 'Decision Engine — Scoring Algorithm',
+    icon: Calculator,
+    badge: { label: 'Scoring', tone: 'success' },
+    content: (
+      <div className="space-y-4 text-sm text-ink-soft leading-relaxed">
+        <p>
+          The recommendation engine uses a <strong className="text-ink">deterministic weighted scoring algorithm</strong>. Every supplier receives a score out of 100 based on measurable factors.
+        </p>
+        <div className="rounded-md border border-line bg-bg p-4">
+          <h4 className="mb-3 font-semibold text-ink">Balanced Profile — Default Weights (<code className="text-accent text-[11px]">config.py → WEIGHT_PROFILES</code>)</h4>
+          <div className="space-y-2">
+            {[
+              { factor: 'Price', weight: 30, color: 'bg-green-500', desc: 'Unit cost normalized against cheapest option' },
+              { factor: 'Delivery', weight: 20, color: 'bg-blue-500', desc: 'Estimated delivery days (location-aware)' },
+              { factor: 'Rating', weight: 20, color: 'bg-yellow-500', desc: 'Supplier reliability rating (0–5)' },
+              { factor: 'Discount', weight: 10, color: 'bg-purple-500', desc: 'Percentage discount from list price' },
+              { factor: 'Availability', weight: 10, color: 'bg-orange-500', desc: 'In-stock probability' },
+              { factor: 'Warranty', weight: 5, color: 'bg-teal-500', desc: 'Coverage duration in months' },
+              { factor: 'Return Policy', weight: 5, color: 'bg-pink-500', desc: 'Return window in days' },
+            ].map((f) => (
+              <div key={f.factor} className="flex items-center gap-3">
+                <span className="w-20 text-xs font-semibold text-ink">{f.factor}</span>
+                <div className="flex-1 h-5 rounded-full bg-surface overflow-hidden border border-line">
+                  <div className={cn('h-full rounded-full', f.color)} style={{ width: `${f.weight}%` }} />
+                </div>
+                <span className="w-10 text-right text-xs font-bold text-ink">{f.weight}%</span>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="rounded-md border border-line bg-bg p-4">
+          <h4 className="mb-3 font-semibold text-ink">Ranking Pipeline</h4>
+          <div className="flex flex-wrap items-center justify-center gap-2 text-xs font-medium">
+            {['Normalize Factors', 'Apply Weights', 'Compute Score (0–100)', 'Rank Suppliers', 'Top = Recommendation'].map((s, i, arr) => (
+              <React.Fragment key={s}>
+                <span className="rounded-md bg-accent-soft px-3 py-1.5 text-accent whitespace-nowrap">{s}</span>
+                {i < arr.length - 1 && <ArrowRight size={12} className="text-muted shrink-0" />}
+              </React.Fragment>
+            ))}
+          </div>
+        </div>
+        <div className="rounded-md border border-line bg-bg p-4">
+          <h4 className="mb-2 font-semibold text-ink">Weight Profiles (internal) → Recommendation Modes (user-facing)</h4>
+          <div className="overflow-x-auto">
+            <table className="w-full text-xs">
+              <thead><tr className="border-b border-line bg-bg text-left"><th className="px-2 py-1.5 font-semibold text-ink">Mode</th><th className="px-2 py-1.5 font-semibold text-ink">Weight Profile</th><th className="px-2 py-1.5 font-semibold text-ink">Sort By</th></tr></thead>
+              <tbody className="divide-y divide-line">
+                {[
+                  ['balanced', 'balanced', 'balanced'],
+                  ['lowest_cost', 'budget', 'total_cost'],
+                  ['lowest_risk', 'balanced', 'risk'],
+                  ['fastest_delivery', 'urgent', 'delivery'],
+                  ['highest_reliability', 'fast', 'reliability'],
+                  ['best_long_term_value', 'balanced', 'long_term'],
+                ].map(([mode, profile, sort]) => (
+                  <tr key={mode}><td className="px-2 py-1.5"><code className="text-accent">{mode}</code></td><td className="px-2 py-1.5 text-muted">{profile}</td><td className="px-2 py-1.5 text-muted">{sort}</td></tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div className="rounded-md border border-accent/20 bg-accent-soft p-4">
+          <h4 className="mb-1 flex items-center gap-2 text-xs font-semibold text-accent"><Lightbulb size={14} /> Key Insight</h4>
+          <p className="text-xs text-ink-soft">Switching strategy changes the weight distribution — the same suppliers get different scores, producing different "best" recommendations. Defined in <code className="rounded bg-bg px-1 text-accent">config.py → RECOMMENDATION_MODES</code>.</p>
+        </div>
+      </div>
+    ),
+  },
+
+  /* ── AI BACKEND TOOLS ── */
+  {
+    id: 'd-ai-tools',
+    title: 'AI Backend Tools (8 Functions)',
+    icon: Bot,
+    content: (
+      <div className="space-y-4 text-sm text-ink-soft leading-relaxed">
+        <p>
+          Defined in <code className="rounded bg-bg px-1 text-accent">ai_tools.py → TOOL_DEFINITIONS</code>. OpenAI-compatible function-calling format. Dispatched via <code className="rounded bg-bg px-1 text-accent">execute_tool()</code>.
+        </p>
+        <div className="grid gap-2 sm:grid-cols-2">
+          {[
+            { name: 'search_products', desc: 'Search & compare products across all marketplace suppliers with pricing, delivery, and ratings.', icon: '🔍', params: 'query, category, suppliers?, recommendation_mode?' },
+            { name: 'get_recommendation', desc: 'Get an AI-powered supplier recommendation with scoring, reasons, and confidence level.', icon: '⭐', params: 'query, category, mode?' },
+            { name: 'optimize_basket', desc: 'Optimize a multi-item basket — finds the best split/consolidate plan across suppliers.', icon: '🛒', params: 'category, items[], mode?' },
+            { name: 'get_analytics', desc: 'Retrieve procurement analytics: dashboard summary, spend breakdown, savings trends, or insights.', icon: '📊', params: 'metric (summary|spend|savings|insights)' },
+            { name: 'get_business_impact', desc: 'Get business impact metrics: total savings, hours saved, AI accuracy, and efficiency score.', icon: '💰', params: 'none' },
+            { name: 'list_suppliers', desc: 'List the user\'s private Supplier Hub suppliers with their products and details.', icon: '🏢', params: 'none' },
+            { name: 'get_basket_history', desc: 'Fetch recent basket optimization history — used before re-optimizing baskets.', icon: '📋', params: 'limit?, category?' },
+            { name: 'get_history', desc: 'Get recent procurement search history with timestamps and results.', icon: '🕐', params: 'limit?' },
+          ].map((tool) => (
+            <div key={tool.name} className="rounded-md border border-line bg-bg p-3">
+              <div className="flex gap-2 items-start">
+                <span className="text-lg leading-none mt-0.5">{tool.icon}</span>
+                <div>
+                  <code className="text-xs font-bold text-accent">{tool.name}</code>
+                  <p className="mt-0.5 text-[11px] text-muted">{tool.desc}</p>
+                  <p className="mt-1 text-[10px] font-mono text-muted/70">Params: {tool.params}</p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="rounded-md border border-accent/20 bg-accent-soft p-4">
+          <h4 className="mb-1 flex items-center gap-2 text-xs font-semibold text-accent"><Lightbulb size={14} /> Implementation Notes</h4>
+          <p className="text-xs text-ink-soft">All tools are scoped by <code className="rounded bg-bg px-1 text-accent">user_id</code> for security. Results are truncated to fit token limits. Parallel tool calls supported for cross-category queries.</p>
+        </div>
+      </div>
+    ),
+  },
+
+  /* ── GETTING STARTED ── */
   {
     id: 'd-getting-started',
     title: 'Getting Started',
