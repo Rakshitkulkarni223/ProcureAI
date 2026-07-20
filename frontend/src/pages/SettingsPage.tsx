@@ -1,20 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { Check, User as UserIcon, MapPin, SlidersHorizontal, Package } from 'lucide-react';
-import type { Category, Preferences, SortOption, WeightProfile } from '../types';
+import { Check, User as UserIcon, MapPin, Package } from 'lucide-react';
+import type { Category, Preferences } from '../types';
 import { api, apiError } from '../lib/api';
 import { Card, CardBody, CardHeader } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { Badge } from '../components/ui/Badge';
 import { useAuth } from '../context/AuthContext';
 import { useLocation } from '../context/LocationContext';
-
-const SORTS: { value: SortOption; label: string }[] = [
-  { value: 'lowest_price', label: 'Lowest Price' },
-  { value: 'lowest_total_cost', label: 'Lowest Total Cost' },
-  { value: 'highest_rating', label: 'Highest Rating' },
-  { value: 'fastest_delivery', label: 'Fastest Delivery' },
-  { value: 'highest_discount', label: 'Highest Discount' },
-];
 
 const BUSINESS_TYPES = [
   { value: 'startup', label: 'Startup' },
@@ -28,7 +20,6 @@ export function SettingsPage() {
   const { user } = useAuth();
   const { city: contextCity, cities: availableCities, setCity } = useLocation();
   const [categories, setCategories] = useState<Category[]>([]);
-  const [weightProfiles, setWeightProfiles] = useState<WeightProfile[]>([]);
   const [prefs, setPrefs] = useState<Preferences | null>(null);
   const [savedPrefs, setSavedPrefs] = useState<Preferences | null>(null);
   const [saving, setSaving] = useState(false);
@@ -37,8 +28,6 @@ export function SettingsPage() {
   const hasUnsavedChanges = Boolean(
     prefs && savedPrefs && (
       prefs.defaultCategory !== savedPrefs.defaultCategory ||
-      prefs.sortPreference !== savedPrefs.sortPreference ||
-      prefs.weightProfile !== savedPrefs.weightProfile ||
       prefs.businessType !== savedPrefs.businessType ||
       prefs.city !== savedPrefs.city
     )
@@ -46,11 +35,10 @@ export function SettingsPage() {
 
   useEffect(() => {
     try {
-      Promise.all([api.categories(), api.preferences(), api.weightProfiles()])
-        .then(([categoryData, preferenceData, profileData]) => {
+      Promise.all([api.categories(), api.preferences()])
+        .then(([categoryData, preferenceData]) => {
           const loadedPrefs = { ...preferenceData, city: preferenceData.city || contextCity };
           setCategories(categoryData);
-          setWeightProfiles(profileData);
           setPrefs(loadedPrefs);
           setSavedPrefs(loadedPrefs);
         })
@@ -86,8 +74,6 @@ export function SettingsPage() {
     try {
       const updated = await api.updatePreferences({
         defaultCategory: prefs.defaultCategory,
-        sortPreference: prefs.sortPreference,
-        weightProfile: prefs.weightProfile,
         businessType: prefs.businessType,
         city: prefs.city,
       });
@@ -129,34 +115,7 @@ export function SettingsPage() {
         </CardBody>
       </Card>
 
-      <div className="grid gap-5 xl:grid-cols-2">
-        <Card className="border border-line bg-surface shadow-card">
-          <CardHeader className="flex items-center gap-2 border-line">
-            <SlidersHorizontal size={16} className="text-sky-400" />
-            <div>
-              <h2 className="font-display text-base font-semibold tracking-tight text-ink">AI Preferences</h2>
-              <p className="mt-0.5 text-xs text-muted">Control how recommendations are prioritized.</p>
-            </div>
-          </CardHeader>
-          <CardBody className="space-y-5 p-5 sm:p-6">
-            <SelectField
-              label="Preferred supplier ranking"
-              testId="pref-sort"
-              value={prefs?.sortPreference || 'lowest_price'}
-              onChange={(value) => update({ sortPreference: value as SortOption })}
-              options={SORTS.map((sort) => ({ value: sort.value, label: sort.label }))}
-            />
-            <SelectField
-              label="Decision model"
-              value={prefs?.weightProfile || ''}
-              onChange={(value) => update({ weightProfile: value as Preferences['weightProfile'] })}
-              options={weightProfiles.map((profile) => ({ value: profile.key, label: profile.label }))}
-              description={weightProfiles.find((profile) => profile.key === prefs?.weightProfile)?.description}
-            />
-          </CardBody>
-        </Card>
-
-        <Card className="border border-line bg-surface shadow-card">
+      <Card className="border border-line bg-surface shadow-card">
           <CardHeader className="flex items-center gap-2 border-line">
             <Package size={16} className="text-accent" />
             <div>
@@ -191,8 +150,7 @@ export function SettingsPage() {
               </div>
             )}
           </CardBody>
-        </Card>
-      </div>
+      </Card>
 
       {error && <div className="rounded-xl border border-danger/30 bg-danger/10 px-4 py-3 text-sm text-danger">{error}</div>}
 
