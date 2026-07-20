@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Check, User as UserIcon, MapPin } from 'lucide-react';
-import type { Category, Preferences, SortOption } from '../types';
+import { Check, User as UserIcon, MapPin, SlidersHorizontal, Package } from 'lucide-react';
+import type { Category, Preferences, SortOption, WeightProfile } from '../types';
 import { api, apiError } from '../lib/api';
 import { Card, CardBody, CardHeader } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
@@ -16,27 +16,58 @@ const SORTS: { value: SortOption; label: string }[] = [
   { value: 'highest_discount', label: 'Highest Discount' },
 ];
 
+const BUSINESS_TYPES = [
+  { value: 'startup', label: 'Startup' },
+  { value: 'restaurant', label: 'Restaurant / Hotel' },
+  { value: 'hospital', label: 'Hospital / Clinic' },
+  { value: 'retail', label: 'Retail / Agency' },
+  { value: 'general', label: 'General / Office' },
+];
+
 export function SettingsPage() {
   const { user } = useAuth();
   const { city: contextCity, cities: availableCities, setCity } = useLocation();
   const [categories, setCategories] = useState<Category[]>([]);
+  const [weightProfiles, setWeightProfiles] = useState<WeightProfile[]>([]);
   const [prefs, setPrefs] = useState<Preferences | null>(null);
+  const [savedPrefs, setSavedPrefs] = useState<Preferences | null>(null);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState('');
 
   useEffect(() => {
-    Promise.all([api.categories(), api.preferences()])
-      .then(([c, pr]) => {
-        setCategories(c);
-        setPrefs({ ...pr, city: pr.city || contextCity });
-      })
-      .catch((e) => setError(apiError(e)));
-  }, []);
+    try {
+      Promise.all([api.categories(), api.preferences(), api.weightProfiles()])
+        .then(([categoryData, preferenceData, profileData]) => {
+          const loadedPrefs = { ...preferenceData, city: preferenceData.city || contextCity };
+          setCategories(categoryData);
+          setWeightProfiles(profileData);
+          setPrefs(loadedPrefs);
+          setSavedPrefs(loadedPrefs);
+        })
+        .catch((e) => setError(apiError(e)));
+    } catch (e) {
+      setError(apiError(e));
+    }
+  }, [contextCity]);
 
   const update = (patch: Partial<Preferences>) => {
-    setPrefs((prev) => (prev ? { ...prev, ...patch } : prev));
-    setSaved(false);
+    try {
+      setPrefs((prev) => (prev ? { ...prev, ...patch } : prev));
+      setSaved(false);
+    } catch (e) {
+      setError(apiError(e));
+    }
+  };
+
+  const cancel = () => {
+    try {
+      if (savedPrefs) setPrefs({ ...savedPrefs });
+      setSaved(false);
+      setError('');
+    } catch (e) {
+      setError(apiError(e));
+    }
   };
 
   const save = async () => {
@@ -52,6 +83,7 @@ export function SettingsPage() {
         city: prefs.city,
       });
       setPrefs(updated);
+      setSavedPrefs(updated);
       setCity(updated.city || prefs.city || contextCity);
       setSaved(true);
     } catch (e) {
@@ -62,111 +94,159 @@ export function SettingsPage() {
   };
 
   return (
-    <div className="space-y-7">
+    <div className="space-y-6 lg:space-y-8">
       <div>
-        <div className="label-eyebrow">Account</div>
-        <h1 className="mt-1 font-display text-3xl font-bold tracking-tight text-ink">Settings</h1>
-        <p className="mt-1 text-sm text-muted">Tune how the AI ranks suppliers for your business.</p>
+        <div className="label-eyebrow">Workspace</div>
+        <h1 className="mt-1 font-display text-3xl font-bold tracking-tight text-ink">Workspace Settings</h1>
+        <p className="mt-1 max-w-2xl text-sm leading-6 text-muted">Manage your account, procurement preferences, AI behavior, and workspace configuration.</p>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-3">
-        <Card className="lg:col-span-1">
-          <CardHeader className="flex items-center gap-2">
-            <UserIcon size={15} className="text-muted" />
-            <h3 className="font-display text-base font-semibold tracking-tight text-ink">Profile</h3>
-          </CardHeader>
-          <CardBody className="space-y-3 text-sm">
+      <Card className="border border-line bg-surface shadow-card">
+        <CardHeader className="flex items-center gap-2 border-line">
+          <UserIcon size={16} className="text-sky-400" />
+          <h2 className="font-display text-base font-semibold tracking-tight text-ink">Account</h2>
+        </CardHeader>
+        <CardBody className="grid gap-5 p-5 sm:grid-cols-[auto_minmax(0,1fr)] sm:items-center sm:p-6">
+          <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-accent-soft text-xl font-display font-bold text-accent">
+            {user?.name?.[0]?.toUpperCase() || 'U'}
+          </span>
+          <div className="grid gap-3 sm:grid-cols-3">
             <Field label="Name" value={user?.name} />
             <Field label="Email" value={user?.email} />
-            <div className="flex items-center justify-between">
-              <span className="label-eyebrow">Role</span>
-              <Badge tone="accent">{user?.role}</Badge>
+            <div>
+              <div className="label-eyebrow">Role</div>
+              <div className="mt-1.5"><Badge tone="accent">{user?.role || 'User'}</Badge></div>
             </div>
+          </div>
+        </CardBody>
+      </Card>
+
+      <div className="grid gap-5 xl:grid-cols-2">
+        <Card className="border border-line bg-surface shadow-card">
+          <CardHeader className="flex items-center gap-2 border-line">
+            <SlidersHorizontal size={16} className="text-sky-400" />
+            <div>
+              <h2 className="font-display text-base font-semibold tracking-tight text-ink">AI Preferences</h2>
+              <p className="mt-0.5 text-xs text-muted">Control how recommendations are prioritized.</p>
+            </div>
+          </CardHeader>
+          <CardBody className="space-y-5 p-5 sm:p-6">
+            <SelectField
+              label="Preferred supplier ranking"
+              testId="pref-sort"
+              value={prefs?.sortPreference || 'lowest_price'}
+              onChange={(value) => update({ sortPreference: value as SortOption })}
+              options={SORTS.map((sort) => ({ value: sort.value, label: sort.label }))}
+            />
+            <SelectField
+              label="Decision model"
+              value={prefs?.weightProfile || ''}
+              onChange={(value) => update({ weightProfile: value as Preferences['weightProfile'] })}
+              options={weightProfiles.map((profile) => ({ value: profile.key, label: profile.label }))}
+              description={weightProfiles.find((profile) => profile.key === prefs?.weightProfile)?.description}
+            />
           </CardBody>
         </Card>
 
-        <Card className="lg:col-span-2">
-          <CardHeader>
-            <h3 className="font-display text-base font-semibold tracking-tight text-ink">Procurement Preferences</h3>
-          </CardHeader>
-          <CardBody className="space-y-6" data-testid="preferences-form">
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="space-y-1.5">
-                <label className="label-eyebrow block">Default Category</label>
-                <select
-                  data-testid="pref-default-category"
-                  value={prefs?.defaultCategory || ''}
-                  onChange={(e) => update({ defaultCategory: e.target.value })}
-                  className="h-11 w-full appearance-none rounded-md border border-line bg-surface px-3.5 text-sm text-ink focus:border-ink focus:outline-none"
-                >
-                  {categories.map((c) => (
-                    <option key={c.slug} value={c.slug}>
-                      {c.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="space-y-1.5">
-                <label className="label-eyebrow block">Default Sort</label>
-                <select
-                  data-testid="pref-sort"
-                  value={prefs?.sortPreference || 'lowest_price'}
-                  onChange={(e) => update({ sortPreference: e.target.value as SortOption })}
-                  className="h-11 w-full appearance-none rounded-md border border-line bg-surface px-3.5 text-sm text-ink focus:border-ink focus:outline-none"
-                >
-                  {SORTS.map((s) => (
-                    <option key={s.value} value={s.value}>
-                      {s.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
+        <Card className="border border-line bg-surface shadow-card">
+          <CardHeader className="flex items-center gap-2 border-line">
+            <Package size={16} className="text-accent" />
+            <div>
+              <h2 className="font-display text-base font-semibold tracking-tight text-ink">Procurement Defaults</h2>
+              <p className="mt-0.5 text-xs text-muted">Applied when starting a new supplier comparison.</p>
             </div>
-
-            {/* Delivery Location */}
+          </CardHeader>
+          <CardBody className="grid gap-5 p-5 sm:grid-cols-2 sm:p-6">
+            <SelectField
+              label="Default category"
+              testId="pref-default-category"
+              value={prefs?.defaultCategory || ''}
+              onChange={(value) => update({ defaultCategory: value })}
+              options={categories.map((category) => ({ value: category.slug, label: category.name }))}
+            />
+            <SelectField
+              label="Business type"
+              value={prefs?.businessType || 'general'}
+              onChange={(value) => update({ businessType: value })}
+              options={BUSINESS_TYPES}
+            />
             {availableCities.length > 0 && (
-              <div className="space-y-1.5">
-                <label className="label-eyebrow flex items-center gap-1.5">
-                  <MapPin size={11} className="text-muted" /> Delivery Location
-                </label>
-                <select
-                  data-testid="pref-city"
+              <div className="sm:col-span-2">
+                <SelectField
+                  label="Delivery location"
+                  testId="pref-city"
                   value={prefs?.city || contextCity || 'Hyderabad'}
-                  onChange={(e) => update({ city: e.target.value })}
-                  className="h-11 w-full appearance-none rounded-md border border-line bg-surface px-3.5 text-sm text-ink focus:border-ink focus:outline-none"
-                >
-                  {availableCities.map((city) => (
-                    <option key={city} value={city}>{city}</option>
-                  ))}
-                </select>
-                <p className="text-xs text-muted">Used for distance-based delivery estimates across all pages.</p>
+                  onChange={(value) => update({ city: value })}
+                  options={availableCities.map((city) => ({ value: city, label: city }))}
+                  description="Used for distance-based delivery estimates."
+                />
               </div>
             )}
-
-            {error && <div className="rounded-md bg-danger/10 px-3 py-2 text-sm text-danger">{error}</div>}
-
-            <div className="flex items-center gap-3">
-              <Button onClick={save} loading={saving} data-testid="save-preferences">
-                Save Preferences
-              </Button>
-              {saved && (
-                <span className="flex items-center gap-1.5 text-sm text-success" data-testid="preferences-saved">
-                  <Check size={15} /> Saved
-                </span>
-              )}
-            </div>
           </CardBody>
         </Card>
+      </div>
+
+      {error && <div className="rounded-xl border border-danger/30 bg-danger/10 px-4 py-3 text-sm text-danger">{error}</div>}
+
+      <div className="flex flex-col-reverse gap-3 border-t border-line pt-5 sm:flex-row sm:items-center sm:justify-end">
+        <Button variant="outline" onClick={cancel} disabled={saving}>Cancel</Button>
+        <Button onClick={save} loading={saving} data-testid="save-preferences">Save Changes</Button>
+        {saved && (
+          <span className="flex items-center gap-1.5 text-sm text-success" data-testid="preferences-saved">
+            <Check size={15} /> Changes saved
+          </span>
+        )}
       </div>
     </div>
   );
 }
 
 function Field({ label, value }: { label: string; value?: string }) {
-  return (
-    <div className="flex items-center justify-between">
-      <span className="label-eyebrow">{label}</span>
-      <span className="font-medium text-ink">{value || '—'}</span>
-    </div>
-  );
+  try {
+    return (
+      <div className="flex items-center justify-between">
+        <span className="label-eyebrow">{label}</span>
+        <span className="font-medium text-ink">{value || '—'}</span>
+      </div>
+    );
+  } catch {
+    return null;
+  }
+}
+
+function SelectField({
+  label,
+  value,
+  options,
+  onChange,
+  description,
+  testId,
+}: {
+  label: string;
+  value: string;
+  options: { value: string; label: string }[];
+  onChange: (value: string) => void;
+  description?: string;
+  testId?: string;
+}) {
+  try {
+    return (
+      <div className="space-y-1.5">
+        <label className="label-eyebrow block">{label}</label>
+        <select
+          data-testid={testId}
+          value={value}
+          onChange={(event) => onChange(event.target.value)}
+          className="h-11 w-full appearance-none rounded-md border border-line bg-bg px-3.5 text-sm text-ink outline-none transition-colors focus:border-accent focus:ring-2 focus:ring-accent/15"
+        >
+          {options.map((option) => (
+            <option key={option.value} value={option.value}>{option.label}</option>
+          ))}
+        </select>
+        {description && <p className="text-xs leading-5 text-muted">{description}</p>}
+      </div>
+    );
+  } catch {
+    return null;
+  }
 }
