@@ -327,7 +327,7 @@ export function SearchPage() {
 
   return (
     <div className="space-y-7">
-      <div className="flex flex-wrap items-end justify-between gap-4">
+      <section className="flex flex-col gap-4 overflow-hidden rounded-3xl border border-line bg-gradient-to-br from-slate-950 via-surface to-emerald-500/[0.08] p-5 shadow-card sm:flex-row sm:items-end sm:justify-between sm:p-6">
         <div>
           <div className="label-eyebrow">Procurement</div>
           <h1 className="mt-1 font-display text-3xl font-bold tracking-tight text-ink">Search &amp; Compare</h1>
@@ -358,7 +358,7 @@ export function SearchPage() {
             <ShoppingBasket size={15} /> Basket Optimiser
           </button>
         </div>
-      </div>
+      </section>
 
       {/* Search panel */}
       <Card>

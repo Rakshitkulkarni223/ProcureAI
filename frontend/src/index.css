@@ -134,7 +134,7 @@ body {
     @apply text-[11px] uppercase tracking-[0.18em] font-semibold text-muted;
   }
   .card-surface {
-    @apply bg-surface border border-line rounded-md;
+    @apply rounded-2xl border border-line bg-surface shadow-card;
   }
   .data-num {
     font-family: 'IBM Plex Mono', monospace;

@@ -1576,7 +1576,7 @@ export function DocsPage() {
   return (
     <div className="space-y-9">
       {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+      <section className="flex flex-col gap-4 overflow-hidden rounded-3xl border border-line bg-gradient-to-br from-slate-950 via-surface to-violet-500/[0.08] p-5 shadow-card sm:flex-row sm:items-end sm:justify-between sm:p-6">
         <div>
           <div className="label-eyebrow">Reference</div>
           <h1 className="mt-1 font-display text-3xl font-bold tracking-tight text-ink">Documentation</h1>
@@ -1601,7 +1601,7 @@ export function DocsPage() {
             <Code2 size={15} /> Developer
           </button>
         </div>
-      </div>
+      </section>
 
       {/* Table of contents */}
       <Card>

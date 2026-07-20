@@ -75,11 +75,11 @@ export function HistoryPage() {
 
   return (
     <div className="space-y-7">
-      <div>
+      <section className="relative overflow-hidden rounded-3xl border border-line bg-gradient-to-br from-slate-950 via-surface to-violet-500/[0.08] p-5 shadow-card sm:p-6">
         <div className="label-eyebrow">Activity</div>
         <h1 className="mt-1 font-display text-3xl font-bold tracking-tight text-ink">Search History</h1>
         <p className="mt-1 text-sm text-muted">Every comparison you've run, with savings and recommendations.</p>
-      </div>
+      </section>
 
       {loading && items.length === 0 ? (
         <Card>

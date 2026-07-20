@@ -100,11 +100,11 @@ export function SettingsPage() {
 
   return (
     <div className="space-y-6 lg:space-y-8">
-      <div>
+      <section className="relative overflow-hidden rounded-3xl border border-line bg-gradient-to-br from-slate-950 via-surface to-sky-500/[0.08] p-5 shadow-card sm:p-6">
         <div className="label-eyebrow">Workspace</div>
         <h1 className="mt-1 font-display text-3xl font-bold tracking-tight text-ink">Workspace Settings</h1>
         <p className="mt-1 max-w-2xl text-sm leading-6 text-muted">Manage your account, procurement preferences, AI behavior, and workspace configuration.</p>
-      </div>
+      </section>
 
       <div className="grid items-start gap-5 xl:grid-cols-[minmax(250px,0.75fr)_minmax(0,1.75fr)]">
         <Card className="self-start overflow-hidden rounded-2xl border border-line bg-surface shadow-card">

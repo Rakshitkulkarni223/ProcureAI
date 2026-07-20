@@ -41,7 +41,7 @@ export function WatchlistPage() {
 
   return (
     <div className="space-y-7">
-      <div className="flex items-start justify-between gap-4">
+      <section className="flex flex-col gap-4 overflow-hidden rounded-3xl border border-line bg-gradient-to-br from-slate-950 via-surface to-amber-500/[0.08] p-5 shadow-card sm:flex-row sm:items-start sm:justify-between sm:p-6">
         <div>
           <div className="label-eyebrow flex items-center gap-1.5">
             <Eye size={11} /> Price Watchlist
@@ -63,7 +63,7 @@ export function WatchlistPage() {
             <Trash2 size={14} /> Clear all
           </Button>
         )}
-      </div>
+      </section>
 
       {/* Summary cards */}
       {items.length > 0 && (

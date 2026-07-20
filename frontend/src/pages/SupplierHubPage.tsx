@@ -194,7 +194,7 @@ export function SupplierHubPage() {
   if (view === 'list') {
     return (
       <div className="space-y-7">
-        <div className="flex items-start justify-between gap-4">
+        <section className="flex flex-col gap-4 overflow-hidden rounded-3xl border border-line bg-gradient-to-br from-slate-950 via-surface to-cyan-500/[0.08] p-5 shadow-card sm:flex-row sm:items-start sm:justify-between sm:p-6">
           <div>
             <div className="label-eyebrow flex items-center gap-1.5">
               <Store size={11} /> Procurement Network
@@ -212,7 +212,7 @@ export function SupplierHubPage() {
               <Plus size={15} /> Add Supplier
             </Button>
           </div>
-        </div>
+        </section>
 
         {error && <div className="rounded-md bg-danger/10 px-3 py-2 text-sm text-danger">{error}</div>}
 

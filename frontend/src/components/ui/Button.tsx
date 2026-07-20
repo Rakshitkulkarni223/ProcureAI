@@ -11,11 +11,11 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const variants: Record<Variant, string> = {
-  primary: 'bg-accent text-white hover:bg-accent-hover',
-  accent: 'bg-accent text-white hover:bg-accent-hover',
-  outline: 'bg-surface text-ink border border-line hover:bg-bg',
+  primary: 'bg-accent text-white shadow-[0_8px_20px_rgba(34,197,94,0.18)] hover:bg-accent-hover hover:shadow-[0_12px_26px_rgba(34,197,94,0.24)]',
+  accent: 'bg-accent text-white shadow-[0_8px_20px_rgba(34,197,94,0.18)] hover:bg-accent-hover hover:shadow-[0_12px_26px_rgba(34,197,94,0.24)]',
+  outline: 'border border-line bg-slate-950/35 text-ink hover:border-white/20 hover:bg-bg',
   ghost: 'bg-transparent text-ink hover:bg-bg',
-  danger: 'bg-danger text-white hover:bg-red-600',
+  danger: 'bg-danger text-white shadow-[0_8px_20px_rgba(239,68,68,0.16)] hover:bg-red-600',
 };
 
 const sizes: Record<Size, string> = {
@@ -30,7 +30,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       ref={ref}
       disabled={disabled || loading}
       className={cn(
-        'inline-flex items-center justify-center gap-2 rounded-md font-medium tracking-tight transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-bg disabled:opacity-50 disabled:cursor-not-allowed',
+        'inline-flex items-center justify-center gap-2 rounded-xl font-medium tracking-tight transition-all duration-200 hover:-translate-y-px focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-bg disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0',
         variants[variant],
         sizes[size],
         className,

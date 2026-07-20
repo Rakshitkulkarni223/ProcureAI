@@ -58,14 +58,14 @@ export function AnalyticsPage() {
 
   return (
     <div className="space-y-7">
-      <div>
+      <section className="relative overflow-hidden rounded-3xl border border-line bg-gradient-to-br from-slate-950 via-surface to-sky-500/[0.08] p-5 shadow-card sm:p-6">
         <div className="label-eyebrow">Analytics</div>
         <h1 className="mt-1 font-display text-3xl font-bold tracking-tight text-ink">Procurement Analytics</h1>
         <p className="mt-1 text-sm text-muted">Spend, savings and supplier activity across your comparisons.</p>
-        <div className="mt-3">
+        <div className="mt-4 border-t border-line pt-3">
           <DateRangeFilter value={dateRange} onChange={handleDateChange} />
         </div>
-      </div>
+      </section>
 
       <div className="grid gap-6 lg:grid-cols-2">
         <Card>
