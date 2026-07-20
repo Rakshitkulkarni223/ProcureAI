@@ -58,7 +58,7 @@ html,
 body,
 #root {
   min-height: 100%;
-  background-color: var(--color-bg);
+  background-color: #07111F;
 }
 
 body {
@@ -67,6 +67,29 @@ body {
   background-color: var(--color-bg);
   color: var(--color-ink);
   font-family: 'IBM Plex Sans', system-ui, sans-serif;
+}
+
+.app-shell {
+  color-scheme: dark;
+  background-color: var(--color-bg);
+  color: var(--color-ink);
+  --color-bg: #07111F;
+  --color-surface: #111827;
+  --color-ink: #F8FAFC;
+  --color-ink-soft: #D7E0EC;
+  --color-muted: #94A3B8;
+  --color-accent: #22C55E;
+  --color-accent-hover: #4ADE80;
+  --color-accent-soft: rgba(34, 197, 94, 0.14);
+  --color-success: #4ADE80;
+  --color-success-bg: rgba(34, 197, 94, 0.14);
+  --color-warning: #FBBF24;
+  --color-warning-bg: rgba(251, 191, 36, 0.14);
+  --color-danger: #F87171;
+  --color-line: #223248;
+  --scrollbar-bg: #07111F;
+  --scrollbar-thumb: #31445E;
+  --scrollbar-thumb-hover: #465C78;
 }
 
 .auth-shell {

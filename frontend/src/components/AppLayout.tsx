@@ -109,9 +109,9 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   );
 
   return (
-    <div className="min-h-[100dvh] bg-bg">
+    <div className="app-shell min-h-[100dvh] bg-bg">
       {/* Desktop sidebar */}
-      <aside className="fixed inset-y-0 left-0 z-30 hidden w-56 border-r border-line bg-surface lg:block">
+      <aside className="fixed inset-y-0 left-0 z-30 hidden w-56 border-r border-line bg-[#0b1220] lg:block">
         {sidebar}
       </aside>
 
@@ -119,17 +119,17 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
       {open && (
         <div className="fixed inset-0 z-40 lg:hidden">
           <div className="absolute inset-0 bg-ink/30 backdrop-blur-sm" onClick={() => setOpen(false)} />
-          <aside className="absolute inset-y-0 left-0 w-64 bg-surface border-r border-line">{sidebar}</aside>
+          <aside className="absolute inset-y-0 left-0 w-64 bg-[#0b1220] border-r border-line">{sidebar}</aside>
         </div>
       )}
 
       <div className="lg:pl-56">
         {/* Desktop top bar */}
-        <div className="sticky top-0 z-20 hidden h-12 items-center justify-end gap-3 border-b border-line bg-surface/80 px-5 backdrop-blur lg:flex">
+        <div className="sticky top-0 z-20 hidden h-12 items-center justify-end gap-3 border-b border-line bg-[#0b1220] px-5 backdrop-blur lg:flex">
           <LocationDropdown readOnly />
         </div>
 
-        <header className="sticky top-0 z-20 flex h-16 items-center gap-3 border-b border-line bg-surface/80 px-5 backdrop-blur lg:hidden">
+        <header className="sticky top-0 z-20 flex h-16 items-center gap-3 border-b border-line bg-[#0b1220] px-5 backdrop-blur lg:hidden">
           <button
             data-testid="mobile-menu-button"
             onClick={() => setOpen(true)}
