@@ -41,7 +41,7 @@ class Env:
     SERPAPI_KEY: str = os.getenv("SERPAPI_KEY", "")
     # Groq AI (free tier, OpenAI-compatible)
     GROQ_API_KEY: str = os.getenv("GROQ_API_KEY", "")
-    AI_PRIMARY_MODEL: str = os.getenv("AI_PRIMARY_MODEL", "qwen/qwen3.6-27b")
+    AI_PRIMARY_MODEL: str = os.getenv("AI_PRIMARY_MODEL", "llama-3.3-70b-versatile")
     AI_FALLBACK_MODEL: str = os.getenv("AI_FALLBACK_MODEL", "llama-3.1-8b-instant")
     AI_TEMPERATURE: float = float(os.getenv("AI_TEMPERATURE", "0.3"))
     AI_MAX_TOKENS: int = int(os.getenv("AI_MAX_TOKENS", "1024"))
