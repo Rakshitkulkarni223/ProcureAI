@@ -34,6 +34,15 @@ export function SettingsPage() {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState('');
+  const hasUnsavedChanges = Boolean(
+    prefs && savedPrefs && (
+      prefs.defaultCategory !== savedPrefs.defaultCategory ||
+      prefs.sortPreference !== savedPrefs.sortPreference ||
+      prefs.weightProfile !== savedPrefs.weightProfile ||
+      prefs.businessType !== savedPrefs.businessType ||
+      prefs.city !== savedPrefs.city
+    )
+  );
 
   useEffect(() => {
     try {
@@ -106,17 +115,16 @@ export function SettingsPage() {
           <UserIcon size={16} className="text-sky-400" />
           <h2 className="font-display text-base font-semibold tracking-tight text-ink">Account</h2>
         </CardHeader>
-        <CardBody className="grid gap-5 p-5 sm:grid-cols-[auto_minmax(0,1fr)] sm:items-center sm:p-6">
-          <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-accent-soft text-xl font-display font-bold text-accent">
+        <CardBody className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:p-6">
+          <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-accent-soft text-xl font-display font-bold text-accent">
             {user?.name?.[0]?.toUpperCase() || 'U'}
           </span>
-          <div className="grid gap-3 sm:grid-cols-3">
-            <Field label="Name" value={user?.name} />
-            <Field label="Email" value={user?.email} />
-            <div>
-              <div className="label-eyebrow">Role</div>
-              <div className="mt-1.5"><Badge tone="accent">{user?.role || 'User'}</Badge></div>
+          <div className="min-w-0">
+            <div className="flex flex-wrap items-center gap-2">
+              <h3 className="font-display text-lg font-semibold text-ink">{user?.name || 'User'}</h3>
+              <Badge tone="accent">{user?.role || 'User'}</Badge>
             </div>
+            <p className="mt-1 text-sm text-muted">{user?.email || '—'}</p>
           </div>
         </CardBody>
       </Card>
@@ -188,31 +196,20 @@ export function SettingsPage() {
 
       {error && <div className="rounded-xl border border-danger/30 bg-danger/10 px-4 py-3 text-sm text-danger">{error}</div>}
 
-      <div className="flex flex-col-reverse gap-3 border-t border-line pt-5 sm:flex-row sm:items-center sm:justify-end">
-        <Button variant="outline" onClick={cancel} disabled={saving}>Cancel</Button>
-        <Button onClick={save} loading={saving} data-testid="save-preferences">Save Changes</Button>
-        {saved && (
-          <span className="flex items-center gap-1.5 text-sm text-success" data-testid="preferences-saved">
-            <Check size={15} /> Changes saved
-          </span>
-        )}
-      </div>
+      {hasUnsavedChanges ? (
+        <div className="flex flex-col-reverse gap-3 border-t border-line pt-5 sm:flex-row sm:items-center sm:justify-end">
+          <Button variant="outline" onClick={cancel} disabled={saving}>Cancel</Button>
+          <Button onClick={save} loading={saving} data-testid="save-preferences">Save Changes</Button>
+        </div>
+      ) : saved ? (
+        <div className="flex items-center justify-end gap-1.5 border-t border-line pt-5 text-sm text-success" data-testid="preferences-saved">
+          <Check size={15} /> Changes saved
+        </div>
+      ) : null}
     </div>
   );
 }
 
-function Field({ label, value }: { label: string; value?: string }) {
-  try {
-    return (
-      <div className="flex items-center justify-between">
-        <span className="label-eyebrow">{label}</span>
-        <span className="font-medium text-ink">{value || '—'}</span>
-      </div>
-    );
-  } catch {
-    return null;
-  }
-}
 
 function SelectField({
   label,
