@@ -358,24 +358,22 @@ export function DashboardPage() {
           <Card className="rounded-2xl border-0 bg-accent-soft/45 shadow-card">
             <CardHeader className="flex items-center gap-2 border-accent/20 px-4 sm:px-5">
               <Sparkles size={15} className="text-accent" />
-              <h3 className="font-display text-base font-semibold tracking-tight text-accent">Today's AI Recommendations</h3>
+              <h3 className="font-display text-base font-semibold tracking-tight text-accent">ProcureAI Advisor</h3>
             </CardHeader>
-            <CardBody className="space-y-3 p-4 sm:p-5" data-testid="ai-insights">
-              {insights.map((ins, i) => {
-                const Icon = insightIcon[ins.icon] || Sparkles;
-                return (
-                  <div key={i} className="flex gap-3 rounded-xl bg-surface/80 p-3 shadow-[0_4px_14px_rgba(15,23,42,0.04)]">
-                    <span
-                      className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-md ${
-                        ins.tone === 'success' ? 'bg-success-bg text-success' : 'bg-accent-soft text-accent'
-                      }`}
-                    >
-                      <Icon size={15} />
-                    </span>
-                    <p className="text-sm leading-snug text-ink-soft">{ins.text}</p>
-                  </div>
-                );
-              })}
+            <CardBody className="p-4 sm:p-5" data-testid="ai-insights">
+              <p className="text-sm leading-6 text-ink-soft">Ask a procurement question, explore a supplier trade-off, or get help planning your next purchase.</p>
+              <button
+                type="button"
+                onClick={() => {
+                  try {
+                    window.dispatchEvent(new Event('open-procureai-chat'));
+                  } catch {
+                  }
+                }}
+                className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-accent px-4 py-2.5 text-sm font-semibold text-slate-950 transition-all hover:-translate-y-px hover:bg-accent-hover"
+              >
+                <Sparkles size={16} /> Ask ProcureAI
+              </button>
             </CardBody>
           </Card>
         </div>
