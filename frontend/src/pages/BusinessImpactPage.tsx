@@ -31,15 +31,14 @@ import { DateRangeFilter, DateRange } from '../components/DateRangeFilter';
 function ImpactMetrics({ data }: { data: BusinessImpact }) {
   try {
     const metrics = [
-      { label: 'Total Procurement Savings', value: formatINR(data.totalSavings), icon: PiggyBank, color: 'text-emerald-600', bg: 'bg-emerald-50 dark:bg-emerald-950/30' },
-      { label: 'Monthly Savings', value: formatINR(data.monthlySavings), icon: TrendingUp, color: 'text-blue-600', bg: 'bg-blue-50 dark:bg-blue-950/30' },
+      { label: 'Total Savings', value: formatINR(data.totalSavings), icon: PiggyBank, color: 'text-emerald-600', bg: 'bg-emerald-50 dark:bg-emerald-950/30' },
+      { label: 'Savings This Month', value: formatINR(data.monthlySavings), icon: TrendingUp, color: 'text-blue-600', bg: 'bg-blue-50 dark:bg-blue-950/30' },
       { label: 'Hours Saved', value: `${formatNumber(data.hoursSaved)} hrs`, icon: Clock, color: 'text-violet-600', bg: 'bg-violet-50 dark:bg-violet-950/30' },
-      { label: 'Purchases Optimized', value: formatNumber(data.optimizedPurchases), icon: ShoppingCart, color: 'text-amber-600', bg: 'bg-amber-50 dark:bg-amber-950/30' },
-      { label: 'Products Compared', value: formatNumber(data.productsCompared), icon: Search, color: 'text-pink-600', bg: 'bg-pink-50 dark:bg-pink-950/30' },
-      { label: 'Avg Saving / Purchase', value: formatINR(data.avgSavingPerPurchase), icon: Target, color: 'text-teal-600', bg: 'bg-teal-50 dark:bg-teal-950/30' },
-      { label: 'Suppliers Compared', value: formatNumber(data.suppliersCompared), icon: Users, color: 'text-orange-600', bg: 'bg-orange-50 dark:bg-orange-950/30' },
-      { label: 'AI Accuracy', value: `${data.aiAccuracyPct}%`, icon: Zap, color: 'text-cyan-600', bg: 'bg-cyan-50 dark:bg-cyan-950/30' },
-      { label: 'Manual Work Eliminated', value: `${data.manualEliminatedPct}%`, icon: CheckCircle2, color: 'text-green-600', bg: 'bg-green-50 dark:bg-green-950/30' },
+      { label: 'Procurement Searches', value: formatNumber(data.optimizedPurchases), icon: ShoppingCart, color: 'text-amber-600', bg: 'bg-amber-50 dark:bg-amber-950/30' },
+      { label: 'Supplier Quotes Compared', value: formatNumber(data.productsCompared), icon: Search, color: 'text-pink-600', bg: 'bg-pink-50 dark:bg-pink-950/30' },
+      { label: 'Average Savings / Decision', value: formatINR(data.avgSavingPerPurchase), icon: Target, color: 'text-teal-600', bg: 'bg-teal-50 dark:bg-teal-950/30' },
+      { label: 'Active Suppliers', value: formatNumber(data.suppliersCompared), icon: Users, color: 'text-orange-600', bg: 'bg-orange-50 dark:bg-orange-950/30' },
+      { label: 'Manual Work Reduced', value: `${data.manualEliminatedPct}%`, icon: CheckCircle2, color: 'text-green-600', bg: 'bg-green-50 dark:bg-green-950/30' },
     ];
 
     return (
@@ -48,6 +47,16 @@ function ImpactMetrics({ data }: { data: BusinessImpact }) {
           <BarChart3 size={20} className="text-accent" />
           <h2 className="font-display text-xl font-bold text-ink">Business Impact</h2>
         </div>
+        <Card className="border-accent/25 bg-gradient-to-r from-accent-soft/55 via-surface to-sky-500/10">
+          <CardBody className="flex items-start gap-3 sm:items-center">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-accent-soft text-accent">
+              <TrendingUp size={19} />
+            </span>
+            <p className="text-sm leading-6 text-ink-soft">
+              ProcureAI helped your team save <strong className="data-num text-success">{formatINR(data.totalSavings)}</strong>, reduce manual work by <strong className="text-ink">{data.manualEliminatedPct}%</strong>, and reduce procurement time from 45 minutes to under 5 minutes.
+            </p>
+          </CardBody>
+        </Card>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {metrics.map((m, i) => (
             <motion.div key={m.label} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}>
@@ -76,7 +85,7 @@ function ImpactMetrics({ data }: { data: BusinessImpact }) {
                 <Gauge size={28} className="text-accent" />
               </div>
               <div>
-                <p className="text-sm font-medium text-muted">Procurement Efficiency Score</p>
+                <p className="text-sm font-medium text-muted">Efficiency Score</p>
                 <p className="text-4xl font-bold text-accent">{data.efficiencyScore}<span className="text-lg text-muted">/100</span></p>
               </div>
             </div>
@@ -122,7 +131,7 @@ function BeforeAfterWorkflow() {
       <div className="space-y-5">
         <div className="flex items-center gap-3">
           <Zap size={20} className="text-accent" />
-          <h2 className="font-display text-xl font-bold text-ink">Before vs After ProcureAI</h2>
+          <h2 className="font-display text-xl font-bold text-ink">Procurement Workflow Comparison</h2>
         </div>
         <div className="grid gap-6 lg:grid-cols-2">
           {/* BEFORE */}
@@ -200,6 +209,8 @@ function ROICalculator() {
   const [hourlyCost, setHourlyCost] = useState(600);
   const [manualTime, setManualTime] = useState(45);
   const [aiTime, setAiTime] = useState(3);
+  const [averagePurchaseValue, setAveragePurchaseValue] = useState(7000);
+  const [costOptimizationRate, setCostOptimizationRate] = useState(6);
 
   const roi = useMemo(() => {
     try {
@@ -207,12 +218,13 @@ function ROICalculator() {
       const monthlyHoursSaved = monthlyMinutesSaved / 60;
       const monthlySalarySavings = Math.round(monthlyHoursSaved * hourlyCost);
       const annualSavings = monthlySalarySavings * 12;
-      const costReduction = manualTime > 0 ? Math.round(((manualTime - aiTime) / manualTime) * 100) : 0;
-      return { monthlyHoursSaved: Math.round(monthlyHoursSaved), monthlySalarySavings, annualSavings, costReduction };
+      const timeReduction = manualTime > 0 ? Math.round(((manualTime - aiTime) / manualTime) * 100) : 0;
+      const annualProcurementSavings = Math.round(purchasesPerMonth * averagePurchaseValue * (costOptimizationRate / 100) * 12);
+      return { monthlyHoursSaved: Math.round(monthlyHoursSaved), monthlySalarySavings, annualSavings, timeReduction, annualProcurementSavings }; 
     } catch {
-      return { monthlyHoursSaved: 0, monthlySalarySavings: 0, annualSavings: 0, costReduction: 0 };
+      return { monthlyHoursSaved: 0, monthlySalarySavings: 0, annualSavings: 0, timeReduction: 0, annualProcurementSavings: 0 };
     }
-  }, [purchasesPerMonth, hourlyCost, manualTime, aiTime]);
+  }, [purchasesPerMonth, hourlyCost, manualTime, aiTime, averagePurchaseValue, costOptimizationRate]);
 
   try {
     return (
@@ -235,6 +247,8 @@ function ROICalculator() {
                 { label: 'Employee Cost (₹/hr)', value: hourlyCost, set: setHourlyCost, min: 100, max: 5000, unit: '₹' },
                 { label: 'Manual Comparison Time (min)', value: manualTime, set: setManualTime, min: 10, max: 120, unit: 'min' },
                 { label: 'ProcureAI Time (min)', value: aiTime, set: setAiTime, min: 1, max: 30, unit: 'min' },
+                { label: 'Average Purchase Value (₹)', value: averagePurchaseValue, set: setAveragePurchaseValue, min: 1000, max: 100000, unit: '₹' },
+                { label: 'Cost Optimization Rate', value: costOptimizationRate, set: setCostOptimizationRate, min: 1, max: 20, unit: '%' },
               ].map((input) => (
                 <div key={input.label}>
                   <div className="mb-1.5 flex items-center justify-between">
@@ -262,9 +276,10 @@ function ROICalculator() {
             <CardBody className="space-y-4">
               {[
                 { label: 'Monthly Time Saved', value: `${roi.monthlyHoursSaved} Hours`, icon: Clock, color: 'text-violet-600' },
-                { label: 'Monthly Salary Savings', value: formatINR(roi.monthlySalarySavings), icon: PiggyBank, color: 'text-emerald-600' },
-                { label: 'Annual Savings', value: formatINR(roi.annualSavings), icon: TrendingUp, color: 'text-blue-600' },
-                { label: 'Procurement Cost Reduction', value: `${roi.costReduction}%`, icon: ArrowDown, color: 'text-green-600' },
+                { label: 'Monthly Labor Savings', value: formatINR(roi.monthlySalarySavings), icon: PiggyBank, color: 'text-emerald-600' },
+                { label: 'Annual Labor Savings', value: formatINR(roi.annualSavings), icon: TrendingUp, color: 'text-blue-600' },
+                { label: 'Procurement Time Reduction', value: `${roi.timeReduction}%`, icon: ArrowDown, color: 'text-green-600' },
+                { label: 'Estimated Procurement Savings', value: `${formatINR(roi.annualProcurementSavings)} / year`, icon: Target, color: 'text-teal-600' },
               ].map((o) => (
                 <div key={o.label} className="flex items-center gap-4 rounded-lg border border-line bg-surface p-4">
                   <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-bg ${o.color}`}>
