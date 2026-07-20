@@ -250,16 +250,16 @@ export function BasketIntelligencePanel({
           </div>
 
           {/* Consolidation Score */}
-          <div className="rounded-lg border border-line bg-surface p-5 shadow-card">
-            <div className="mb-3 flex items-center gap-2">
-              <Star size={16} className="text-muted" />
-              <span className="label-eyebrow">Supplier Consolidation Score</span>
+          <div className="rounded-2xl border border-line bg-[#111827] p-5 shadow-card sm:p-7">
+            <div className="flex items-center gap-2 text-slate-400">
+              <Star size={20} />
+              <span className="text-xs font-bold uppercase tracking-[0.2em]">Supplier Consolidation Score</span>
             </div>
-            <div className="flex items-center gap-3">
-              <span className="text-2xl font-bold text-ink">{consolidationScore.stars}</span>
-              <span className="text-sm font-medium text-ink">{consolidationScore.label}</span>
+            <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-3">
+              <span className="data-num text-3xl font-bold leading-none tracking-[0.1em] text-white sm:text-4xl">{consolidationScore.stars}</span>
+              <span className="text-lg font-semibold text-ink sm:text-xl">{consolidationScore.label}</span>
             </div>
-            <p className="mt-2 text-xs text-muted">
+            <p className="mt-5 text-sm leading-6 text-muted">
               {supplierCount === 1
                 ? 'All items from a single supplier — minimal management effort.'
                 : `${supplierCount} suppliers means ${supplierCount} invoices, ${supplierCount} deliveries, and ${supplierCount} vendor follow-ups.`}

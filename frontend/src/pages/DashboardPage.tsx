@@ -145,7 +145,7 @@ export function DashboardPage() {
               { icon: PiggyBank, label: 'Total Saved', value: formatINR(impact.totalSavings), color: 'text-accent' },
               { icon: Clock, label: 'Hours Saved', value: `${impact.hoursSaved.toFixed(1)}h`, color: 'text-sky-400' },
               { icon: Zap, label: 'Efficiency', value: `${impact.efficiencyScore}/100`, color: 'text-violet-400' },
-              { icon: Target, label: 'Purchases Optimized', value: formatNumber(impact.optimizedPurchases), color: 'text-cyan-400' },
+              { icon: Target, label: 'Procurement Searches', value: formatNumber(impact.optimizedPurchases), color: 'text-cyan-400' },
             ].map((m) => (
               <div key={m.label} className="rounded-2xl border border-line bg-surface/75 p-3.5 shadow-[0_8px_24px_rgba(15,23,42,0.05)]">
                 <m.icon size={16} className={m.color} />
