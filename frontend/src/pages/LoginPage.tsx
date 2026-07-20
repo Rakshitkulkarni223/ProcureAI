@@ -29,6 +29,16 @@ export function LoginPage() {
     }
   };
 
+  const useDemoAccount = () => {
+    try {
+      setEmail('demo@procureai.com');
+      setPassword('Demo@123');
+      setError('');
+    } catch {
+      setError('Unable to load the demo account.');
+    }
+  };
+
   return (
     <AuthShell>
       <div className="mb-8 flex items-center gap-2.5 lg:hidden">
@@ -38,7 +48,7 @@ export function LoginPage() {
         <span className="font-display text-xl font-bold tracking-tight">ProcureAI</span>
       </div>
 
-      <h2 className="font-display text-3xl font-bold tracking-tight text-ink">Welcome back</h2>
+      <h2 className="font-display text-3xl font-bold tracking-tight text-ink">Welcome to ProcureAI</h2>
       <p className="mt-1.5 text-sm text-muted">Sign in to your procurement workspace.</p>
 
       <form onSubmit={submit} className="mt-7 space-y-4" data-testid="login-form">
@@ -74,9 +84,9 @@ export function LoginPage() {
         </Button>
       </form>
 
-      <div className="mt-5 rounded-md border border-line bg-surface px-3.5 py-3 text-xs text-muted">
-        <span className="font-semibold text-ink">Demo:</span> demo@procureai.com · Demo@123
-      </div>
+      <Button type="button" variant="outline" className="mt-5 w-full" onClick={useDemoAccount} data-testid="login-demo-account">
+        Use Demo Account
+      </Button>
 
       <p className="mt-6 text-center text-sm text-muted">
         No account?{' '}
