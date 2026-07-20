@@ -44,7 +44,7 @@ export function RegisterPage() {
         <span className="flex h-9 w-9 items-center justify-center rounded-md bg-accent text-white">
           <Boxes size={20} />
         </span>
-        <span className="font-display text-xl font-bold tracking-tight">ProcureAI</span>
+        <span className="font-display text-xl font-bold tracking-tight text-ink">ProcureAI</span>
       </div>
 
       <h2 className="font-display text-3xl font-bold tracking-tight text-ink">Create your workspace</h2>
