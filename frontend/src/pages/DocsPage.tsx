@@ -40,7 +40,6 @@ import {
   Workflow,
   Trophy,
   Rocket,
-  Activity,
   Sparkles,
   Timer,
   Bot,
@@ -100,7 +99,7 @@ const GENERAL_SECTIONS: DocSection[] = [
               { icon: '⭐', text: 'Up to 90% faster supplier comparison' },
               { icon: '📉', text: 'Reduce manual procurement work' },
               { icon: '🤖', text: '6 AI procurement strategies' },
-              { icon: '📊', text: 'Business Impact Dashboard & ROI Calculator' },
+              { icon: '📊', text: 'Business Impact Dashboard & Business Impact Calculator' },
               { icon: '🧠', text: 'AI Chat Assistant with 8 tools' },
               { icon: '💬', text: 'Explainable AI with radar charts' },
             ].map((p) => (
@@ -164,7 +163,7 @@ const GENERAL_SECTIONS: DocSection[] = [
             {[
               { icon: DollarSign, title: '~93% Time Reduction', desc: 'Estimated: from 45 min to 3 min per procurement cycle (illustrative scenario).' },
               { icon: Star, title: 'Explainable AI', desc: 'Every recommendation includes a "Why?" panel with radar chart.' },
-              { icon: Clock, title: 'Track & Maximize Savings', desc: 'Business Impact dashboard with ROI calculator.' },
+              { icon: Clock, title: 'Track & Maximize Savings', desc: 'Business Impact dashboard with Business Impact Calculator.' },
               { icon: Package, title: 'One-Click Reports', desc: 'Export comparisons as professional PDF or CSV.' },
             ].map((v) => (
               <div key={v.title} className="flex gap-3 rounded-md border border-line bg-bg p-3">
@@ -473,7 +472,6 @@ const GENERAL_SECTIONS: DocSection[] = [
               { title: 'Hours Saved', desc: 'Time saved vs manual comparison (42 min per search).' },
               { title: 'Purchases Optimized', desc: 'Searches where the engine recommended a better supplier.' },
               { title: 'Products Compared', desc: 'Total supplier options evaluated across all searches.' },
-              { title: 'Recommendation Accuracy', desc: 'Percentage of searches with a successful recommendation.' },
               { title: 'Efficiency Score', desc: 'Composite score (0–100) measuring procurement performance.' },
             ].map((m) => (
               <div key={m.title} className="rounded-md border border-line bg-surface p-3">
@@ -489,7 +487,7 @@ const GENERAL_SECTIONS: DocSection[] = [
             <p className="text-xs text-muted">Side-by-side visual comparing the <strong className="text-ink">8-step manual process (45–60 min)</strong> with ProcureAI's <strong className="text-ink">5-step AI workflow (3–5 min)</strong> — an estimated ~93% time reduction (illustrative scenario).</p>
           </div>
           <div className="rounded-md border border-line bg-bg p-4">
-            <h4 className="mb-2 flex items-center gap-2 font-semibold text-ink"><Calculator size={14} className="text-accent" /> ROI Calculator</h4>
+            <h4 className="mb-2 flex items-center gap-2 font-semibold text-ink"><Calculator size={14} className="text-accent" /> Business Impact Calculator</h4>
             <p className="text-xs text-muted">Interactive sliders let you input your <strong className="text-ink">purchases/month, hourly cost,</strong> and <strong className="text-ink">comparison times</strong> to estimate monthly hours saved, salary savings, and annual cost reduction.</p>
           </div>
         </div>
@@ -784,7 +782,7 @@ const GENERAL_SECTIONS: DocSection[] = [
             { title: 'Hybrid Supplier Network', desc: 'Combine online marketplace data with your own offline suppliers in a single search.' },
             { title: 'AI Chat with Tool Calling', desc: '8 backend tools accessible via conversational AI — grounded in real procurement data.' },
             { title: 'Split-Cart Optimization', desc: 'Multi-item baskets are automatically split across the best suppliers or consolidated when cheaper.' },
-            { title: 'Business ROI Calculator', desc: 'Interactive sliders to project monthly hours saved, salary savings, and annual cost reduction.' },
+            { title: 'Business Impact Calculator', desc: 'Interactive sliders to project monthly hours saved, salary savings, and annual cost reduction.' },
             { title: '6 Recommendation Strategies', desc: 'Same data, different business priorities — dynamically rerank suppliers without changing catalog.' },
             { title: 'Location-Aware Delivery', desc: 'Delivery estimates auto-calculate based on city distances. Supplier Network filters by state.' },
             { title: 'Radar Chart Explanation', desc: 'Visual trade-off analysis across all scoring dimensions for every recommendation.' },
@@ -886,7 +884,7 @@ const GENERAL_SECTIONS: DocSection[] = [
                 { done: true, text: 'AI-powered recommendations (6 strategies)' },
                 { done: true, text: 'Basket optimization (split/consolidate)' },
                 { done: true, text: 'AI chat assistant with 8 tools' },
-                { done: true, text: 'Business Impact dashboard & ROI calculator' },
+                { done: true, text: 'Business Impact dashboard & Business Impact Calculator' },
                 { done: true, text: 'Supplier Network (offline supplier network)' },
                 { done: true, text: 'Location-aware delivery estimates' },
                 { done: true, text: 'Explainable AI (radar chart + scoreboard)' },
@@ -964,7 +962,7 @@ const GENERAL_SECTIONS: DocSection[] = [
             { title: 'AI-First Procurement', desc: 'Every decision powered by intelligent scoring, not manual guesswork.', icon: '🤖' },
             { title: 'Faster Purchasing', desc: 'From 45–60 minutes to 3–5 minutes per procurement cycle.', icon: '⚡' },
             { title: 'Transparent Recommendations', desc: 'Radar charts, scoreboards, and confidence scores — fully auditable.', icon: '🔍' },
-            { title: 'Proven Business ROI', desc: 'Interactive ROI calculator with real savings metrics.', icon: '💰' },
+            { title: 'Proven Business ROI', desc: 'Interactive Business Impact Calculator with real savings metrics.', icon: '💰' },
             { title: 'Local Supplier Support', desc: 'Supplier Network bridges offline vendors into digital procurement.', icon: '🏢' },
             { title: 'Enterprise-Ready Architecture', desc: 'FastAPI + MongoDB + JWT — scalable and secure.', icon: '🏗️' },
             { title: 'Explainable AI', desc: 'No black box — every recommendation comes with evidence.', icon: '🧠' },
@@ -1019,70 +1017,6 @@ const GENERAL_SECTIONS: DocSection[] = [
       </div>
     ),
   },
-  {
-    id: 'g-current-workspace',
-    title: 'Current Workspace Guide',
-    icon: Activity,
-    badge: { label: 'Updated', tone: 'success' },
-    content: (
-      <div className="space-y-5 text-sm leading-relaxed text-ink-soft">
-        <p>
-          ProcureAI is a <strong className="text-ink">dark-first, authenticated procurement workspace</strong>. The features below describe the current user-facing behavior; visual styling changes are intentionally not listed.
-        </p>
-        <div className="grid gap-3 sm:grid-cols-2">
-          <div className="rounded-md border border-line bg-bg p-4">
-            <h4 className="font-semibold text-ink">Account and workspace</h4>
-            <ul className="mt-2 space-y-1 text-xs text-muted">
-              <li>• Register or sign in with your own account, or use the <strong className="text-ink">Try Demo Workspace</strong> action.</li>
-              <li>• Dashboard, search, history, analytics, settings, watchlist, business impact, Supplier Network, and documentation require sign-in.</li>
-              <li>• Set default category, sort order, business type, and delivery location in Workspace Settings.</li>
-            </ul>
-          </div>
-          <div className="rounded-md border border-line bg-bg p-4">
-            <h4 className="font-semibold text-ink">Supplier Network</h4>
-            <ul className="mt-2 space-y-1 text-xs text-muted">
-              <li>• Create, edit, inspect, and remove private suppliers.</li>
-              <li>• Maintain supplier products, pricing, delivery, commercial, contact, and reliability information.</li>
-              <li>• Eligible Supplier Network products are included beside marketplace products during comparison.</li>
-            </ul>
-          </div>
-        </div>
-        <div className="rounded-md border border-line bg-bg p-4">
-          <h4 className="font-semibold text-ink">Search and basket decisions</h4>
-          <div className="mt-3 grid gap-3 sm:grid-cols-2">
-            <div>
-              <h5 className="text-xs font-semibold text-accent">Single Search</h5>
-              <p className="mt-1 text-xs text-muted">Choose a category and suppliers, then compare a product by price, delivery, rating, availability, and total cost. Filter, sort, export CSV/PDF, and add products to your watchlist directly from results.</p>
-            </div>
-            <div>
-              <h5 className="text-xs font-semibold text-accent">Basket Optimisation</h5>
-              <p className="mt-1 text-xs text-muted">Add multiple products and quantities, optionally set delivery cost per supplier, then compare a split-cart plan with a single-supplier consolidation plan.</p>
-            </div>
-          </div>
-          <p className="mt-3 text-xs text-muted">Both modes support the six recommendation strategies: Balanced, Lowest Cost, Lowest Risk, Fastest Delivery, Highest Reliability, and Best Long-Term Value.</p>
-        </div>
-        <div className="grid gap-3 sm:grid-cols-2">
-          <div className="rounded-md border border-line bg-bg p-4">
-            <h4 className="font-semibold text-ink">Explainable AI advice</h4>
-            <p className="mt-1 text-xs text-muted">When result data is available, ProcureAI shows recommendation reasoning, confidence, factor scores, supplier intelligence, a comparison matrix, procurement health, long-term guidance, and basket risk or savings insights.</p>
-          </div>
-          <div className="rounded-md border border-line bg-bg p-4">
-            <h4 className="font-semibold text-ink">ProcureAI Advisor</h4>
-            <p className="mt-1 text-xs text-muted">Use the floating Ask ProcureAI control to receive streaming, grounded answers. You can start a new chat, resume saved conversations, and delete conversations you no longer need.</p>
-          </div>
-        </div>
-        <div className="rounded-md border border-line bg-bg p-4">
-          <h4 className="font-semibold text-ink">Tracking and reporting</h4>
-          <ul className="mt-2 grid gap-1 text-xs text-muted sm:grid-cols-2">
-            <li>• Set watchlist target prices and identify products at or below target.</li>
-            <li>• Review, rerun, expand, and delete paginated search history entries.</li>
-            <li>• Filter analytics and Business Impact data by date range.</li>
-            <li>• Review spend, savings, category activity, supplier activity, and ROI projections.</li>
-          </ul>
-        </div>
-      </div>
-    ),
-  },
 ];
 
 /* ════════════════════════════════════════════════════════════════
@@ -1112,7 +1046,7 @@ const DEV_SECTIONS: DocSection[] = [
               <li>• localStorage Watchlist</li>
               <li>• AI Chat Assistant panel (floating drawer)</li>
               <li>• Date range filter (Dashboard, Analytics & Business Impact)</li>
-              <li>• Business Impact page (metrics, before/after, ROI calculator)</li>
+              <li>• Business Impact page (metrics, before/after, Business Impact Calculator)</li>
             </ul>
           </div>
           <div className="rounded-md border border-line bg-bg p-4">
@@ -1271,7 +1205,7 @@ const DEV_SECTIONS: DocSection[] = [
             { name: 'get_recommendation', desc: 'Get an AI-powered supplier recommendation with scoring, reasons, and confidence level.', icon: '⭐', params: 'query, category, mode?' },
             { name: 'optimize_basket', desc: 'Optimize a multi-item basket — finds the best split/consolidate plan across suppliers.', icon: '🛒', params: 'category, items[], mode?' },
             { name: 'get_analytics', desc: 'Retrieve procurement analytics: dashboard summary, spend breakdown, savings trends, or insights.', icon: '📊', params: 'metric (summary|spend|savings|insights)' },
-            { name: 'get_business_impact', desc: 'Get business impact metrics: total savings, hours saved, AI accuracy, and efficiency score.', icon: '💰', params: 'none' },
+            { name: 'get_business_impact', desc: 'Get business impact metrics: total savings, hours saved, optimized purchases, and efficiency score.', icon: '💰', params: 'none' },
             { name: 'list_suppliers', desc: 'List the user\'s private Supplier Network suppliers with their products and details.', icon: '🏢', params: 'none' },
             { name: 'get_basket_history', desc: 'Fetch recent basket optimization history — used before re-optimizing baskets.', icon: '📋', params: 'limit?, category?' },
             { name: 'get_history', desc: 'Get recent procurement search history with timestamps and results.', icon: '🕐', params: 'limit?' },
