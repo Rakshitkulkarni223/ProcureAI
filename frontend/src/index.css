@@ -67,6 +67,24 @@ body {
   font-family: 'IBM Plex Sans', system-ui, sans-serif;
 }
 
+.auth-shell {
+  color-scheme: dark;
+  --color-bg: #0F172A;
+  --color-surface: #1E293B;
+  --color-ink: #F1F5F9;
+  --color-ink-soft: #E2E8F0;
+  --color-muted: #94A3B8;
+  --color-accent: #10B981;
+  --color-accent-hover: #34D399;
+  --color-accent-soft: rgba(16, 185, 129, 0.15);
+  --color-success: #34D399;
+  --color-success-bg: rgba(16, 185, 129, 0.15);
+  --color-warning: #FBBF24;
+  --color-warning-bg: rgba(245, 158, 11, 0.15);
+  --color-danger: #F87171;
+  --color-line: #334155;
+}
+
 ::selection {
   background: var(--selection-bg);
   color: var(--selection-fg);
