@@ -10,8 +10,8 @@ import { apiError } from '../lib/api';
 export function LoginPage() {
   const { login } = useAuth();
   const navigate = useNavigate();
-  const [email, setEmail] = useState('demo@procureai.com');
-  const [password, setPassword] = useState('Demo@123');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -29,13 +29,16 @@ export function LoginPage() {
     }
   };
 
-  const useDemoAccount = () => {
+  const useDemoAccount = async () => {
     try {
-      setEmail('demo@procureai.com');
-      setPassword('Demo@123');
       setError('');
-    } catch {
-      setError('Unable to load the demo account.');
+      setLoading(true);
+      await login('demo@procureai.com', 'Demo@123');
+      navigate('/');
+    } catch (err) {
+      setError(apiError(err));
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -49,7 +52,7 @@ export function LoginPage() {
       </div>
 
       <h2 className="font-display text-3xl font-bold tracking-tight text-ink">Welcome to ProcureAI</h2>
-      <p className="mt-1.5 text-sm text-muted">Sign in to access AI-powered procurement insights.</p>
+      <p className="mt-1.5 text-sm text-muted">Sign in to your intelligent procurement workspace.</p>
 
       <form onSubmit={submit} className="mt-7 space-y-4" data-testid="login-form">
         <Input
@@ -80,12 +83,12 @@ export function LoginPage() {
           </div>
         )}
         <Button type="submit" className="w-full" size="md" loading={loading} data-testid="login-submit">
-          Sign in
+          Sign In →
         </Button>
       </form>
 
-      <Button type="button" variant="outline" className="mt-5 w-full" onClick={useDemoAccount} data-testid="login-demo-account">
-        Use Demo Account
+      <Button type="button" variant="outline" className="mt-5 w-full" onClick={useDemoAccount} loading={loading} data-testid="login-demo-account">
+        Explore Demo
       </Button>
 
       <p className="mt-6 text-center text-sm text-muted">

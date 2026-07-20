@@ -41,7 +41,7 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
 
             <div className="max-w-lg">
               <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-emerald-300/20 bg-emerald-400/10 px-4 py-2 text-[10px] font-bold uppercase tracking-[0.23em] text-emerald-300 shadow-[0_0_24px_rgba(16,185,129,0.08)]">
-                <Sparkles size={12} /> AI Procurement Intelligence
+                <Sparkles size={12} /> AI Procurement Platform
               </div>
               <h1 className="font-display text-5xl font-extrabold leading-[1.06] tracking-tight xl:text-6xl">
                 <span className="block">Search once.</span>
@@ -49,7 +49,7 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
                 <span className="block text-emerald-300">Procure smarter.</span>
               </h1>
               <p className="mt-5 max-w-md text-sm leading-6 text-slate-300/80">
-                Compare suppliers, optimize every purchase, and understand every recommendation with explainable AI.
+                Compare suppliers, optimize procurement decisions, and quantify business impact using explainable AI.
               </p>
               <div className="mt-9 grid gap-2.5">
                 {[
