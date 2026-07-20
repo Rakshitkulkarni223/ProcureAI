@@ -75,56 +75,121 @@ export function DashboardPage() {
 
   return (
     <div className="space-y-6 lg:space-y-8">
-      <div className="flex flex-col gap-5 rounded-2xl border border-line bg-surface p-5 shadow-card sm:p-6 lg:flex-row lg:items-end lg:justify-between">
-        <div>
-          <div className="label-eyebrow">Overview</div>
-          <h1 className="mt-1 font-display text-2xl font-bold tracking-tight text-ink sm:text-3xl">
-            Welcome back, {user?.name?.split(' ')[0]}
-          </h1>
-          <p className="mt-1 text-sm text-muted">Your procurement intelligence at a glance.</p>
-          <div className="mt-3">
-            <DateRangeFilter value={dateRange} onChange={handleDateChange} />
+      <section className="relative overflow-hidden rounded-3xl bg-[linear-gradient(120deg,#07111f_0%,#0b2940_58%,#075b53_130%)] px-5 py-6 text-white shadow-[0_20px_50px_rgba(15,23,42,0.16)] sm:px-7 sm:py-8">
+        <div className="absolute -right-20 -top-24 h-64 w-64 rounded-full border border-emerald-300/20" />
+        <div className="absolute right-[18%] top-0 h-full w-px bg-gradient-to-b from-transparent via-white/10 to-transparent" />
+        <div className="relative flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
+          <div className="max-w-3xl">
+            <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-emerald-200">
+              <Sparkles size={12} /> AI Procurement Dashboard
+            </div>
+            <h1 className="mt-4 font-display text-3xl font-bold tracking-tight sm:text-4xl">
+              Procurement intelligence, amplified.
+            </h1>
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-300">
+              Compare suppliers, optimize purchasing decisions, and track business impact from explainable AI recommendations.
+            </p>
+            <div className="mt-5 flex flex-wrap gap-x-4 gap-y-2 text-xs text-slate-300 sm:text-sm">
+              <span><strong className="data-num text-emerald-300">{formatINR(data?.totalSavings || 0)}</strong> saved to date</span>
+              <span className="hidden text-white/30 sm:inline">•</span>
+              <span><strong className="data-num text-white">{formatNumber(data?.procurementRequests || 0)}</strong> procurement decisions</span>
+              <span className="hidden text-white/30 sm:inline">•</span>
+              <span><strong className="data-num text-sky-200">{impact ? `${impact.aiAccuracyPct.toFixed(0)}%` : '—'}</strong> AI confidence</span>
+            </div>
+          </div>
+          <div className="flex flex-col gap-3 sm:flex-row xl:flex-col xl:items-stretch">
+            <button
+              onClick={() => navigate('/search')}
+              data-testid="dashboard-new-search"
+              className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl bg-emerald-400 px-4 py-3 text-sm font-semibold text-slate-950 transition-all hover:-translate-y-px hover:bg-emerald-300 xl:flex-none"
+            >
+              <Search size={16} /> Start Procurement
+            </button>
+            <button
+              onClick={() => {
+                try {
+                  window.dispatchEvent(new Event('open-procureai-chat'));
+                } catch {
+                }
+              }}
+              className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl border border-white/15 bg-white/10 px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/15 xl:flex-none"
+            >
+              <Sparkles size={16} /> Ask ProcureAI
+            </button>
           </div>
         </div>
-        <button
-          onClick={() => navigate('/search')}
-          data-testid="dashboard-new-search"
-          className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-accent px-4 py-3 text-sm font-semibold text-white shadow-[0_10px_20px_rgba(5,150,105,0.2)] transition-all hover:-translate-y-px hover:bg-accent-hover sm:w-auto"
-        >
-          <Search size={16} /> New Search
-        </button>
-      </div>
+        <div className="relative mt-6 border-t border-white/10 pt-4">
+          <DateRangeFilter value={dateRange} onChange={handleDateChange} />
+        </div>
+      </section>
+
+      {impact && (
+        <section className="grid gap-4 rounded-3xl bg-gradient-to-br from-emerald-500/12 via-surface to-sky-500/10 p-5 sm:p-6 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1.85fr)]">
+          <div className="flex flex-col justify-between gap-4">
+            <div>
+              <div className="flex items-center gap-2 text-accent">
+                <Gauge size={17} />
+                <span className="text-xs font-bold uppercase tracking-[0.16em]">Business Impact</span>
+              </div>
+              <h2 className="mt-3 font-display text-2xl font-bold tracking-tight text-ink">Measurable value from every decision.</h2>
+              <p className="mt-2 text-sm leading-6 text-muted">Track savings, efficiency, and the confidence behind your AI-guided procurement decisions.</p>
+            </div>
+            <button onClick={() => navigate('/impact')} className="inline-flex w-fit items-center gap-2 text-sm font-semibold text-accent hover:text-accent-hover">
+              View full business impact <ArrowRight size={15} />
+            </button>
+          </div>
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+            {[
+              { icon: PiggyBank, label: 'Total Saved', value: formatINR(impact.totalSavings), color: 'text-success' },
+              { icon: Clock, label: 'Hours Saved', value: `${impact.hoursSaved.toFixed(1)}h`, color: 'text-sky-600 dark:text-sky-400' },
+              { icon: Zap, label: 'Efficiency', value: `${impact.efficiencyScore}/100`, color: 'text-amber-600 dark:text-amber-400' },
+              { icon: Target, label: 'AI Accuracy', value: `${impact.aiAccuracyPct.toFixed(0)}%`, color: 'text-violet-600 dark:text-violet-400' },
+            ].map((m) => (
+              <div key={m.label} className="rounded-2xl bg-surface/75 p-3.5 shadow-[0_8px_24px_rgba(15,23,42,0.05)]">
+                <m.icon size={16} className={m.color} />
+                <div className={`data-num mt-5 text-xl font-bold ${m.color}`}>{m.value}</div>
+                <div className="mt-1 text-[11px] font-medium text-muted">{m.label}</div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* KPI grid */}
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4" data-testid="dashboard-stats">
+      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5" data-testid="dashboard-stats">
         {stats.map((s, i) => (
           <motion.div
             key={s.label}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.06 }}
+            className={i === 0 ? 'sm:col-span-2 xl:col-span-2' : ''}
           >
-            <Card className="rounded-2xl border-line bg-surface/90 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lift">
+            <Card className={`rounded-2xl border-0 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lift ${i === 0 ? 'bg-slate-950 shadow-[0_16px_32px_rgba(15,23,42,0.15)]' : 'bg-surface/75 shadow-card'}`}>
               <CardBody className="p-4 sm:p-5">
                 <div className="flex items-start justify-between gap-3">
-                  <span className="label-eyebrow">{s.label}</span>
-                  <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-accent-soft text-accent">
+                  <div>
+                    <span className={`label-eyebrow ${i === 0 ? 'text-slate-400' : ''}`}>{s.label}</span>
+                    {i === 0 && <div className="mt-1 text-xs text-emerald-300">AI-tracked across your workspace</div>}
+                  </div>
+                  <span className={`flex h-9 w-9 items-center justify-center rounded-xl ${i === 0 ? 'bg-white/10 text-emerald-300' : 'bg-accent-soft text-accent'}`}>
                     <s.icon size={16} />
                   </span>
                 </div>
-                <div className={`data-num mt-4 text-2xl font-bold sm:text-3xl ${s.tone}`}>{s.value}</div>
+                <div className={`data-num mt-4 text-3xl font-bold sm:text-4xl ${i === 0 ? 'text-white' : s.tone}`}>{s.value}</div>
+                <div className={`mt-1 text-xs ${i === 0 ? 'text-slate-400' : 'text-muted'}`}>{i === 0 ? 'Total procurement activity' : 'Updated from live procurement data'}</div>
               </CardBody>
             </Card>
           </motion.div>
         ))}
       </div>
 
-      <div className="grid gap-5 xl:grid-cols-3">
+      <div className="grid gap-5 xl:grid-cols-[minmax(0,1.5fr)_minmax(320px,0.85fr)]">
         {/* Left: highlights + recent */}
-        <div className="space-y-5 xl:col-span-2">
+        <div className="space-y-5">
           {/* Highlight cards */}
           <div className="grid gap-3 sm:grid-cols-3">
-            <Card className="rounded-2xl border-line bg-surface/90">
+            <Card className="rounded-2xl border-0 bg-surface/75 shadow-card">
               <CardBody className="p-4">
                 <div className="label-eyebrow flex items-center gap-1.5">
                   <Trophy size={12} className="text-accent" /> Preferred Supplier
@@ -141,7 +206,7 @@ export function DashboardPage() {
                 </div>
               </CardBody>
             </Card>
-            <Card className="rounded-2xl border-line bg-surface/90">
+            <Card className="rounded-2xl border-0 bg-surface/75 shadow-card">
               <CardBody className="p-4">
                 <div className="label-eyebrow flex items-center gap-1.5">
                   <Layers size={12} className="text-accent" /> Top Category
@@ -149,7 +214,7 @@ export function DashboardPage() {
                 <div className="mt-3 font-display text-lg font-bold text-ink">{data?.topCategory || '—'}</div>
               </CardBody>
             </Card>
-            <Card className="rounded-2xl border-line bg-surface/90">
+            <Card className="rounded-2xl border-0 bg-surface/75 shadow-card">
               <CardBody className="p-4">
                 <div className="label-eyebrow flex items-center gap-1.5">
                   <TrendingUp size={12} className="text-accent" /> Projected / yr
@@ -162,9 +227,12 @@ export function DashboardPage() {
           </div>
 
           {/* Savings trend */}
-          <Card className="rounded-2xl border-line bg-surface/90">
-            <CardHeader className="flex items-center justify-between px-4 sm:px-5">
-              <h3 className="font-display text-base font-semibold tracking-tight text-ink">Savings Trend</h3>
+          <Card className="rounded-2xl border-0 bg-surface/75 shadow-card">
+            <CardHeader className="flex items-center justify-between gap-3 border-line/60 px-4 sm:px-5">
+              <div>
+                <h3 className="font-display text-base font-semibold tracking-tight text-ink">Savings Trend</h3>
+                <p className="mt-0.5 text-xs text-muted">AI-identified savings across completed comparisons</p>
+              </div>
               <Badge tone="success">{formatINR(data?.totalSavings || 0)} total</Badge>
             </CardHeader>
             <CardBody className="p-3 pb-4 sm:p-5">
@@ -197,8 +265,8 @@ export function DashboardPage() {
           </Card>
 
           {/* Recent searches */}
-          <Card className="rounded-2xl border-line bg-surface/90">
-            <CardHeader className="px-4 sm:px-5">
+          <Card className="rounded-2xl border-0 bg-surface/75 shadow-card">
+            <CardHeader className="border-line/60 px-4 sm:px-5">
               <h3 className="font-display text-base font-semibold tracking-tight text-ink">Recent Comparisons</h3>
             </CardHeader>
             <CardBody className="p-0">
@@ -242,40 +310,7 @@ export function DashboardPage() {
         {/* Right: AI insights + Business Impact */}
         <div className="space-y-5">
           {/* Business Impact Summary */}
-          {impact && (
-            <Card className="rounded-2xl border-green-500/30 bg-gradient-to-br from-green-50/50 to-emerald-50/30 shadow-card dark:from-green-950/20 dark:to-emerald-950/10">
-              <CardHeader className="flex items-center justify-between border-green-500/20 px-4 sm:px-5">
-                <div className="flex items-center gap-2">
-                  <Gauge size={15} className="text-green-600" />
-                  <h3 className="font-display text-base font-semibold tracking-tight text-green-700 dark:text-green-400">Business Impact</h3>
-                </div>
-              </CardHeader>
-              <CardBody className="space-y-3 p-4 sm:p-5">
-                <div className="grid grid-cols-2 gap-2">
-                  {[
-                    { icon: PiggyBank, label: 'Total Saved', value: formatINR(impact.totalSavings), color: 'text-green-600' },
-                    { icon: Clock, label: 'Hours Saved', value: `${impact.hoursSaved.toFixed(1)}h`, color: 'text-blue-600' },
-                    { icon: Zap, label: 'Efficiency', value: `${impact.efficiencyScore}/100`, color: 'text-amber-600' },
-                    { icon: Target, label: 'AI Accuracy', value: `${impact.aiAccuracyPct.toFixed(0)}%`, color: 'text-violet-600' },
-                  ].map((m) => (
-                    <div key={m.label} className="rounded-xl border border-line bg-surface/90 p-2.5 text-center">
-                      <m.icon size={14} className={`mx-auto ${m.color}`} />
-                      <div className={`mt-1 text-lg font-bold ${m.color}`}>{m.value}</div>
-                      <div className="text-[10px] text-muted">{m.label}</div>
-                    </div>
-                  ))}
-                </div>
-                <button
-                  onClick={() => navigate('/impact')}
-                  className="flex w-full items-center justify-center gap-2 rounded-xl bg-green-600 px-3 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-green-700"
-                >
-                  View Full Business Impact <ArrowRight size={14} />
-                </button>
-              </CardBody>
-            </Card>
-          )}
-
-          <Card className="rounded-2xl border-accent/30 bg-accent-soft/30">
+          <Card className="rounded-2xl border-0 bg-accent-soft/45 shadow-card">
             <CardHeader className="flex items-center gap-2 border-accent/20 px-4 sm:px-5">
               <Sparkles size={15} className="text-accent" />
               <h3 className="font-display text-base font-semibold tracking-tight text-accent">AI Insights</h3>
@@ -284,7 +319,7 @@ export function DashboardPage() {
               {insights.map((ins, i) => {
                 const Icon = insightIcon[ins.icon] || Sparkles;
                 return (
-                  <div key={i} className="flex gap-3 rounded-xl border border-line bg-surface/90 p-3">
+                  <div key={i} className="flex gap-3 rounded-xl bg-surface/80 p-3 shadow-[0_4px_14px_rgba(15,23,42,0.04)]">
                     <span
                       className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-md ${
                         ins.tone === 'success' ? 'bg-success-bg text-success' : 'bg-accent-soft text-accent'

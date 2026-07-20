@@ -111,7 +111,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-[100dvh] bg-bg">
       {/* Desktop sidebar */}
-      <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 border-r border-line bg-surface lg:block">
+      <aside className="fixed inset-y-0 left-0 z-30 hidden w-60 border-r border-line bg-surface lg:block">
         {sidebar}
       </aside>
 
@@ -123,7 +123,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
         </div>
       )}
 
-      <div className="lg:pl-64">
+      <div className="lg:pl-60">
         {/* Desktop top bar */}
         <div className="sticky top-0 z-20 hidden h-12 items-center justify-end gap-3 border-b border-line bg-surface/80 px-5 backdrop-blur lg:flex">
           <LocationDropdown readOnly />

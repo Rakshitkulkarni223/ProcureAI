@@ -5,7 +5,7 @@
 /* ── Light palette (default) ── */
 :root {
   color-scheme: light;
-  --color-bg: #F4F5F7;
+  --color-bg: #F8FAFC;
   --color-surface: #FFFFFF;
   --color-ink: #0F172A;
   --color-ink-soft: #1E293B;
@@ -19,7 +19,7 @@
   --color-warning-bg: #FEF3C7;
   --color-danger: #EF4444;
   --color-line: #E2E8F0;
-  --scrollbar-bg: #F4F5F7;
+  --scrollbar-bg: #F8FAFC;
   --scrollbar-thumb: #CBD5E1;
   --scrollbar-thumb-hover: #94A3B8;
   --selection-bg: #0F172A;
