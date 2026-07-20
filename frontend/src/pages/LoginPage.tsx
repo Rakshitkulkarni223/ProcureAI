@@ -88,7 +88,7 @@ export function LoginPage() {
       </form>
 
       <Button type="button" variant="outline" className="mt-5 w-full" onClick={useDemoAccount} loading={loading} data-testid="login-demo-account">
-        Explore Demo
+        Try Demo Workspace
       </Button>
 
       <p className="mt-6 text-center text-sm text-muted">
