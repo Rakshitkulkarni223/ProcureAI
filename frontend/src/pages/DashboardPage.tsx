@@ -89,14 +89,14 @@ export function DashboardPage() {
             <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-300">
               Compare suppliers, optimize purchasing decisions, and measure business impact with explainable AI.
             </p>
-            <div className="mt-5 flex flex-wrap gap-x-4 gap-y-2 text-xs text-slate-300 sm:text-sm">
-              <span><strong className="data-num text-emerald-300">{formatINR(data?.totalSavings || 0)}</strong> saved</span>
+            <div className="mt-5 grid grid-cols-2 gap-x-6 gap-y-3 text-xs text-slate-300 sm:flex sm:flex-wrap sm:gap-x-8 sm:gap-y-2 sm:text-sm">
+              <span className="whitespace-nowrap"><strong className="data-num text-emerald-300">{formatINR(data?.totalSavings || 0)}</strong> saved</span>
               <span className="hidden text-white/30 sm:inline">•</span>
-              <span><strong className="data-num text-white">{formatNumber(data?.procurementRequests || 0)}</strong> decisions</span>
+              <span className="whitespace-nowrap"><strong className="data-num text-white">{formatNumber(data?.procurementRequests || 0)}</strong> decisions</span>
               <span className="hidden text-white/30 sm:inline">•</span>
-              <span><strong className="data-num text-sky-200">{impact ? `${impact.aiAccuracyPct.toFixed(0)}%` : '—'}</strong> confidence</span>
+              <span className="whitespace-nowrap"><strong className="data-num text-sky-200">{impact ? `${impact.aiAccuracyPct.toFixed(0)}%` : '—'}</strong> confidence</span>
               <span className="hidden text-white/30 sm:inline">•</span>
-              <span><strong className="data-num text-violet-200">{impact ? `${impact.hoursSaved.toFixed(0)}h` : '—'}</strong> hours saved</span>
+              <span className="whitespace-nowrap"><strong className="data-num text-violet-200">{impact ? `${impact.hoursSaved.toFixed(0)}h` : '—'}</strong> hours saved</span>
             </div>
           </div>
           <div className="flex flex-col gap-3 sm:flex-row xl:flex-col xl:items-stretch">
@@ -114,7 +114,7 @@ export function DashboardPage() {
                 } catch {
                 }
               }}
-              className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl border border-white/15 bg-white/10 px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/15 xl:flex-none"
+              className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl border border-emerald-300/60 bg-white/[0.08] px-4 py-3 text-sm font-semibold text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.12)] backdrop-blur-sm transition-colors hover:bg-emerald-300/15 xl:flex-none"
             >
               <Sparkles size={16} /> Ask ProcureAI
             </button>
@@ -142,12 +142,12 @@ export function DashboardPage() {
           </div>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
             {[
-              { icon: PiggyBank, label: 'Total Saved', value: formatINR(impact.totalSavings), color: 'text-success' },
-              { icon: Clock, label: 'Hours Saved', value: `${impact.hoursSaved.toFixed(1)}h`, color: 'text-sky-600 dark:text-sky-400' },
-              { icon: Zap, label: 'Efficiency', value: `${impact.efficiencyScore}/100`, color: 'text-amber-600 dark:text-amber-400' },
-              { icon: Target, label: 'AI Accuracy', value: `${impact.aiAccuracyPct.toFixed(0)}%`, color: 'text-violet-600 dark:text-violet-400' },
+              { icon: PiggyBank, label: 'Total Saved', value: formatINR(impact.totalSavings), color: 'text-accent' },
+              { icon: Clock, label: 'Hours Saved', value: `${impact.hoursSaved.toFixed(1)}h`, color: 'text-accent' },
+              { icon: Zap, label: 'Efficiency', value: `${impact.efficiencyScore}/100`, color: 'text-accent' },
+              { icon: Target, label: 'AI Accuracy', value: `${impact.aiAccuracyPct.toFixed(0)}%`, color: 'text-accent' },
             ].map((m) => (
-              <div key={m.label} className="rounded-2xl bg-surface/75 p-3.5 shadow-[0_8px_24px_rgba(15,23,42,0.05)]">
+              <div key={m.label} className="rounded-2xl border border-line bg-surface/75 p-3.5 shadow-[0_8px_24px_rgba(15,23,42,0.05)]">
                 <m.icon size={16} className={m.color} />
                 <div className={`data-num mt-5 text-xl font-bold ${m.color}`}>{m.value}</div>
                 <div className="mt-1 text-[11px] font-medium text-muted">{m.label}</div>
@@ -156,6 +156,38 @@ export function DashboardPage() {
           </div>
         </section>
       )}
+
+      <section className="rounded-2xl border border-line bg-[#111827] p-4 shadow-card sm:p-5" data-testid="dashboard-ai-recommendations">
+        <div className="flex flex-col gap-3 border-b border-line pb-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-2">
+            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent-soft text-accent">
+              <Sparkles size={16} />
+            </span>
+            <div>
+              <h2 className="font-display text-base font-semibold text-ink">Today's AI Recommendations</h2>
+              <p className="text-xs text-muted">Actionable procurement intelligence from your latest activity</p>
+            </div>
+          </div>
+          <span className="w-fit rounded-full bg-accent-soft px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-accent">AI active</span>
+        </div>
+        <div className="mt-4 grid gap-3 lg:grid-cols-3">
+          {insights.length ? (
+            insights.slice(0, 3).map((ins, i) => {
+              const Icon = insightIcon[ins.icon] || Sparkles;
+              return (
+                <div key={`${ins.text}-${i}`} className="flex gap-3 rounded-xl bg-[#1a2435] p-3.5 transition-colors hover:bg-[#1f2937]">
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-accent-soft text-accent">
+                    <Icon size={15} />
+                  </span>
+                  <p className="text-sm leading-5 text-ink-soft">{ins.text}</p>
+                </div>
+              );
+            })
+          ) : (
+            <div className="lg:col-span-3 py-3 text-sm text-muted">AI recommendations will appear as procurement activity is analyzed.</div>
+          )}
+        </div>
+      </section>
 
       {/* KPI grid */}
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5" data-testid="dashboard-stats">
@@ -167,19 +199,19 @@ export function DashboardPage() {
             transition={{ delay: i * 0.06 }}
             className={i === 0 ? 'sm:col-span-2 xl:col-span-2' : ''}
           >
-            <Card className={`rounded-2xl border-0 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lift ${i === 0 ? 'bg-slate-950 shadow-[0_16px_32px_rgba(15,23,42,0.15)]' : i === 1 ? 'bg-gradient-to-br from-sky-500/[0.10] via-surface to-surface shadow-card' : i === 2 ? 'bg-gradient-to-br from-emerald-500/[0.10] via-surface to-surface shadow-card' : 'bg-gradient-to-br from-violet-500/[0.08] via-surface to-surface shadow-card'}`}> 
+            <Card className={`rounded-2xl border border-line transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#1f2937] hover:shadow-lift ${i === 0 ? 'bg-slate-950 shadow-[0_16px_32px_rgba(15,23,42,0.15)]' : i === 1 ? 'bg-gradient-to-br from-sky-500/[0.10] via-surface to-surface shadow-card' : i === 2 ? 'bg-gradient-to-br from-emerald-500/[0.10] via-surface to-surface shadow-card' : 'bg-gradient-to-br from-violet-500/[0.08] via-surface to-surface shadow-card'}`}>  
               <CardBody className="p-4 sm:p-5">
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <span className={`label-eyebrow ${i === 0 ? 'text-slate-400' : ''}`}>{s.label}</span>
-                    {i === 0 && <div className="mt-1 text-xs text-emerald-300">AI-tracked across your workspace</div>}
+                    {i === 0 && <div className="mt-1 text-xs text-emerald-300">Live supplier activity</div>}
                   </div>
                   <span className={`flex h-9 w-9 items-center justify-center rounded-xl ${i === 0 ? 'bg-white/10 text-emerald-300' : 'bg-accent-soft text-accent'}`}>
                     <s.icon size={16} />
                   </span>
                 </div>
                 <div className={`data-num mt-4 text-3xl font-bold sm:text-4xl ${i === 0 ? 'text-white' : s.tone}`}>{s.value}</div>
-                <div className={`mt-1 text-xs ${i === 0 ? 'text-slate-400' : 'text-muted'}`}>{i === 0 ? 'Total procurement activity' : 'Updated from live procurement data'}</div>
+                <div className={`mt-1 text-xs ${i === 0 ? 'text-slate-400' : 'text-muted'}`}>{i === 0 ? 'AI supplier comparison activity' : 'Updated from live procurement data'}</div>
               </CardBody>
             </Card>
           </motion.div>
