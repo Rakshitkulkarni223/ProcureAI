@@ -607,7 +607,16 @@ export function AIChatPanel() {
                     ) : streamingTool ? (
                       <div className="flex items-center gap-2 text-sm text-muted">
                         <Wrench size={14} className="text-accent animate-pulse" />
-                        <span>Using <strong className="text-accent">{streamingTool}</strong>...</span>
+                        <span>{({
+                          search_products: 'Searching products',
+                          get_recommendation: 'Getting recommendations',
+                          optimize_basket: 'Optimizing basket',
+                          get_analytics: 'Fetching analytics',
+                          get_business_impact: 'Analyzing business impact',
+                          list_suppliers: 'Loading suppliers',
+                          get_basket_history: 'Checking basket history',
+                          get_history: 'Loading search history',
+                        } as Record<string, string>)[streamingTool] || 'Processing'}...</span>
                       </div>
                     ) : (
                       <div className="flex items-center gap-2 text-sm text-muted">
