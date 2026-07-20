@@ -146,7 +146,7 @@ TOOL_DEFINITIONS: list[dict[str, Any]] = [
         "type": "function",
         "function": {
             "name": "list_suppliers",
-            "description": "List the user's private Supplier Hub suppliers.",
+            "description": "List the user's private Supplier Hub suppliers with details including city, state, reliability score, delivery days, preferred categories, and contact info. ALWAYS call this tool when the user asks about their suppliers, best/good suppliers, nearby suppliers, supplier location, or supplier quality.",
             "parameters": {
                 "type": "object",
                 "properties": {},
@@ -457,23 +457,42 @@ async def _tool_get_business_impact(user_id: str) -> dict:
 
 
 async def _tool_list_suppliers(user_id: str) -> dict:
-    """List user's Supplier Hub suppliers."""
+    """List user's Supplier Hub suppliers with full details."""
     try:
         from app.services.supplier_hub import SupplierHubService
         suppliers = await SupplierHubService.list_suppliers(user_id)
+
+        if not suppliers:
+            return {"count": 0, "suppliers": [], "message": "No suppliers in your Supplier Hub yet. Add suppliers from the Supplier Hub page."}
+
+        supplier_list = []
+        for s in suppliers[:20]:
+            entry: dict[str, Any] = {
+                "name": s.get("name", ""),
+                "type": s.get("supplierType", ""),
+                "city": s.get("city", ""),
+                "state": s.get("state", ""),
+                "country": s.get("country", ""),
+                "active": s.get("active", True),
+                "delivery_days": s.get("deliveryDays"),
+                "reliability_score": s.get("reliabilityScore"),
+                "preferred_categories": s.get("preferredCategories", []),
+                "contact_person": s.get("contactPerson", ""),
+                "phone": s.get("phone", ""),
+                "email": s.get("email", ""),
+                "delivery_charges": s.get("deliveryCharges"),
+                "credit_period": s.get("creditPeriod"),
+                "payment_terms": s.get("paymentTerms", ""),
+            }
+            supplier_list.append(entry)
+
+        # Sort by reliability score (highest first) for "best supplier" queries
+        supplier_list.sort(key=lambda x: x.get("reliability_score") or 0, reverse=True)
+
         return {
-            "count": len(suppliers),
-            "suppliers": [
-                {
-                    "name": s.get("name", ""),
-                    "type": s.get("supplierType", ""),
-                    "city": s.get("city", ""),
-                    "active": s.get("active", True),
-                    "delivery_days": s.get("deliveryDays"),
-                    "reliability": s.get("reliabilityScore"),
-                }
-                for s in suppliers[:20]
-            ]
+            "count": len(supplier_list),
+            "suppliers": supplier_list,
+            "_note": "Use reliability_score (0-10) to rank supplier quality. Use city/state to determine proximity. ONLY report data present here.",
         }
     except Exception as e:
         return {"error": f"Supplier Hub failed: {str(e)}"}
