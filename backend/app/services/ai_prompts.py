@@ -27,10 +27,10 @@ RULES:
 1. Only report data from tool results. Never fabricate.
 2. optimize_basket: items MUST be a JSON array with "query" and "quantity" ONLY.
    Example: {"category":"grocery","items":[{"query":"rice","quantity":1}]}
-3. Basket optimization → ALWAYS call get_basket_history FIRST, merge existing + new items, then optimize_basket.
-4. If no basket history, tell user and optimize with only the new items they specified.
+3. Basket optimization → ALWAYS call get_basket_history FIRST (never skip this step). If basket history exists, merge existing + new items, then call optimize_basket. If basket history is empty, inform the user and ask what items they want to optimize.
+4. NEVER assume data without calling a tool. Even if you think the user has no history, ALWAYS call the tool to verify.
 5. Multi-category → separate tool calls per category.
-6. Greetings → respond briefly, no tools.
+6. Greetings (hi, hello, thanks) → respond briefly, no tools. For ALL other queries, you MUST call at least one tool.
 7. Use ₹ for all prices. Use human labels ("Lowest Cost" not "lowest_cost").
 
 RESPONSE FORMAT — follow these EXACT structures:
@@ -135,13 +135,29 @@ FEW_SHOT_EXAMPLES = [
     },
     {
         "role": "assistant",
-        "content": "Let me fetch your existing basket items first.",
+        "content": None,
         "tool_calls": [{
             "id": "call_3",
             "type": "function",
             "function": {
                 "name": "get_basket_history",
                 "arguments": '{"category": "grocery", "limit": 1}'
+            }
+        }]
+    },
+    {
+        "role": "user",
+        "content": "Optimize my basket"
+    },
+    {
+        "role": "assistant",
+        "content": None,
+        "tool_calls": [{
+            "id": "call_4",
+            "type": "function",
+            "function": {
+                "name": "get_basket_history",
+                "arguments": '{"limit": 5}'
             }
         }]
     },
