@@ -41,7 +41,7 @@ export function LoginPage() {
 
   return (
     <AuthShell>
-      <div className="mb-8 flex items-center gap-2.5 lg:hidden">
+      <div className="mb-8 flex items-center gap-2.5 xl:hidden">
         <span className="flex h-9 w-9 items-center justify-center rounded-md bg-accent text-white">
           <Boxes size={20} />
         </span>
