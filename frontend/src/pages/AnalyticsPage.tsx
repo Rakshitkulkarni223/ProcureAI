@@ -68,8 +68,8 @@ export function AnalyticsPage() {
       </section>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <Card>
-          <CardHeader>
+        <Card className="overflow-hidden rounded-2xl border-0 bg-gradient-to-br from-sky-500/[0.10] via-surface to-surface shadow-card transition-all duration-200 hover:-translate-y-1 hover:shadow-lift">
+          <CardHeader className="border-line/60">
             <h3 className="font-display text-base font-semibold tracking-tight text-ink">Monthly Procurement Value</h3>
           </CardHeader>
           <CardBody>
@@ -85,15 +85,15 @@ export function AnalyticsPage() {
                     contentStyle={{ borderRadius: 6, border: '1px solid var(--color-line)', fontSize: 12, background: 'var(--color-surface)', color: 'var(--color-ink)' }}
                     labelStyle={{ color: 'var(--color-ink)' }}
                     itemStyle={{ color: 'var(--color-ink)' }} />
-                  <Bar dataKey="amount" fill="var(--color-accent)" radius={[4, 4, 0, 0]} maxBarSize={42} />
+                  <Bar dataKey="amount" fill="#38BDF8" radius={[8, 8, 0, 0]} maxBarSize={42} />
                 </BarChart>
               </ResponsiveContainer>
             </ChartOrEmpty>
           </CardBody>
         </Card>
 
-        <Card>
-          <CardHeader>
+        <Card className="overflow-hidden rounded-2xl border-0 bg-gradient-to-br from-emerald-500/[0.10] via-surface to-surface shadow-card transition-all duration-200 hover:-translate-y-1 hover:shadow-lift">
+          <CardHeader className="border-line/60">
             <h3 className="font-display text-base font-semibold tracking-tight text-ink">Savings Trend</h3>
           </CardHeader>
           <CardBody>
@@ -108,15 +108,15 @@ export function AnalyticsPage() {
                     contentStyle={{ borderRadius: 6, border: '1px solid var(--color-line)', fontSize: 12, background: 'var(--color-surface)', color: 'var(--color-ink)' }}
                     labelStyle={{ color: 'var(--color-ink)' }}
                     itemStyle={{ color: 'var(--color-ink)' }} />
-                  <Line type="monotone" dataKey="amount" stroke="#10B981" strokeWidth={2.5} dot={{ r: 3 }} />
+                  <Line type="monotone" dataKey="amount" stroke="#34D399" strokeWidth={2.5} dot={{ r: 3, fill: '#34D399', strokeWidth: 0 }} activeDot={{ r: 5 }} />
                 </LineChart>
               </ResponsiveContainer>
             </ChartOrEmpty>
           </CardBody>
         </Card>
 
-        <Card>
-          <CardHeader>
+        <Card className="overflow-hidden rounded-2xl border-0 bg-gradient-to-br from-violet-500/[0.10] via-surface to-surface shadow-card transition-all duration-200 hover:-translate-y-1 hover:shadow-lift">
+          <CardHeader className="border-line/60">
             <h3 className="font-display text-base font-semibold tracking-tight text-ink">Category-wise Spend</h3>
           </CardHeader>
           <CardBody>
@@ -156,8 +156,8 @@ export function AnalyticsPage() {
           </CardBody>
         </Card>
 
-        <Card>
-          <CardHeader>
+        <Card className="overflow-hidden rounded-2xl border-0 bg-gradient-to-br from-cyan-500/[0.10] via-surface to-surface shadow-card transition-all duration-200 hover:-translate-y-1 hover:shadow-lift">
+          <CardHeader className="border-line/60">
             <h3 className="font-display text-base font-semibold tracking-tight text-ink">Supplier Recommendations</h3>
           </CardHeader>
           <CardBody>
@@ -168,9 +168,9 @@ export function AnalyticsPage() {
                   return (
                     <div key={s.supplier} className="flex items-center gap-3">
                       <span className="w-28 shrink-0 truncate text-sm text-ink-soft">{s.supplier}</span>
-                      <div className="h-6 flex-1 overflow-hidden rounded-md bg-bg">
+                      <div className="h-7 flex-1 overflow-hidden rounded-lg bg-bg/80">
                         <div
-                          className="flex h-full items-center justify-end rounded-md px-2 text-[11px] font-semibold text-white"
+                          className="flex h-full items-center justify-end rounded-lg px-2 text-[11px] font-semibold text-white shadow-[0_0_14px_rgba(56,189,248,0.20)]"
                           style={{ width: `${(s.count / max) * 100}%`, background: PIE_COLORS[i % PIE_COLORS.length] }}
                         >
                           {s.count}

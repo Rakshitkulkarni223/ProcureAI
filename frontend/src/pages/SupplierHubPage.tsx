@@ -199,7 +199,7 @@ export function SupplierHubPage() {
             <div className="label-eyebrow flex items-center gap-1.5">
               <Store size={11} /> Procurement Network
             </div>
-            <h1 className="mt-1 font-display text-3xl font-bold tracking-tight text-ink">Supplier Hub</h1>
+            <h1 className="mt-1 font-display text-3xl font-bold tracking-tight text-ink">Supplier Network</h1>
             <p className="mt-1 text-sm text-muted">
               Organize and maintain your procurement suppliers in one place.
             </p>

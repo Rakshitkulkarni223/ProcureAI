@@ -27,7 +27,7 @@ const NAV = [
   { to: '/analytics', label: 'Analytics', icon: BarChart3, testid: 'nav-analytics' },
   { to: '/history', label: 'Search History', icon: History, testid: 'nav-history' },
   { to: '/watchlist', label: 'Watchlist', icon: Eye, testid: 'nav-watchlist' },
-  { to: '/supplier-hub', label: 'Supplier Hub', icon: Store, testid: 'nav-supplier-hub' },
+  { to: '/supplier-hub', label: 'Supplier Network', icon: Store, testid: 'nav-supplier-hub' },
   { to: '/docs', label: 'Documentation', icon: FileText, testid: 'nav-docs' },
 ];
 

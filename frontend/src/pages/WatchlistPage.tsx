@@ -68,9 +68,9 @@ export function WatchlistPage() {
       {/* Summary cards */}
       {items.length > 0 && (
         <div className="grid gap-4 sm:grid-cols-3">
-          <Card>
+          <Card className="border-0 bg-gradient-to-br from-emerald-500/[0.12] via-surface to-surface transition-all duration-200 hover:-translate-y-1 hover:shadow-lift">
             <CardBody className="flex items-center gap-3 py-4">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-accent/10 text-accent">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-400/10 text-accent shadow-[0_0_18px_rgba(52,211,153,0.14)]">
                 <Eye size={18} />
               </div>
               <div>
@@ -79,9 +79,9 @@ export function WatchlistPage() {
               </div>
             </CardBody>
           </Card>
-          <Card>
+          <Card className="border-0 bg-gradient-to-br from-sky-500/[0.12] via-surface to-surface transition-all duration-200 hover:-translate-y-1 hover:shadow-lift">
             <CardBody className="flex items-center gap-3 py-4">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-success/10 text-success">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-sky-400/10 text-sky-300 shadow-[0_0_18px_rgba(56,189,248,0.14)]">
                 <TrendingDown size={18} />
               </div>
               <div>
@@ -90,9 +90,9 @@ export function WatchlistPage() {
               </div>
             </CardBody>
           </Card>
-          <Card>
+          <Card className="border-0 bg-gradient-to-br from-amber-500/[0.12] via-surface to-surface transition-all duration-200 hover:-translate-y-1 hover:shadow-lift">
             <CardBody className="flex items-center gap-3 py-4">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-warning/10 text-warning">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-400/10 text-amber-300 shadow-[0_0_18px_rgba(251,191,36,0.14)]">
                 <AlertTriangle size={18} />
               </div>
               <div>
@@ -123,7 +123,7 @@ export function WatchlistPage() {
         <div className="space-y-3">
           {/* Below target alert */}
           {belowTarget.length > 0 && (
-            <div className="rounded-md border border-success/40 bg-success-bg/50 px-4 py-3">
+            <div className="rounded-xl border border-success/40 bg-success-bg/50 px-4 py-3 shadow-[0_0_22px_rgba(52,211,153,0.10)]">
               <div className="flex items-center gap-2 text-sm font-medium text-success">
                 <TrendingDown size={15} />
                 {belowTarget.length} item{belowTarget.length > 1 ? 's' : ''} at or below your target price!
@@ -132,7 +132,7 @@ export function WatchlistPage() {
           )}
 
           {/* Watchlist items */}
-          <div className="overflow-hidden rounded-md border border-line bg-surface">
+          <div className="overflow-hidden rounded-2xl border border-line bg-surface shadow-card">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-line bg-bg text-left">
@@ -153,7 +153,7 @@ export function WatchlistPage() {
                       key={item.id}
                       className={cn(
                         'border-b border-line last:border-0 transition-colors',
-                        atTarget ? 'bg-success-bg/30' : '',
+                        atTarget ? 'bg-success-bg/30' : 'hover:bg-bg/70',
                       )}
                     >
                       <td className="px-4 py-3">

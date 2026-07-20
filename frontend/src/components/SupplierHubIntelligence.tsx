@@ -64,10 +64,10 @@ export function SupplierHubIntelligence() {
         {metrics.map((m) => {
           const Icon = m.icon;
           return (
-            <Card key={m.label}>
+            <Card key={m.label} className="border-0 bg-gradient-to-br from-slate-800 via-surface to-surface transition-all duration-200 hover:-translate-y-1 hover:shadow-lift">
               <CardBody className="flex items-center gap-3">
                 <span className={cn(
-                  'flex h-10 w-10 items-center justify-center rounded-md',
+                  'flex h-10 w-10 items-center justify-center rounded-xl shadow-[0_0_18px_rgba(52,211,153,0.12)]',
                   m.tone === 'accent' && 'bg-accent-soft text-accent',
                   m.tone === 'success' && 'bg-success-bg text-success',
                   m.tone === 'danger' && 'bg-accent-soft text-danger',
@@ -107,7 +107,7 @@ export function SupplierHubIntelligence() {
         </Card>
 
         {/* Preferred categories */}
-        <Card>
+        <Card className="overflow-hidden rounded-2xl border border-line bg-gradient-to-br from-violet-500/[0.08] via-surface to-surface shadow-card">
           <CardHeader className="flex items-center gap-2">
             <PieChart size={15} className="text-muted" />
             <h3 className="font-display text-base font-semibold tracking-tight text-ink">Preferred Categories</h3>
@@ -128,9 +128,9 @@ export function SupplierHubIntelligence() {
       </div>
 
       {/* Smart insights */}
-      <Card>
+      <Card className="overflow-hidden rounded-2xl border border-accent/25 bg-gradient-to-br from-accent-soft/45 via-surface to-sky-500/[0.06] shadow-card">
         <CardHeader className="flex items-center gap-2">
-          <Lightbulb size={15} className="text-muted" />
+          <Lightbulb size={15} className="text-accent" />
           <h3 className="font-display text-base font-semibold tracking-tight text-ink">Smart Insights</h3>
         </CardHeader>
         <CardBody className="space-y-2">
