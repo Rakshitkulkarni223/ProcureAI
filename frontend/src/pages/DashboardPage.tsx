@@ -66,10 +66,10 @@ export function DashboardPage() {
 
   const stats = data
     ? [
-        { label: 'Total Searches', value: formatNumber(data.totalSearches), icon: Search, tone: 'text-ink' },
-        { label: 'Procurement Requests', value: formatNumber(data.procurementRequests), icon: ShoppingCart, tone: 'text-ink' },
+        { label: 'Supplier Comparisons', value: formatNumber(data.totalSearches), icon: Search, tone: 'text-ink' },
+        { label: 'Purchase Decisions', value: formatNumber(data.procurementRequests), icon: ShoppingCart, tone: 'text-ink' },
         { label: 'Est. Monthly Savings', value: formatINR(data.estimatedMonthlySavings), icon: PiggyBank, tone: 'text-success' },
-        { label: 'Active Categories', value: formatNumber(data.activeCategories), icon: Boxes, tone: 'text-ink' },
+        { label: 'Procurement Categories', value: formatNumber(data.activeCategories), icon: Boxes, tone: 'text-ink' },
       ]
     : [];
 
@@ -81,20 +81,22 @@ export function DashboardPage() {
         <div className="relative flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
           <div className="max-w-3xl">
             <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-emerald-200">
-              <Sparkles size={12} /> AI Procurement Dashboard
+              <Sparkles size={12} /> Explainable AI
             </div>
             <h1 className="mt-4 font-display text-3xl font-bold tracking-tight sm:text-4xl">
-              Procurement intelligence, amplified.
+              Find the best supplier. Every time.
             </h1>
             <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-300">
-              Compare suppliers, optimize purchasing decisions, and track business impact from explainable AI recommendations.
+              Compare suppliers, optimize purchasing decisions, and measure business impact with explainable AI.
             </p>
             <div className="mt-5 flex flex-wrap gap-x-4 gap-y-2 text-xs text-slate-300 sm:text-sm">
-              <span><strong className="data-num text-emerald-300">{formatINR(data?.totalSavings || 0)}</strong> saved to date</span>
+              <span><strong className="data-num text-emerald-300">{formatINR(data?.totalSavings || 0)}</strong> saved</span>
               <span className="hidden text-white/30 sm:inline">•</span>
-              <span><strong className="data-num text-white">{formatNumber(data?.procurementRequests || 0)}</strong> procurement decisions</span>
+              <span><strong className="data-num text-white">{formatNumber(data?.procurementRequests || 0)}</strong> decisions</span>
               <span className="hidden text-white/30 sm:inline">•</span>
-              <span><strong className="data-num text-sky-200">{impact ? `${impact.aiAccuracyPct.toFixed(0)}%` : '—'}</strong> AI confidence</span>
+              <span><strong className="data-num text-sky-200">{impact ? `${impact.aiAccuracyPct.toFixed(0)}%` : '—'}</strong> confidence</span>
+              <span className="hidden text-white/30 sm:inline">•</span>
+              <span><strong className="data-num text-violet-200">{impact ? `${impact.hoursSaved.toFixed(0)}h` : '—'}</strong> hours saved</span>
             </div>
           </div>
           <div className="flex flex-col gap-3 sm:flex-row xl:flex-col xl:items-stretch">
@@ -132,7 +134,7 @@ export function DashboardPage() {
                 <span className="text-xs font-bold uppercase tracking-[0.16em]">Business Impact</span>
               </div>
               <h2 className="mt-3 font-display text-2xl font-bold tracking-tight text-ink">Measurable value from every decision.</h2>
-              <p className="mt-2 text-sm leading-6 text-muted">Track savings, efficiency, and the confidence behind your AI-guided procurement decisions.</p>
+              <p className="mt-2 text-sm leading-6 text-muted">See exactly how AI recommendations reduce procurement costs and save operational time.</p>
             </div>
             <button onClick={() => navigate('/impact')} className="inline-flex w-fit items-center gap-2 text-sm font-semibold text-accent hover:text-accent-hover">
               View full business impact <ArrowRight size={15} />
@@ -165,7 +167,7 @@ export function DashboardPage() {
             transition={{ delay: i * 0.06 }}
             className={i === 0 ? 'sm:col-span-2 xl:col-span-2' : ''}
           >
-            <Card className={`rounded-2xl border-0 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lift ${i === 0 ? 'bg-slate-950 shadow-[0_16px_32px_rgba(15,23,42,0.15)]' : 'bg-surface/75 shadow-card'}`}>
+            <Card className={`rounded-2xl border-0 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lift ${i === 0 ? 'bg-slate-950 shadow-[0_16px_32px_rgba(15,23,42,0.15)]' : i === 1 ? 'bg-gradient-to-br from-sky-500/[0.10] via-surface to-surface shadow-card' : i === 2 ? 'bg-gradient-to-br from-emerald-500/[0.10] via-surface to-surface shadow-card' : 'bg-gradient-to-br from-violet-500/[0.08] via-surface to-surface shadow-card'}`}> 
               <CardBody className="p-4 sm:p-5">
                 <div className="flex items-start justify-between gap-3">
                   <div>
@@ -189,7 +191,7 @@ export function DashboardPage() {
         <div className="space-y-5">
           {/* Highlight cards */}
           <div className="grid gap-3 sm:grid-cols-3">
-            <Card className="rounded-2xl border-0 bg-surface/75 shadow-card">
+            <Card className="rounded-2xl border-0 bg-gradient-to-br from-amber-500/[0.08] via-surface to-surface shadow-card">
               <CardBody className="p-4">
                 <div className="label-eyebrow flex items-center gap-1.5">
                   <Trophy size={12} className="text-accent" /> Preferred Supplier
@@ -206,7 +208,7 @@ export function DashboardPage() {
                 </div>
               </CardBody>
             </Card>
-            <Card className="rounded-2xl border-0 bg-surface/75 shadow-card">
+            <Card className="rounded-2xl border-0 bg-gradient-to-br from-sky-500/[0.08] via-surface to-surface shadow-card">
               <CardBody className="p-4">
                 <div className="label-eyebrow flex items-center gap-1.5">
                   <Layers size={12} className="text-accent" /> Top Category
@@ -214,7 +216,7 @@ export function DashboardPage() {
                 <div className="mt-3 font-display text-lg font-bold text-ink">{data?.topCategory || '—'}</div>
               </CardBody>
             </Card>
-            <Card className="rounded-2xl border-0 bg-surface/75 shadow-card">
+            <Card className="rounded-2xl border-0 bg-gradient-to-br from-emerald-500/[0.08] via-surface to-surface shadow-card">
               <CardBody className="p-4">
                 <div className="label-eyebrow flex items-center gap-1.5">
                   <TrendingUp size={12} className="text-accent" /> Projected / yr
@@ -227,7 +229,7 @@ export function DashboardPage() {
           </div>
 
           {/* Savings trend */}
-          <Card className="rounded-2xl border-0 bg-surface/75 shadow-card">
+          <Card className="rounded-2xl border-0 bg-gradient-to-br from-sky-500/[0.06] via-surface to-surface shadow-card">
             <CardHeader className="flex items-center justify-between gap-3 border-line/60 px-4 sm:px-5">
               <div>
                 <h3 className="font-display text-base font-semibold tracking-tight text-ink">Savings Trend</h3>
@@ -265,7 +267,7 @@ export function DashboardPage() {
           </Card>
 
           {/* Recent searches */}
-          <Card className="rounded-2xl border-0 bg-surface/75 shadow-card">
+          <Card className="rounded-2xl border-0 bg-gradient-to-br from-slate-500/[0.05] via-surface to-surface shadow-card">
             <CardHeader className="border-line/60 px-4 sm:px-5">
               <h3 className="font-display text-base font-semibold tracking-tight text-ink">Recent Comparisons</h3>
             </CardHeader>
@@ -313,7 +315,7 @@ export function DashboardPage() {
           <Card className="rounded-2xl border-0 bg-accent-soft/45 shadow-card">
             <CardHeader className="flex items-center gap-2 border-accent/20 px-4 sm:px-5">
               <Sparkles size={15} className="text-accent" />
-              <h3 className="font-display text-base font-semibold tracking-tight text-accent">AI Insights</h3>
+              <h3 className="font-display text-base font-semibold tracking-tight text-accent">Today's AI Recommendations</h3>
             </CardHeader>
             <CardBody className="space-y-3 p-4 sm:p-5" data-testid="ai-insights">
               {insights.map((ins, i) => {
