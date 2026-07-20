@@ -337,7 +337,7 @@ export function BusinessImpactPage() {
       <section className="relative overflow-hidden rounded-3xl border border-emerald-400/15 bg-[linear-gradient(120deg,#07111f_0%,#0b2940_58%,#075b53_130%)] px-5 py-6 shadow-[0_20px_50px_rgba(15,23,42,0.16)] sm:px-7 sm:py-7">
         <div className="absolute -right-16 -top-20 h-56 w-56 rounded-full border border-emerald-300/20" />
         <div className="absolute right-[28%] top-0 h-full w-px bg-gradient-to-b from-transparent via-white/10 to-transparent" />
-        <div className="relative flex flex-col gap-5 xl:flex-row xl:items-end xl:justify-between">
+        <div className="relative">
           <div className="max-w-2xl">
             <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-emerald-200">
               <BarChart3 size={12} /> Measurable Impact
@@ -345,7 +345,7 @@ export function BusinessImpactPage() {
             <h1 className="mt-3 font-display text-3xl font-bold tracking-tight text-white sm:text-4xl">Business impact, made visible.</h1>
             <p className="mt-2 text-sm leading-6 text-slate-300">Measure how ProcureAI reduces procurement costs, saves employee time, and improves purchasing decisions.</p>
           </div>
-          <div className="rounded-xl border border-white/10 bg-slate-950/35 p-2 backdrop-blur-sm">
+          <div className="mt-5 border-t border-white/10 pt-3">
             <DateRangeFilter value={dateRange} onChange={handleDateChange} />
           </div>
         </div>
