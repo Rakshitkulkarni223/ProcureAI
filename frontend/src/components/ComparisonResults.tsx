@@ -355,7 +355,7 @@ export function ComparisonResults({
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="flex flex-wrap items-center justify-between gap-3 rounded-md border border-line bg-surface px-4 py-3">
+            <div className="flex flex-wrap items-center justify-between gap-3 rounded-md border border-line bg-surface px-4 py-3 lg:mb-24">
               <span className="text-xs text-muted">
                 Showing {(currentPage - 1) * PAGE_SIZE + 1}–{Math.min(currentPage * PAGE_SIZE, view.length)} of {view.length} products
               </span>
