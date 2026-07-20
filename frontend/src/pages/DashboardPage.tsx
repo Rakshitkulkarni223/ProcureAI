@@ -74,11 +74,11 @@ export function DashboardPage() {
     : [];
 
   return (
-    <div className="space-y-7">
-      <div className="flex flex-wrap items-end justify-between gap-3">
+    <div className="space-y-6 lg:space-y-8">
+      <div className="flex flex-col gap-5 rounded-2xl border border-line bg-surface p-5 shadow-card sm:p-6 lg:flex-row lg:items-end lg:justify-between">
         <div>
           <div className="label-eyebrow">Overview</div>
-          <h1 className="mt-1 font-display text-3xl font-bold tracking-tight text-ink">
+          <h1 className="mt-1 font-display text-2xl font-bold tracking-tight text-ink sm:text-3xl">
             Welcome back, {user?.name?.split(' ')[0]}
           </h1>
           <p className="mt-1 text-sm text-muted">Your procurement intelligence at a glance.</p>
@@ -89,14 +89,14 @@ export function DashboardPage() {
         <button
           onClick={() => navigate('/search')}
           data-testid="dashboard-new-search"
-          className="inline-flex items-center gap-2 rounded-md bg-accent px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-accent-hover"
+          className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-accent px-4 py-3 text-sm font-semibold text-white shadow-[0_10px_20px_rgba(5,150,105,0.2)] transition-all hover:-translate-y-px hover:bg-accent-hover sm:w-auto"
         >
           <Search size={16} /> New Search
         </button>
       </div>
 
       {/* KPI grid */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4" data-testid="dashboard-stats">
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4" data-testid="dashboard-stats">
         {stats.map((s, i) => (
           <motion.div
             key={s.label}
@@ -104,28 +104,30 @@ export function DashboardPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.06 }}
           >
-            <Card className="transition-transform duration-200 hover:-translate-y-px hover:shadow-lift">
-              <CardBody>
-                <div className="flex items-start justify-between">
+            <Card className="rounded-2xl border-line bg-surface/90 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lift">
+              <CardBody className="p-4 sm:p-5">
+                <div className="flex items-start justify-between gap-3">
                   <span className="label-eyebrow">{s.label}</span>
-                  <s.icon size={16} className="text-muted" />
+                  <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-accent-soft text-accent">
+                    <s.icon size={16} />
+                  </span>
                 </div>
-                <div className={`data-num mt-3 text-3xl font-bold ${s.tone}`}>{s.value}</div>
+                <div className={`data-num mt-4 text-2xl font-bold sm:text-3xl ${s.tone}`}>{s.value}</div>
               </CardBody>
             </Card>
           </motion.div>
         ))}
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-3">
+      <div className="grid gap-5 xl:grid-cols-3">
         {/* Left: highlights + recent */}
-        <div className="space-y-6 lg:col-span-2">
+        <div className="space-y-5 xl:col-span-2">
           {/* Highlight cards */}
-          <div className="grid gap-4 sm:grid-cols-3">
-            <Card>
-              <CardBody>
+          <div className="grid gap-3 sm:grid-cols-3">
+            <Card className="rounded-2xl border-line bg-surface/90">
+              <CardBody className="p-4">
                 <div className="label-eyebrow flex items-center gap-1.5">
-                  <Trophy size={12} /> Preferred Supplier
+                  <Trophy size={12} className="text-accent" /> Preferred Supplier
                 </div>
                 <div className="mt-3 flex items-center gap-2.5">
                   {data?.preferredSupplier ? (
@@ -139,18 +141,18 @@ export function DashboardPage() {
                 </div>
               </CardBody>
             </Card>
-            <Card>
-              <CardBody>
+            <Card className="rounded-2xl border-line bg-surface/90">
+              <CardBody className="p-4">
                 <div className="label-eyebrow flex items-center gap-1.5">
-                  <Layers size={12} /> Top Category
+                  <Layers size={12} className="text-accent" /> Top Category
                 </div>
                 <div className="mt-3 font-display text-lg font-bold text-ink">{data?.topCategory || '—'}</div>
               </CardBody>
             </Card>
-            <Card>
-              <CardBody>
+            <Card className="rounded-2xl border-line bg-surface/90">
+              <CardBody className="p-4">
                 <div className="label-eyebrow flex items-center gap-1.5">
-                  <TrendingUp size={12} /> Projected / yr
+                  <TrendingUp size={12} className="text-accent" /> Projected / yr
                 </div>
                 <div className="data-num mt-3 text-lg font-bold text-success">
                   {formatINR(data?.projectedAnnualSavings || 0)}
@@ -160,14 +162,14 @@ export function DashboardPage() {
           </div>
 
           {/* Savings trend */}
-          <Card>
-            <CardHeader className="flex items-center justify-between">
+          <Card className="rounded-2xl border-line bg-surface/90">
+            <CardHeader className="flex items-center justify-between px-4 sm:px-5">
               <h3 className="font-display text-base font-semibold tracking-tight text-ink">Savings Trend</h3>
               <Badge tone="success">{formatINR(data?.totalSavings || 0)} total</Badge>
             </CardHeader>
-            <CardBody>
+            <CardBody className="p-3 pb-4 sm:p-5">
               {trend.length ? (
-                <ResponsiveContainer width="100%" height={220}>
+                <ResponsiveContainer width="100%" height={240}>
                   <AreaChart data={[...trend].reverse()} margin={{ left: -16, right: 8, top: 8 }}>
                     <defs>
                       <linearGradient id="savings" x1="0" y1="0" x2="0" y2="1">
@@ -195,8 +197,8 @@ export function DashboardPage() {
           </Card>
 
           {/* Recent searches */}
-          <Card>
-            <CardHeader>
+          <Card className="rounded-2xl border-line bg-surface/90">
+            <CardHeader className="px-4 sm:px-5">
               <h3 className="font-display text-base font-semibold tracking-tight text-ink">Recent Comparisons</h3>
             </CardHeader>
             <CardBody className="p-0">
@@ -207,7 +209,7 @@ export function DashboardPage() {
                       key={r.id}
                       data-testid={`recent-search-${r.id}`}
                       onClick={() => navigate('/search', { state: { category: r.categorySlug, query: r.query } })}
-                      className="flex w-full items-center justify-between gap-3 px-5 py-3 text-left transition-colors hover:bg-bg"
+                      className="flex w-full items-center justify-between gap-3 px-4 py-3.5 text-left transition-colors hover:bg-bg sm:px-5"
                     >
                       <div className="min-w-0">
                         <div className="flex items-center gap-2">
@@ -238,17 +240,17 @@ export function DashboardPage() {
         </div>
 
         {/* Right: AI insights + Business Impact */}
-        <div className="space-y-4">
+        <div className="space-y-5">
           {/* Business Impact Summary */}
           {impact && (
-            <Card className="border-green-500/30 bg-gradient-to-br from-green-50/50 to-emerald-50/30 dark:from-green-950/20 dark:to-emerald-950/10">
-              <CardHeader className="flex items-center justify-between border-green-500/20">
+            <Card className="rounded-2xl border-green-500/30 bg-gradient-to-br from-green-50/50 to-emerald-50/30 shadow-card dark:from-green-950/20 dark:to-emerald-950/10">
+              <CardHeader className="flex items-center justify-between border-green-500/20 px-4 sm:px-5">
                 <div className="flex items-center gap-2">
                   <Gauge size={15} className="text-green-600" />
                   <h3 className="font-display text-base font-semibold tracking-tight text-green-700 dark:text-green-400">Business Impact</h3>
                 </div>
               </CardHeader>
-              <CardBody className="space-y-3">
+              <CardBody className="space-y-3 p-4 sm:p-5">
                 <div className="grid grid-cols-2 gap-2">
                   {[
                     { icon: PiggyBank, label: 'Total Saved', value: formatINR(impact.totalSavings), color: 'text-green-600' },
@@ -256,7 +258,7 @@ export function DashboardPage() {
                     { icon: Zap, label: 'Efficiency', value: `${impact.efficiencyScore}/100`, color: 'text-amber-600' },
                     { icon: Target, label: 'AI Accuracy', value: `${impact.aiAccuracyPct.toFixed(0)}%`, color: 'text-violet-600' },
                   ].map((m) => (
-                    <div key={m.label} className="rounded-lg border border-line bg-surface p-2.5 text-center">
+                    <div key={m.label} className="rounded-xl border border-line bg-surface/90 p-2.5 text-center">
                       <m.icon size={14} className={`mx-auto ${m.color}`} />
                       <div className={`mt-1 text-lg font-bold ${m.color}`}>{m.value}</div>
                       <div className="text-[10px] text-muted">{m.label}</div>
@@ -265,7 +267,7 @@ export function DashboardPage() {
                 </div>
                 <button
                   onClick={() => navigate('/impact')}
-                  className="flex w-full items-center justify-center gap-2 rounded-md bg-green-600 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-green-700"
+                  className="flex w-full items-center justify-center gap-2 rounded-xl bg-green-600 px-3 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-green-700"
                 >
                   View Full Business Impact <ArrowRight size={14} />
                 </button>
@@ -273,19 +275,19 @@ export function DashboardPage() {
             </Card>
           )}
 
-          <Card className="border-accent/30 bg-accent-soft/30">
-            <CardHeader className="flex items-center gap-2 border-accent/20">
+          <Card className="rounded-2xl border-accent/30 bg-accent-soft/30">
+            <CardHeader className="flex items-center gap-2 border-accent/20 px-4 sm:px-5">
               <Sparkles size={15} className="text-accent" />
               <h3 className="font-display text-base font-semibold tracking-tight text-accent">AI Insights</h3>
             </CardHeader>
-            <CardBody className="space-y-3" data-testid="ai-insights">
+            <CardBody className="space-y-3 p-4 sm:p-5" data-testid="ai-insights">
               {insights.map((ins, i) => {
                 const Icon = insightIcon[ins.icon] || Sparkles;
                 return (
-                  <div key={i} className="flex gap-3 rounded-md border border-line bg-surface p-3">
+                  <div key={i} className="flex gap-3 rounded-xl border border-line bg-surface/90 p-3">
                     <span
                       className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-md ${
-                        ins.tone === 'success' ? 'bg-success-bg text-emerald-600' : 'bg-accent-soft text-accent'
+                        ins.tone === 'success' ? 'bg-success-bg text-success' : 'bg-accent-soft text-accent'
                       }`}
                     >
                       <Icon size={15} />
