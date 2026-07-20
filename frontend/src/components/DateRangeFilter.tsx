@@ -94,8 +94,8 @@ export function DateRangeFilter({ value, onChange }: Props) {
   const isAllTime = !value.from && !value.to;
 
   return (
-    <div className="flex flex-wrap items-center gap-2">
-      <CalendarDays size={15} className="text-muted" />
+    <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+      <CalendarDays size={15} className="shrink-0 text-muted" />
 
       {PRESETS.map((p) => {
         const pv = p.value();
@@ -105,7 +105,7 @@ export function DateRangeFilter({ value, onChange }: Props) {
             key={p.label}
             onClick={() => handlePreset(p)}
             className={cn(
-              'rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors',
+              'shrink-0 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors',
               active
                 ? 'bg-accent text-white'
                 : 'border border-line text-muted hover:border-ink/40 hover:text-ink',
@@ -119,7 +119,7 @@ export function DateRangeFilter({ value, onChange }: Props) {
       <button
         onClick={() => setShowCustom((v) => !v)}
         className={cn(
-          'rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors',
+          'shrink-0 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors',
           showCustom && !activePreset
             ? 'bg-accent text-white'
             : 'border border-line text-muted hover:border-ink/40 hover:text-ink',
@@ -129,7 +129,7 @@ export function DateRangeFilter({ value, onChange }: Props) {
       </button>
 
       {showCustom && (
-        <div className="flex items-center gap-2">
+        <div className="flex shrink-0 items-center gap-2">
           <input
             type="date"
             value={value.from || ''}
@@ -156,7 +156,7 @@ export function DateRangeFilter({ value, onChange }: Props) {
       )}
 
       {!isAllTime && !showCustom && (
-        <span className="text-[11px] text-muted">
+        <span className="shrink-0 text-[11px] text-muted">
           {value.from} → {value.to}
         </span>
       )}
