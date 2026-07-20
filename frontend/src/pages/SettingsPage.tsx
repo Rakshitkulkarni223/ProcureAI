@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Check, User as UserIcon, MapPin, Package } from 'lucide-react';
+import { Check, ChevronDown, User as UserIcon, MapPin, Package } from 'lucide-react';
 import type { Category, Preferences, SortOption } from '../types';
 import { api, apiError } from '../lib/api';
 import { Card, CardBody, CardHeader } from '../components/ui/Card';
@@ -106,27 +106,29 @@ export function SettingsPage() {
         <p className="mt-1 max-w-2xl text-sm leading-6 text-muted">Manage your account, procurement preferences, AI behavior, and workspace configuration.</p>
       </div>
 
-      <div className="grid gap-5 xl:grid-cols-[minmax(250px,0.75fr)_minmax(0,1.75fr)]">
-        <Card className="border border-line bg-surface shadow-card">
+      <div className="grid items-start gap-5 xl:grid-cols-[minmax(250px,0.75fr)_minmax(0,1.75fr)]">
+        <Card className="self-start overflow-hidden rounded-2xl border border-line bg-surface shadow-card">
           <CardHeader className="flex items-center gap-2 border-line">
             <UserIcon size={16} className="text-sky-400" />
             <h2 className="font-display text-base font-semibold tracking-tight text-ink">Account</h2>
           </CardHeader>
-          <CardBody className="space-y-4 p-5 sm:p-6">
-            <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-accent-soft text-xl font-display font-bold text-accent">
-              {user?.name?.[0]?.toUpperCase() || 'U'}
-            </span>
-            <div>
-              <div className="flex flex-wrap items-center gap-2">
-                <h3 className="font-display text-lg font-semibold text-ink">{user?.name || 'User'}</h3>
-                <Badge tone="accent">{user?.role || 'User'}</Badge>
+          <CardBody className="p-5 sm:p-6">
+            <div className="rounded-xl border border-line bg-bg p-4">
+              <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-accent-soft text-lg font-display font-bold text-accent">
+                {user?.name?.[0]?.toUpperCase() || 'U'}
+              </span>
+              <div className="mt-3">
+                <div className="flex flex-wrap items-center gap-2">
+                  <h3 className="font-display text-base font-semibold text-ink">{user?.name || 'User'}</h3>
+                  <Badge tone="accent">{user?.role || 'User'}</Badge>
+                </div>
+                <p className="mt-1 text-sm text-muted">{user?.email || '—'}</p>
               </div>
-              <p className="mt-1 text-sm text-muted">{user?.email || '—'}</p>
             </div>
           </CardBody>
         </Card>
 
-        <Card className="border border-line bg-surface shadow-card">
+        <Card className="overflow-hidden rounded-2xl border border-line bg-surface shadow-card">
           <CardHeader className="flex items-center gap-2 border-line">
             <Package size={16} className="text-accent" />
             <div>
@@ -205,17 +207,20 @@ function SelectField({
     return (
       <div className="space-y-1.5">
         <label className="label-eyebrow block">{label}</label>
-        <select
-          data-testid={testId}
-          value={value}
-          onChange={(event) => onChange(event.target.value)}
-          className="h-11 w-full appearance-none rounded-md border border-line bg-bg px-3.5 text-sm text-ink outline-none transition-colors focus:border-accent focus:ring-2 focus:ring-accent/15"
-          style={{ colorScheme: 'dark' }}
-        >
-          {options.map((option) => (
-            <option key={option.value} value={option.value}>{option.label}</option>
-          ))}
-        </select>
+        <div className="relative">
+          <select
+            data-testid={testId}
+            value={value}
+            onChange={(event) => onChange(event.target.value)}
+            className="h-12 w-full appearance-none rounded-xl border border-line bg-bg px-3.5 pr-10 text-sm text-ink outline-none transition-colors hover:border-muted/60 focus:border-accent focus:ring-2 focus:ring-accent/15"
+            style={{ colorScheme: 'dark' }}
+          >
+            {options.map((option) => (
+              <option key={option.value} value={option.value}>{option.label}</option>
+            ))}
+          </select>
+          <ChevronDown size={16} className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-muted" />
+        </div>
         {description && <p className="text-xs leading-5 text-muted">{description}</p>}
       </div>
     );
