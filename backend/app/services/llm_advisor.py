@@ -2,7 +2,7 @@
 LLM Procurement Advisor — Groq-powered natural language explanations.
 
 Generates human-readable AI procurement advice from recommendation data
-using Groq API (Qwen 3.6-27B / Llama 3.1-8B). Falls back to template-based
+using Groq API (Llama 3.3-70B / Llama 3.1-8B). Falls back to template-based
 explanation if no API key is set or if the API call fails.
 """
 from __future__ import annotations
@@ -77,7 +77,7 @@ async def _groq_completion(prompt: str, max_tokens: int = 512, model: str | None
             max_tokens=max_tokens,
         )
         text = (response.choices[0].message.content or "").strip()
-        # Strip Qwen <think>...</think> chain-of-thought blocks (complete)
+        # Strip <think>...</think> chain-of-thought blocks (safety net)
         text = re.sub(r"<think>.*?</think>", "", text, flags=re.DOTALL).strip()
         # Strip truncated/unclosed <think> blocks (model hit max_tokens before closing)
         text = re.sub(r"<think>.*", "", text, flags=re.DOTALL).strip()

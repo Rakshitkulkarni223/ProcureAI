@@ -996,7 +996,7 @@ const GENERAL_SECTIONS: DocSection[] = [
           { q: 'How is "estimated savings" calculated?', a: 'Savings = difference between the most expensive option and the AI-recommended option.' },
           { q: 'Can I use ProcureAI on mobile?', a: 'Yes! The interface is fully responsive and works on phones and tablets.' },
           { q: 'What does the confidence score mean?', a: 'It indicates how sure the AI is. Higher confidence (80%+) means the recommended option is significantly better.' },
-          { q: 'What AI model does the chat assistant use?', a: 'It uses Groq-hosted models — Qwen 3.6-27B as the primary model with Llama 3.1-8B as fallback. Both support function calling for real-time data access.' },
+          { q: 'What AI model does the chat assistant use?', a: 'It uses Groq-hosted models — Llama 3.3-70B as the primary model with Llama 3.1-8B as fallback. Both support function calling for real-time data access.' },
           { q: 'What are recommendation modes vs weight profiles?', a: 'Recommendation modes (6 strategies like Balanced, Lowest Cost, etc.) are user-facing and selected on the Search page. Weight profiles are internal configurations that power those modes behind the scenes.' },
         ].map((faq) => (
           <div key={faq.q} className="rounded-md border border-line bg-bg p-4">
@@ -1060,7 +1060,7 @@ const DEV_SECTIONS: DocSection[] = [
               <li>• Pydantic schema validation</li>
               <li>• Multi-provider mock adapters</li>
               <li>• Optional SerpAPI (live Google Shopping prices)</li>
-              <li>• Groq AI Assistant (Qwen 3.6-27B / Llama 3.1-8B)</li>
+              <li>• Groq AI Assistant (Llama 3.3-70B / Llama 3.1-8B)</li>
               <li>• Weighted decision engine</li>
               <li>• Date-filtered analytics (from/to query params)</li>
               <li>• Business impact API (hours saved, efficiency, ROI)</li>
@@ -1113,7 +1113,7 @@ const DEV_SECTIONS: DocSection[] = [
         </div>
         <div className="rounded-md border border-accent/20 bg-accent-soft p-4">
           <h4 className="mb-1 flex items-center gap-2 text-xs font-semibold text-accent"><Lightbulb size={14} /> Implementation Details</h4>
-          <p className="text-xs text-ink-soft">Orchestrated by <code className="rounded bg-bg px-1 text-accent">ai_service.py</code>. 21 anti-hallucination rules in <code className="rounded bg-bg px-1 text-accent">ai_prompts.py</code>. Max 5 rounds of tool calling per turn. Primary model: <strong className="text-ink">Qwen 3.6-27B</strong> (Groq), fallback: <strong className="text-ink">Llama 3.1-8B</strong>.</p>
+          <p className="text-xs text-ink-soft">Orchestrated by <code className="rounded bg-bg px-1 text-accent">ai_service.py</code>. 21 anti-hallucination rules in <code className="rounded bg-bg px-1 text-accent">ai_prompts.py</code>. Max 5 rounds of tool calling per turn. Primary model: <strong className="text-ink">Llama 3.3-70B</strong> (Groq), fallback: <strong className="text-ink">Llama 3.1-8B</strong>.</p>
         </div>
       </div>
     ),
@@ -1258,7 +1258,7 @@ const DEV_SECTIONS: DocSection[] = [
     content: (
       <div className="space-y-4 text-sm text-ink-soft leading-relaxed">
         <div className="grid gap-4 sm:grid-cols-2">
-          <CodeBlock title="backend/" code={`server.py              # FastAPI entry point (Uvicorn)\nrequirements.txt       # Python dependencies\napp/\n  ├── config.py        # env vars, categories, suppliers, catalog\n  ├── database.py      # Motor async MongoDB client\n  ├── auth.py          # JWT + bcrypt, auth dependency\n  ├── schemas.py       # Pydantic validation models\n  ├── routes.py        # All API routes (/api prefix)\n  ├── routes_supplier.py # Supplier Hub CRUD routes\n  ├── seed.py          # DB seeder\n  └── services/\n      ├── core.py      # PRNG, CatalogResolver, Search, Recommendation\n      ├── basket.py    # Basket optimization\n      ├── analytics.py # Dashboard, History, Preferences\n      ├── intelligence.py # Procurement intelligence engine\n      ├── supplier_hub.py # Supplier Hub CRUD service\n      ├── serpapi_adapter.py # Optional live Google Shopping\n      ├── llm_advisor.py # Groq AI advisor (Qwen / Llama)\n      ├── ai_service.py  # AI chat orchestrator + tool calling\n      ├── ai_tools.py    # 8 procurement function-calling tools\n      ├── ai_prompts.py  # System prompt + few-shot examples\n      └── ai_memory.py   # Conversation persistence (MongoDB)`} />
+          <CodeBlock title="backend/" code={`server.py              # FastAPI entry point (Uvicorn)\nrequirements.txt       # Python dependencies\napp/\n  ├── config.py        # env vars, categories, suppliers, catalog\n  ├── database.py      # Motor async MongoDB client\n  ├── auth.py          # JWT + bcrypt, auth dependency\n  ├── schemas.py       # Pydantic validation models\n  ├── routes.py        # All API routes (/api prefix)\n  ├── routes_supplier.py # Supplier Hub CRUD routes\n  ├── seed.py          # DB seeder\n  └── services/\n      ├── core.py      # PRNG, CatalogResolver, Search, Recommendation\n      ├── basket.py    # Basket optimization\n      ├── analytics.py # Dashboard, History, Preferences\n      ├── intelligence.py # Procurement intelligence engine\n      ├── supplier_hub.py # Supplier Hub CRUD service\n      ├── serpapi_adapter.py # Optional live Google Shopping\n      ├── llm_advisor.py # Groq AI advisor (Llama 3.3 / 3.1)\n      ├── ai_service.py  # AI chat orchestrator + tool calling\n      ├── ai_tools.py    # 8 procurement function-calling tools\n      ├── ai_prompts.py  # System prompt + few-shot examples\n      └── ai_memory.py   # Conversation persistence (MongoDB)`} />
           <CodeBlock title="frontend/" code={`src/\n  ├── components/    # reusable UI\n  │   ├── ui/        # Button, Card, Badge…\n  │   └── AIChatPanel.tsx  # Floating AI chat drawer\n  ├── context/       # AuthContext, ThemeContext, LocationContext\n  ├── hooks/         # useSearchSuggestions, useWatchlist\n  ├── lib/\n  │   ├── api.ts     # Main API client\n  │   ├── aiApi.ts   # AI chat API client\n  │   └── exportUtils.ts  # CSV/PDF export\n  ├── pages/         # route-level pages\n  ├── types.ts       # TypeScript interfaces\n  ├── types_ai.ts    # AI chat TypeScript types\n  ├── App.tsx        # router & providers\n  └── index.css      # Tailwind + CSS vars`} />
         </div>
       </div>
@@ -1469,7 +1469,7 @@ const DEV_SECTIONS: DocSection[] = [
         <div className="grid gap-3 sm:grid-cols-3">
           {[
             { category: 'Frontend', items: ['React 18', 'TypeScript', 'Tailwind CSS', 'React Router v6', 'Recharts (Radar)', 'Bloom Filter', 'Framer Motion', 'Lucide Icons'] },
-            { category: 'Backend', items: ['Python 3.13', 'FastAPI', 'Uvicorn', 'Motor (async MongoDB)', 'Pydantic', 'PyJWT / bcrypt', 'Groq AI (Qwen 3.6-27B)', 'OpenAI-compatible function calling'] },
+            { category: 'Backend', items: ['Python 3.13', 'FastAPI', 'Uvicorn', 'Motor (async MongoDB)', 'Pydantic', 'PyJWT / bcrypt', 'Groq AI (Llama 3.3-70B)', 'OpenAI-compatible function calling'] },
             { category: 'Infrastructure', items: ['MongoDB', 'pip', 'npm', 'Pytest (E2E)', 'Git / GitHub', 'SerpAPI (optional)'] },
           ].map((group) => (
             <div key={group.category} className="rounded-md border border-line bg-bg p-4">

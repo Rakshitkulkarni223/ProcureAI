@@ -1,7 +1,7 @@
 """
 AI Procurement Assistant — System prompts, guardrails, and few-shot examples.
 
-All prompts are structured for Groq (Qwen3 / Llama 3.3) function calling.
+All prompts are structured for Groq (Llama 3.3 70B) function calling.
 """
 from __future__ import annotations
 

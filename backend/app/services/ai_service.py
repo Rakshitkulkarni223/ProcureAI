@@ -2,7 +2,7 @@
 AI Procurement Assistant — Main orchestrator.
 
 Handles the conversation loop: user message → LLM → tool calls → LLM → response.
-Uses Groq (OpenAI-compatible) with function calling on Qwen3 32B / Llama 3.3 70B.
+Uses Groq (OpenAI-compatible) with function calling on Llama 3.3 70B / Llama 3.1 8B.
 """
 from __future__ import annotations
 
@@ -51,7 +51,7 @@ MAX_TOOL_ROUNDS = 3          # Max tool-call loops per user message
 MAX_RESPONSE_TOKENS = 4096   # Max tokens for final response
 TOOL_RESULT_MAX_CHARS = 3000 # Truncate tool results to keep within context
 
-# Regex to strip Qwen <think>...</think> chain-of-thought blocks
+# Regex to strip <think>...</think> chain-of-thought blocks (safety net)
 _THINK_CLOSED_RE = re.compile(r"<think>.*?</think>", re.DOTALL)
 _THINK_OPEN_RE = re.compile(r"<think>.*", re.DOTALL)
 
