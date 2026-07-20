@@ -30,7 +30,7 @@ function unwrap<T>(res: { data: { success: boolean; data: T } }): T {
   return res.data.data;
 }
 
-/** Send a chat message to the AI assistant. */
+/** Send a chat message to the AI assistant (non-streaming fallback). */
 export async function sendChatMessage(
   message: string,
   conversationId?: string,
@@ -44,6 +44,101 @@ export async function sendChatMessage(
   } catch (err: any) {
     const msg = err?.response?.data?.detail || err?.message || 'Chat request failed';
     throw new Error(msg);
+  }
+}
+
+/** SSE stream event callbacks. */
+export interface StreamCallbacks {
+  onConversationId?: (id: string) => void;
+  onToken?: (text: string) => void;
+  onToolStart?: (toolName: string) => void;
+  onToolDone?: (toolName: string) => void;
+  onThinking?: () => void;
+  onDone?: (meta: { tools_used: string[]; model: string; latency_ms: number }) => void;
+  onError?: (msg: string) => void;
+}
+
+/** Send a chat message via SSE streaming. */
+export async function sendChatMessageStream(
+  message: string,
+  conversationId: string | undefined,
+  callbacks: StreamCallbacks,
+): Promise<void> {
+  try {
+    const token = tokenStore.get();
+    const baseUrl = process.env.REACT_APP_BACKEND_URL || '';
+
+    const resp = await fetch(`${baseUrl}/api/ai/chat/stream`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      body: JSON.stringify({
+        message,
+        conversation_id: conversationId || undefined,
+      }),
+    });
+
+    if (!resp.ok) {
+      const errorText = await resp.text();
+      throw new Error(errorText || `HTTP ${resp.status}`);
+    }
+
+    const reader = resp.body?.getReader();
+    if (!reader) throw new Error('No readable stream');
+
+    const decoder = new TextDecoder();
+    let buffer = '';
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      buffer += decoder.decode(value, { stream: true });
+
+      // Process complete SSE lines
+      const lines = buffer.split('\n\n');
+      buffer = lines.pop() || '';
+
+      for (const line of lines) {
+        const trimmed = line.trim();
+        if (!trimmed.startsWith('data: ')) continue;
+
+        try {
+          const payload = JSON.parse(trimmed.slice(6));
+          const { type, data } = payload;
+
+          switch (type) {
+            case 'conversation_id':
+              callbacks.onConversationId?.(data);
+              break;
+            case 'token':
+              callbacks.onToken?.(data);
+              break;
+            case 'tool_start':
+              callbacks.onToolStart?.(data);
+              break;
+            case 'tool_done':
+              callbacks.onToolDone?.(data);
+              break;
+            case 'thinking':
+              callbacks.onThinking?.();
+              break;
+            case 'done':
+              callbacks.onDone?.(data);
+              break;
+            case 'error':
+              callbacks.onError?.(data);
+              break;
+          }
+        } catch {
+          // skip malformed events
+        }
+      }
+    }
+  } catch (err: any) {
+    callbacks.onError?.(err?.message || 'Stream failed');
   }
 }
 

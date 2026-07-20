@@ -14,7 +14,7 @@ import {
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import {
-  sendChatMessage,
+  sendChatMessageStream,
   listConversations,
   getConversation,
   deleteConversation,
@@ -227,6 +227,8 @@ export function AIChatPanel() {
   const [conversationId, setConversationId] = useState<string | null>(null);
   const [toolsUsed, setToolsUsed] = useState<string[]>([]);
   const [error, setError] = useState('');
+  const [streamingText, setStreamingText] = useState('');
+  const [streamingTool, setStreamingTool] = useState<string | null>(null);
 
   // History state
   const [conversations, setConversations] = useState<AIConversationListItem[]>([]);
@@ -244,7 +246,7 @@ export function AIChatPanel() {
     } catch {
       // ignore
     }
-  }, [messages, loading]);
+  }, [messages, loading, streamingText]);
 
   // Focus input when panel opens
   useEffect(() => {
@@ -306,31 +308,74 @@ export function AIChatPanel() {
       setInput('');
       setError('');
       setToolsUsed([]);
+      setStreamingText('');
+      setStreamingTool(null);
 
       // Add user message optimistically
       const userMsg: AIChatMessage = { role: 'user', content: text, timestamp: new Date().toISOString() };
       setMessages((prev) => [...prev, userMsg]);
       setLoading(true);
 
-      try {
-        const res = await sendChatMessage(text, conversationId || undefined);
-        setConversationId(res.conversation_id);
-        setToolsUsed(res.tools_used || []);
+      let accumulated = '';
 
-        const assistantMsg: AIChatMessage = {
-          role: 'assistant',
-          content: res.response,
-          timestamp: new Date().toISOString(),
-        };
-        setMessages((prev) => [...prev, assistantMsg]);
+      try {
+        await sendChatMessageStream(text, conversationId || undefined, {
+          onConversationId: (id) => {
+            try { setConversationId(id); } catch { /* ignore */ }
+          },
+          onToken: (chunk) => {
+            try {
+              accumulated += chunk;
+              setStreamingText(accumulated);
+              setStreamingTool(null);
+            } catch { /* ignore */ }
+          },
+          onToolStart: (name) => {
+            try { setStreamingTool(name); } catch { /* ignore */ }
+          },
+          onToolDone: (name) => {
+            try {
+              setToolsUsed((prev) => [...prev, name]);
+              setStreamingTool(null);
+            } catch { /* ignore */ }
+          },
+          onThinking: () => {
+            try { setStreamingTool(null); } catch { /* ignore */ }
+          },
+          onDone: (meta) => {
+            try {
+              setToolsUsed(meta.tools_used || []);
+              // Finalize: move streaming text into messages
+              const finalText = accumulated || 'No response received.';
+              setMessages((prev) => [
+                ...prev,
+                { role: 'assistant', content: finalText, timestamp: new Date().toISOString() },
+              ]);
+              setStreamingText('');
+              setStreamingTool(null);
+              setLoading(false);
+            } catch { /* ignore */ }
+          },
+          onError: (msg) => {
+            try {
+              setError(msg);
+              setMessages((prev) => [
+                ...prev,
+                { role: 'assistant', content: `⚠ ${msg || 'Something went wrong. Please try again.'}` },
+              ]);
+              setStreamingText('');
+              setStreamingTool(null);
+              setLoading(false);
+            } catch { /* ignore */ }
+          },
+        });
       } catch (err: any) {
         setError(err?.message || 'Failed to get response');
-        // Add error as assistant message
         setMessages((prev) => [
           ...prev,
           { role: 'assistant', content: `⚠ ${err?.message || 'Something went wrong. Please try again.'}` },
         ]);
-      } finally {
+        setStreamingText('');
         setLoading(false);
       }
     } catch {
@@ -518,11 +563,23 @@ export function AIChatPanel() {
                   <div className="flex-shrink-0 w-8 h-8 rounded-full bg-accent/10 flex items-center justify-center">
                     <Bot size={16} className="text-accent" />
                   </div>
-                  <div className="bg-bg border border-line rounded-xl rounded-bl-sm px-4 py-3">
-                    <div className="flex items-center gap-2 text-sm text-muted">
-                      <Loader2 size={14} className="animate-spin" />
-                      Thinking...
-                    </div>
+                  <div className="bg-bg border border-line rounded-xl rounded-bl-sm px-4 py-3 max-w-[85%]">
+                    {streamingText ? (
+                      <div className="text-sm text-ink-soft prose-sm">
+                        <FormattedMessage content={streamingText} />
+                        <span className="inline-block w-1.5 h-4 bg-accent/60 animate-pulse rounded-sm ml-0.5 align-text-bottom" />
+                      </div>
+                    ) : streamingTool ? (
+                      <div className="flex items-center gap-2 text-sm text-muted">
+                        <Wrench size={14} className="text-accent animate-pulse" />
+                        <span>Using <strong className="text-accent">{streamingTool}</strong>...</span>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2 text-sm text-muted">
+                        <Loader2 size={14} className="animate-spin" />
+                        Thinking...
+                      </div>
+                    )}
                   </div>
                 </div>
               )}

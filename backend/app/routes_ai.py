@@ -9,10 +9,11 @@ Provides endpoints for:
 from __future__ import annotations
 
 from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi.responses import StreamingResponse
 
 from app.auth import get_current_user
 from app.schemas_ai import ChatRequest, UpdateTitleRequest
-from app.services.ai_service import chat as ai_chat
+from app.services.ai_service import chat as ai_chat, chat_stream as ai_chat_stream
 from app.services.ai_memory import ConversationMemory
 from app.config import env
 
@@ -41,6 +42,27 @@ async def chat_endpoint(body: ChatRequest, user: dict = Depends(get_current_user
             conversation_id=body.conversation_id,
         )
         return _ok(result)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/chat/stream")
+async def chat_stream_endpoint(body: ChatRequest, user: dict = Depends(get_current_user)):
+    """Stream AI assistant response via Server-Sent Events."""
+    try:
+        return StreamingResponse(
+            ai_chat_stream(
+                user_id=user["sub"],
+                message=body.message,
+                conversation_id=body.conversation_id,
+            ),
+            media_type="text/event-stream",
+            headers={
+                "Cache-Control": "no-cache",
+                "Connection": "keep-alive",
+                "X-Accel-Buffering": "no",
+            },
+        )
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

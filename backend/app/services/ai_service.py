@@ -47,7 +47,7 @@ def _get_client() -> AsyncOpenAI:
 # Constants
 # ---------------------------------------------------------------------------
 
-MAX_TOOL_ROUNDS = 3          # Max tool-call loops per user message
+MAX_TOOL_ROUNDS = 5          # Max tool-call loops per user message
 MAX_RESPONSE_TOKENS = 1024   # Max tokens for final response
 TOOL_RESULT_MAX_CHARS = 3000 # Truncate tool results to keep within context
 
@@ -274,6 +274,216 @@ async def chat(
             "latency_ms": latency_ms,
             "error": str(e),
         }
+
+
+# ---------------------------------------------------------------------------
+# Streaming API
+# ---------------------------------------------------------------------------
+
+async def chat_stream(
+    user_id: str,
+    message: str,
+    conversation_id: str | None = None,
+):
+    """Process a user message and yield SSE events as the response streams.
+
+    Yields JSON-encoded SSE events:
+      {"type": "conversation_id", "data": "<id>"}
+      {"type": "tool_start", "data": "<tool_name>"}
+      {"type": "tool_done", "data": "<tool_name>"}
+      {"type": "thinking"}
+      {"type": "token", "data": "<text_chunk>"}
+      {"type": "done", "data": {"tools_used": [...], "model": "...", "latency_ms": ...}}
+      {"type": "error", "data": "<message>"}
+    """
+    try:
+        start = time.time()
+
+        # --- Guardrails ---
+        if is_prompt_injection(message):
+            fallback = "I'm a procurement assistant. I can help you search products, compare suppliers, and optimize procurement. How can I help?"
+            yield _sse_event("conversation_id", conversation_id or "")
+            yield _sse_event("token", fallback)
+            yield _sse_event("done", {"tools_used": [], "model": "", "latency_ms": 0})
+            return
+
+        # --- Conversation memory ---
+        if not conversation_id:
+            title = await ConversationMemory.generate_title(message)
+            conv = await ConversationMemory.create_conversation(user_id, title)
+            conversation_id = conv["id"]
+        else:
+            existing = await ConversationMemory.get_conversation(user_id, conversation_id)
+            if not existing:
+                title = await ConversationMemory.generate_title(message)
+                conv = await ConversationMemory.create_conversation(user_id, title)
+                conversation_id = conv["id"]
+
+        yield _sse_event("conversation_id", conversation_id)
+
+        # Persist user message
+        await ConversationMemory.add_message(user_id, conversation_id, "user", content=message)
+
+        # Load conversation history
+        history = await ConversationMemory.get_history_for_llm(user_id, conversation_id)
+        messages = build_messages(
+            conversation_history=history[:-1],
+            user_message=message,
+            include_few_shot=len(history) <= 1,
+        )
+
+        # --- LLM call with tool-calling loop ---
+        client = _get_client()
+        model = env.AI_PRIMARY_MODEL
+        tools_used: list[str] = []
+
+        _llm_kwargs = dict(
+            tools=TOOL_DEFINITIONS,
+            tool_choice="auto",
+            temperature=env.AI_TEMPERATURE,
+            max_tokens=MAX_RESPONSE_TOKENS,
+        )
+
+        for _round in range(MAX_TOOL_ROUNDS):
+            # Non-streaming call for tool-calling rounds
+            try:
+                response = await client.chat.completions.create(
+                    model=model, messages=messages, **_llm_kwargs,
+                )
+            except Exception as api_err:
+                if model == env.AI_PRIMARY_MODEL and env.AI_FALLBACK_MODEL:
+                    model = env.AI_FALLBACK_MODEL
+                    try:
+                        response = await client.chat.completions.create(
+                            model=model, messages=messages, **_llm_kwargs,
+                        )
+                    except Exception:
+                        raise api_err
+                else:
+                    raise
+
+            choice = response.choices[0]
+            assistant_message = choice.message
+
+            # If no tool calls, stream the final response
+            if not assistant_message.tool_calls:
+                # We already have the full text from this non-streaming call
+                final_text = _clean_response(assistant_message.content or "")
+
+                if not final_text and model == env.AI_PRIMARY_MODEL and env.AI_FALLBACK_MODEL:
+                    model = env.AI_FALLBACK_MODEL
+                    try:
+                        retry = await client.chat.completions.create(
+                            model=model, messages=messages, **_llm_kwargs,
+                        )
+                        final_text = _clean_response(retry.choices[0].message.content or "")
+                    except Exception:
+                        pass
+
+                if not final_text:
+                    final_text = "I couldn't generate a response. Please try again."
+
+                # Stream tokens in chunks for smooth UI
+                chunk_size = 12
+                for i in range(0, len(final_text), chunk_size):
+                    yield _sse_event("token", final_text[i:i + chunk_size])
+
+                # Persist assistant response
+                await ConversationMemory.add_message(
+                    user_id, conversation_id, "assistant", content=final_text
+                )
+
+                latency_ms = int((time.time() - start) * 1000)
+                yield _sse_event("done", {
+                    "tools_used": tools_used,
+                    "model": model,
+                    "latency_ms": latency_ms,
+                })
+                return
+
+            # --- Execute tool calls ---
+            tool_calls_serialized = []
+            for tc in assistant_message.tool_calls:
+                tool_calls_serialized.append({
+                    "id": tc.id,
+                    "type": "function",
+                    "function": {
+                        "name": tc.function.name,
+                        "arguments": tc.function.arguments,
+                    }
+                })
+
+            messages.append({
+                "role": "assistant",
+                "content": None,
+                "tool_calls": tool_calls_serialized,
+            })
+
+            await ConversationMemory.add_message(
+                user_id, conversation_id, "assistant",
+                content=None,
+                tool_calls=tool_calls_serialized,
+            )
+
+            for tc in assistant_message.tool_calls:
+                tool_name = tc.function.name
+                tools_used.append(tool_name)
+
+                yield _sse_event("tool_start", tool_name)
+
+                try:
+                    arguments = json.loads(tc.function.arguments)
+                except (json.JSONDecodeError, TypeError):
+                    arguments = {}
+
+                result = await execute_tool(tool_name, arguments, user_id)
+
+                result_str = json.dumps(result, default=str, ensure_ascii=False)
+                if len(result_str) > TOOL_RESULT_MAX_CHARS:
+                    result_str = result_str[:TOOL_RESULT_MAX_CHARS] + '..."}'
+
+                tool_msg = {
+                    "role": "tool",
+                    "tool_call_id": tc.id,
+                    "content": result_str,
+                }
+                messages.append(tool_msg)
+
+                await ConversationMemory.add_message(
+                    user_id, conversation_id, "tool",
+                    content=result_str,
+                    tool_call_id=tc.id,
+                    name=tool_name,
+                )
+
+                yield _sse_event("tool_done", tool_name)
+
+            yield _sse_event("thinking")
+
+        # Exhausted all rounds
+        fallback = "I've gathered the data but ran into complexity. Could you simplify your question?"
+        await ConversationMemory.add_message(user_id, conversation_id, "assistant", content=fallback)
+        yield _sse_event("token", fallback)
+        latency_ms = int((time.time() - start) * 1000)
+        yield _sse_event("done", {
+            "tools_used": tools_used,
+            "model": model,
+            "latency_ms": latency_ms,
+        })
+
+    except Exception as e:
+        yield _sse_event("error", str(e))
+
+
+def _sse_event(event_type: str, data: Any = None) -> str:
+    """Format an SSE event line."""
+    try:
+        payload = {"type": event_type}
+        if data is not None:
+            payload["data"] = data
+        return f"data: {json.dumps(payload, default=str, ensure_ascii=False)}\n\n"
+    except Exception:
+        return f"data: {json.dumps({'type': 'error', 'data': 'Serialization error'})}\n\n"
 
 
 # ---------------------------------------------------------------------------
