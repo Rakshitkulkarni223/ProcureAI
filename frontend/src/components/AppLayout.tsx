@@ -12,13 +12,10 @@ import {
   X,
   FileText,
   Eye,
-  Moon,
-  Sun,
   TrendingUp,
   Store,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-import { useTheme } from '../context/ThemeContext';
 import { cn } from '../lib/utils';
 import { LocationDropdown } from './LocationDropdown';
 import { AIChatPanel } from './AIChatPanel';
@@ -31,13 +28,11 @@ const NAV = [
   { to: '/history', label: 'Search History', icon: History, testid: 'nav-history' },
   { to: '/watchlist', label: 'Watchlist', icon: Eye, testid: 'nav-watchlist' },
   { to: '/supplier-hub', label: 'Supplier Hub', icon: Store, testid: 'nav-supplier-hub' },
-  { to: '/settings', label: 'Settings', icon: Settings, testid: 'nav-settings' },
   { to: '/docs', label: 'Documentation', icon: FileText, testid: 'nav-docs' },
 ];
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
   const { user, logout } = useAuth();
-  const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
 
@@ -86,12 +81,17 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
           </div>
         </div>
         <button
-          data-testid="theme-toggle"
-          onClick={toggleTheme}
+          onClick={() => {
+            try {
+              navigate('/settings');
+              setOpen(false);
+            } catch {
+            }
+          }}
           className="flex w-full items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium text-muted transition-colors hover:bg-bg hover:text-ink"
         >
-          {theme === 'dark' ? <Sun size={17} /> : <Moon size={17} />}
-          {theme === 'dark' ? 'Light mode' : 'Dark mode'}
+          <Settings size={17} />
+          Workspace Settings
         </button>
         <button
           data-testid="logout-button"
@@ -109,7 +109,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   );
 
   return (
-    <div className="app-shell min-h-[100dvh] bg-bg">
+    <div className="app-shell dark min-h-[100dvh] bg-bg">
       {/* Desktop sidebar */}
       <aside className="fixed inset-y-0 left-0 z-30 hidden w-56 border-r border-line bg-[#0b1220] lg:block">
         {sidebar}
