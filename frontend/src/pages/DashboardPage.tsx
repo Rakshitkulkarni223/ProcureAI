@@ -99,7 +99,7 @@ export function DashboardPage() {
               data-testid="dashboard-new-search"
               className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl bg-emerald-400 px-4 py-2.5 text-sm font-semibold text-slate-950 transition-all hover:-translate-y-px hover:bg-emerald-300 xl:flex-none"
             >
-              <Search size={16} /> Start Procurement
+              <Search size={16} /> Start Comparison
             </button>
             <button
               onClick={() => {

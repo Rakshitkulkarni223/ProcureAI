@@ -246,7 +246,7 @@ const GENERAL_SECTIONS: DocSection[] = [
   /* ── 4. SEARCH & COMPARE ── */
   {
     id: 'g-single-search',
-    title: 'Search & Compare',
+    title: 'Compare Suppliers',
     icon: Search,
     content: (
       <div className="space-y-4 text-sm text-ink-soft leading-relaxed">
@@ -254,7 +254,7 @@ const GENERAL_SECTIONS: DocSection[] = [
         <div className="rounded-md border border-line bg-bg p-4">
           <h4 className="mb-3 font-semibold text-ink">Step-by-step</h4>
           <ol className="space-y-2 text-xs text-muted list-decimal list-inside">
-            <li>Go to <strong className="text-ink">Search & Compare</strong> from the sidebar.</li>
+            <li>Go to <strong className="text-ink">Compare Suppliers</strong> from the sidebar.</li>
             <li>Pick a <strong className="text-ink">category</strong> — Electronics, Fashion, Grocery, Furniture, Office, Cleaning, Medical, or Industrial.</li>
             <li>Choose which <strong className="text-ink">suppliers</strong> to compare (or leave all selected).</li>
             <li>Select an <strong className="text-ink">AI Procurement Strategy</strong> — Balanced, Lowest Cost, Lowest Risk, Fastest Delivery, Highest Reliability, or Best Long-Term Value.</li>
@@ -726,7 +726,7 @@ const GENERAL_SECTIONS: DocSection[] = [
             ))}
           </div>
         </div>
-        <p className="text-xs text-muted">Go to <strong className="text-ink">Settings</strong> from the sidebar to update your preferences. Strategies are selected on the <strong className="text-ink">Search & Compare</strong> page.</p>
+        <p className="text-xs text-muted">Go to <strong className="text-ink">Settings</strong> from the sidebar to update your preferences. Strategies are selected on the <strong className="text-ink">Compare Suppliers</strong> page.</p>
       </div>
     ),
   },

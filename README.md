@@ -60,7 +60,7 @@ This allows buyers to interact with procurement data using natural language whil
 
 | Feature | Description |
 |---------|-------------|
-| **Product Search** | Search any product across marketplace and private suppliers — results normalized, scored, and ranked |
+| **Compare Suppliers** | Search any product across marketplace and private suppliers — results normalized, scored, and ranked |
 | **Supplier Network** | Register private suppliers and maintain their products, pricing, delivery, reliability, and commercial details. Network products appear alongside marketplace results. |
 | **Basket Optimization** | Build a multi-item list, set an optional delivery cost per supplier, and compare split-cart and consolidation plans. |
 | **Procurement AI Assistant** | Conversational AI panel on every page — ask questions, compare suppliers, optimize baskets, check savings via natural language |
@@ -68,7 +68,7 @@ This allows buyers to interact with procurement data using natural language whil
 | **6 Recommendation Modes** | Balanced, Lowest Cost, Lowest Risk, Fastest Delivery, Highest Reliability, Best Long-Term Value |
 | **Location-Aware Delivery** | Same city → 1 day, same state → 2 days, different state → 4–5 days |
 | **Business Impact Dashboard** | Savings, hours saved, efficiency score, projected annual savings — with date range filtering |
-| **ROI Calculator** | Interactive sliders — estimate monthly hours saved, salary savings, annual cost reduction |
+| **Business Impact Calculator** | Interactive sliders — estimate monthly hours saved, salary savings, annual cost reduction |
 | **Export Reports** | CSV and styled PDF export from comparison results |
 | **Price Watchlist** | Track prices and set target alerts across sessions |
 | **Search History** | Paginated per-user log with basket entries tagged |
@@ -101,7 +101,7 @@ This allows buyers to interact with procurement data using natural language whil
 
 ## 📸 Screenshots
 
-| Dashboard | Search & Compare | AI Explanation |
+| Dashboard | Compare Suppliers | AI Explanation |
 |---|---|---|
 | ![Dashboard](screenshots/dashboard.png) | ![Search](screenshots/search-compare.png) | ![AI](screenshots/ai-explanation.png) |
 
@@ -149,7 +149,7 @@ The Procurement AI Assistant is a conversational interface powered by **Groq** (
 
 ## 🎬 Demo Video
 
-> Full walkthrough (~4 min): Login → Dashboard → Business Impact → Search & Compare → Basket Optimizer → AI Assistant → Supplier Network → Analytics → History → Watchlist → Settings → Documentation
+> Full walkthrough (~4 min): Login → Dashboard → Business Impact → Compare Suppliers → Basket Optimizer → AI Assistant → Supplier Network → Analytics → History → Watchlist → Settings → Documentation
 
 [Demo Video]()
 
@@ -364,7 +364,7 @@ cd backend && python -m pytest tests/backend_test.py -v
 - ✅ 6 configurable procurement strategies
 - ✅ Split-cart basket optimization algorithm
 - ✅ Supplier Network — private supplier management
-- ✅ Business Impact Dashboard + ROI Calculator
+- ✅ Business Impact Dashboard + Business Impact Calculator
 - ✅ PDF & CSV export
 - ✅ Location-aware delivery estimation
 - ✅ Responsive dark-first workspace
