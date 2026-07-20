@@ -515,10 +515,10 @@ export function AIChatPanel() {
           if (view === 'history') loadHistory();
         }}
         className={cn(
-          'fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 flex items-center gap-2 rounded-full bg-accent',
+          'fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 flex items-center gap-2 rounded-full border border-emerald-300/50 bg-slate-950/90',
           'px-3.5 py-3 sm:px-5 sm:py-3.5',
-          'text-white shadow-[0_12px_32px_rgba(5,150,105,0.35)] hover:bg-accent/90 transition-all duration-200',
-          'animate-[pulse_18s_ease-in-out_infinite] hover:scale-105 hover:shadow-[0_16px_40px_rgba(5,150,105,0.45)]',
+          'text-white shadow-[0_12px_32px_rgba(2,44,34,0.4)] backdrop-blur-sm transition-all duration-200',
+          'hover:scale-105 hover:border-emerald-300/80 hover:bg-emerald-400/10 hover:shadow-[0_0_28px_rgba(52,211,153,0.28)]',
           open && 'hidden',
         )}
       >

@@ -114,9 +114,9 @@ export function DashboardPage() {
                 } catch {
                 }
               }}
-              className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl border border-emerald-300/60 bg-white/[0.08] px-4 py-3 text-sm font-semibold text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.12)] backdrop-blur-sm transition-colors hover:bg-emerald-300/15 xl:flex-none"
+              className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl border border-emerald-300/45 bg-slate-950/40 px-4 py-3 text-sm font-semibold text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur-sm transition-all hover:-translate-y-px hover:border-emerald-300/80 hover:bg-emerald-400/10 hover:shadow-[0_0_24px_rgba(52,211,153,0.22)] xl:flex-none"
             >
-              <Sparkles size={16} className="text-sky-200" /> Ask ProcureAI
+              <Sparkles size={17} className="text-emerald-300" /> Ask ProcureAI
             </button>
           </div>
         </div>
