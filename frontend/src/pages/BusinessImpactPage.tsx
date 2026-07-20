@@ -31,14 +31,14 @@ import { DateRangeFilter, DateRange } from '../components/DateRangeFilter';
 function ImpactMetrics({ data }: { data: BusinessImpact }) {
   try {
     const metrics = [
-      { label: 'Total Savings', value: formatINR(data.totalSavings), icon: PiggyBank, color: 'text-emerald-600', bg: 'bg-emerald-50 dark:bg-emerald-950/30' },
-      { label: 'Savings This Month', value: formatINR(data.monthlySavings), icon: TrendingUp, color: 'text-blue-600', bg: 'bg-blue-50 dark:bg-blue-950/30' },
-      { label: 'Hours Saved', value: `${formatNumber(data.hoursSaved)} hrs`, icon: Clock, color: 'text-violet-600', bg: 'bg-violet-50 dark:bg-violet-950/30' },
-      { label: 'Procurement Searches', value: formatNumber(data.optimizedPurchases), icon: ShoppingCart, color: 'text-amber-600', bg: 'bg-amber-50 dark:bg-amber-950/30' },
-      { label: 'Supplier Quotes Compared', value: formatNumber(data.productsCompared), icon: Search, color: 'text-pink-600', bg: 'bg-pink-50 dark:bg-pink-950/30' },
-      { label: 'Average Savings / Decision', value: formatINR(data.avgSavingPerPurchase), icon: Target, color: 'text-teal-600', bg: 'bg-teal-50 dark:bg-teal-950/30' },
-      { label: 'Active Suppliers', value: formatNumber(data.suppliersCompared), icon: Users, color: 'text-orange-600', bg: 'bg-orange-50 dark:bg-orange-950/30' },
-      { label: 'Manual Work Reduced', value: `${data.manualEliminatedPct}%`, icon: CheckCircle2, color: 'text-green-600', bg: 'bg-green-50 dark:bg-green-950/30' },
+      { label: 'Total Savings', value: formatINR(data.totalSavings), icon: PiggyBank, color: 'text-emerald-300', bg: 'bg-emerald-400/10 shadow-[0_0_18px_rgba(52,211,153,0.15)]' },
+      { label: 'Savings This Month', value: formatINR(data.monthlySavings), icon: TrendingUp, color: 'text-sky-300', bg: 'bg-sky-400/10 shadow-[0_0_18px_rgba(56,189,248,0.15)]' },
+      { label: 'Hours Saved', value: `${formatNumber(data.hoursSaved)} hrs`, icon: Clock, color: 'text-violet-300', bg: 'bg-violet-400/10 shadow-[0_0_18px_rgba(167,139,250,0.15)]' },
+      { label: 'Procurement Searches', value: formatNumber(data.optimizedPurchases), icon: ShoppingCart, color: 'text-amber-300', bg: 'bg-amber-400/10 shadow-[0_0_18px_rgba(251,191,36,0.15)]' },
+      { label: 'Supplier Quotes Compared', value: formatNumber(data.productsCompared), icon: Search, color: 'text-pink-300', bg: 'bg-pink-400/10 shadow-[0_0_18px_rgba(244,114,182,0.15)]' },
+      { label: 'Average Savings / Decision', value: formatINR(data.avgSavingPerPurchase), icon: Target, color: 'text-teal-300', bg: 'bg-teal-400/10 shadow-[0_0_18px_rgba(45,212,191,0.15)]' },
+      { label: 'Active Suppliers', value: formatNumber(data.suppliersCompared), icon: Users, color: 'text-orange-300', bg: 'bg-orange-400/10 shadow-[0_0_18px_rgba(251,146,60,0.15)]' },
+      { label: 'Manual Work Reduced', value: `${data.manualEliminatedPct}%`, icon: CheckCircle2, color: 'text-green-300', bg: 'bg-green-400/10 shadow-[0_0_18px_rgba(74,222,128,0.15)]' },
     ];
 
     return (
@@ -47,7 +47,7 @@ function ImpactMetrics({ data }: { data: BusinessImpact }) {
           <BarChart3 size={20} className="text-accent" />
           <h2 className="font-display text-xl font-bold text-ink">Business Impact</h2>
         </div>
-        <Card className="border-accent/25 bg-gradient-to-r from-accent-soft/55 via-surface to-sky-500/10">
+        <Card className="rounded-2xl border border-accent/25 bg-gradient-to-r from-accent-soft/55 via-surface to-sky-500/10 shadow-card">
           <CardBody className="flex items-start gap-3 sm:items-center">
             <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-accent-soft text-accent">
               <TrendingUp size={19} />
@@ -60,7 +60,7 @@ function ImpactMetrics({ data }: { data: BusinessImpact }) {
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {metrics.map((m, i) => (
             <motion.div key={m.label} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}>
-              <Card className="transition-transform duration-200 hover:-translate-y-px hover:shadow-lift">
+              <Card className="rounded-2xl border border-line bg-surface shadow-card transition-all duration-200 hover:-translate-y-1 hover:border-white/20 hover:shadow-lift">
                 <CardBody>
                   <div className="flex items-start gap-3">
                     <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${m.bg}`}>
@@ -78,7 +78,7 @@ function ImpactMetrics({ data }: { data: BusinessImpact }) {
         </div>
 
         {/* Efficiency Score gauge */}
-        <Card className="border-accent/30 bg-gradient-to-r from-accent-soft/40 to-transparent">
+        <Card className="rounded-2xl border border-accent/30 bg-gradient-to-r from-accent-soft/40 to-transparent shadow-card">
           <CardBody className="flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
             <div className="flex items-center gap-4">
               <div className="flex h-16 w-16 items-center justify-center rounded-full border-4 border-accent bg-accent-soft">
@@ -135,10 +135,10 @@ function BeforeAfterWorkflow() {
         </div>
         <div className="grid gap-6 lg:grid-cols-2">
           {/* BEFORE */}
-          <Card className="border-red-200 dark:border-red-900/40">
+          <Card className="overflow-hidden rounded-2xl border border-red-500/20 bg-gradient-to-br from-red-500/[0.08] via-surface to-surface shadow-card">
             <CardHeader className="border-red-100 dark:border-red-900/30">
               <div className="flex items-center justify-between">
-                <h3 className="font-display text-base font-semibold text-red-600">Before ProcureAI</h3>
+                <h3 className="font-display text-base font-semibold text-red-400">Traditional Procurement</h3>
                 <Badge tone="danger">45–60 min</Badge>
               </div>
             </CardHeader>
@@ -156,10 +156,10 @@ function BeforeAfterWorkflow() {
           </Card>
 
           {/* AFTER */}
-          <Card className="border-green-200 dark:border-green-900/40">
+          <Card className="overflow-hidden rounded-2xl border border-emerald-500/20 bg-gradient-to-br from-emerald-500/[0.08] via-surface to-surface shadow-card">
             <CardHeader className="border-green-100 dark:border-green-900/30">
               <div className="flex items-center justify-between">
-                <h3 className="font-display text-base font-semibold text-green-600">After ProcureAI</h3>
+                <h3 className="font-display text-base font-semibold text-emerald-400">ProcureAI Workflow</h3>
                 <Badge tone="success">3–5 min</Badge>
               </div>
             </CardHeader>
@@ -178,7 +178,7 @@ function BeforeAfterWorkflow() {
         </div>
 
         {/* Impact summary bar */}
-        <Card className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950/20 dark:to-emerald-950/20">
+        <Card className="rounded-2xl border border-emerald-500/20 bg-gradient-to-r from-emerald-500/[0.12] via-surface to-sky-500/[0.08] shadow-card">
           <CardBody className="flex flex-wrap items-center justify-center gap-6 text-center">
             {[
               { label: 'Time Reduction', value: '~93%', icon: Clock },
@@ -186,8 +186,8 @@ function BeforeAfterWorkflow() {
               { label: 'Suppliers Covered', value: 'All at once', icon: Users },
             ].map((s) => (
               <div key={s.label} className="flex items-center gap-2">
-                <s.icon size={16} className="text-green-600" />
-                <span className="text-sm font-semibold text-green-700 dark:text-green-400">{s.value}</span>
+                <s.icon size={16} className="text-emerald-300" />
+                <span className="text-sm font-semibold text-emerald-300">{s.value}</span>
                 <span className="text-xs text-muted">{s.label}</span>
               </div>
             ))}
@@ -201,7 +201,7 @@ function BeforeAfterWorkflow() {
 }
 
 /* ═══════════════════════════════════════════════
-   Section 3: ROI Calculator
+   Section 3: Business Impact Calculator
    ═══════════════════════════════════════════════ */
 
 function ROICalculator() {
@@ -231,13 +231,13 @@ function ROICalculator() {
       <div className="space-y-5">
         <div className="flex items-center gap-3">
           <Calculator size={20} className="text-accent" />
-          <h2 className="font-display text-xl font-bold text-ink">ROI Calculator</h2>
+          <h2 className="font-display text-xl font-bold text-ink">Business Impact Calculator</h2>
         </div>
         <p className="text-sm text-muted">Estimate how much your business saves by switching to ProcureAI.</p>
 
         <div className="grid gap-6 lg:grid-cols-2">
           {/* Inputs */}
-          <Card>
+          <Card className="overflow-hidden rounded-2xl border border-line bg-surface shadow-card">
             <CardHeader>
               <h3 className="font-display text-base font-semibold text-ink">Your Numbers</h3>
             </CardHeader>
@@ -269,19 +269,19 @@ function ROICalculator() {
           </Card>
 
           {/* Outputs */}
-          <Card className="border-accent/30 bg-accent-soft/20">
+          <Card className="overflow-hidden rounded-2xl border border-accent/30 bg-gradient-to-br from-accent-soft/40 via-surface to-sky-500/[0.08] shadow-card">
             <CardHeader className="border-accent/20">
               <h3 className="font-display text-base font-semibold text-accent">Estimated Savings</h3>
             </CardHeader>
             <CardBody className="space-y-4">
               {[
-                { label: 'Monthly Time Saved', value: `${roi.monthlyHoursSaved} Hours`, icon: Clock, color: 'text-violet-600' },
-                { label: 'Monthly Labor Savings', value: formatINR(roi.monthlySalarySavings), icon: PiggyBank, color: 'text-emerald-600' },
-                { label: 'Annual Labor Savings', value: formatINR(roi.annualSavings), icon: TrendingUp, color: 'text-blue-600' },
-                { label: 'Procurement Time Reduction', value: `${roi.timeReduction}%`, icon: ArrowDown, color: 'text-green-600' },
-                { label: 'Estimated Procurement Savings', value: `${formatINR(roi.annualProcurementSavings)} / year`, icon: Target, color: 'text-teal-600' },
+                { label: 'Monthly Time Saved', value: `${roi.monthlyHoursSaved} Hours`, icon: Clock, color: 'text-violet-300' },
+                { label: 'Monthly Labor Savings', value: formatINR(roi.monthlySalarySavings), icon: PiggyBank, color: 'text-emerald-300' },
+                { label: 'Annual Labor Savings', value: formatINR(roi.annualSavings), icon: TrendingUp, color: 'text-sky-300' },
+                { label: 'Procurement Time Reduction', value: `${roi.timeReduction}%`, icon: ArrowDown, color: 'text-green-300' },
+                { label: 'Estimated Procurement Savings', value: `${formatINR(roi.annualProcurementSavings)} / year`, icon: Target, color: 'text-teal-300' },
               ].map((o) => (
-                <div key={o.label} className="flex items-center gap-4 rounded-lg border border-line bg-surface p-4">
+                <div key={o.label} className="flex items-center gap-4 rounded-xl border border-line bg-bg/70 p-4 transition-all duration-200 hover:-translate-y-0.5 hover:border-white/20">
                   <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-bg ${o.color}`}>
                     <o.icon size={18} />
                   </div>
@@ -334,18 +334,22 @@ export function BusinessImpactPage() {
   return (
     <div className="space-y-10">
       {/* Header */}
-      <div className="flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <div className="label-eyebrow">Intelligence</div>
-          <h1 className="mt-1 font-display text-3xl font-bold tracking-tight text-ink">Business Impact</h1>
-          <p className="mt-1 text-sm text-muted">
-            See how ProcureAI transforms your procurement — measurable savings, time freed, and smarter decisions.
-          </p>
-          <div className="mt-3">
+      <section className="relative overflow-hidden rounded-3xl border border-emerald-400/15 bg-[linear-gradient(120deg,#07111f_0%,#0b2940_58%,#075b53_130%)] px-5 py-6 shadow-[0_20px_50px_rgba(15,23,42,0.16)] sm:px-7 sm:py-7">
+        <div className="absolute -right-16 -top-20 h-56 w-56 rounded-full border border-emerald-300/20" />
+        <div className="absolute right-[28%] top-0 h-full w-px bg-gradient-to-b from-transparent via-white/10 to-transparent" />
+        <div className="relative flex flex-col gap-5 xl:flex-row xl:items-end xl:justify-between">
+          <div className="max-w-2xl">
+            <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-emerald-200">
+              <BarChart3 size={12} /> Measurable Impact
+            </div>
+            <h1 className="mt-3 font-display text-3xl font-bold tracking-tight text-white sm:text-4xl">Business impact, made visible.</h1>
+            <p className="mt-2 text-sm leading-6 text-slate-300">Measure how ProcureAI reduces procurement costs, saves employee time, and improves purchasing decisions.</p>
+          </div>
+          <div className="rounded-xl border border-white/10 bg-slate-950/35 p-2 backdrop-blur-sm">
             <DateRangeFilter value={dateRange} onChange={handleDateChange} />
           </div>
         </div>
-      </div>
+      </section>
 
       {/* Priority 1: Impact Metrics */}
       {loading ? (
@@ -359,7 +363,7 @@ export function BusinessImpactPage() {
       {/* Priority 2: Before vs After */}
       <BeforeAfterWorkflow />
 
-      {/* Priority 3: ROI Calculator */}
+      {/* Priority 3: Business Impact Calculator */}
       <ROICalculator />
     </div>
   );
