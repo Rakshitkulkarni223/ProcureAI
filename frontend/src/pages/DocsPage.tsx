@@ -191,7 +191,7 @@ const GENERAL_SECTIONS: DocSection[] = [
       <div className="space-y-3 text-sm text-ink-soft leading-relaxed">
         <p>
           Watch a <strong className="text-ink">full walkthrough</strong> covering every feature —
-          login, AI search, basket optimization, business impact dashboard, analytics, and dark mode.
+          login, AI search, basket optimization, business impact dashboard, analytics, and workspace settings.
         </p>
         <div className="overflow-hidden rounded-lg border border-line bg-bg shadow-sm">
           <video controls playsInline preload="metadata" className="w-full" poster="">
@@ -568,7 +568,7 @@ const GENERAL_SECTIONS: DocSection[] = [
   /* ── 10. SUPPLIER HUB ── */
   {
     id: 'g-supplier-hub',
-    title: 'Supplier Hub',
+    title: 'Supplier Network',
     icon: Package,
     badge: { label: 'Network', tone: 'success' },
     content: (
@@ -583,7 +583,7 @@ const GENERAL_SECTIONS: DocSection[] = [
             {[
               { title: 'Build Your Network', desc: 'Register suppliers with name, contact, city, state, and category.' },
               { title: 'Add Products', desc: 'Add products with pricing, delivery days, warranty, ratings, and stock status.' },
-              { title: 'Unified Search', desc: 'Supplier Hub products appear alongside marketplace results in every search.' },
+              { title: 'Unified Search', desc: 'Supplier Network products appear alongside marketplace results in every search.' },
               { title: 'State Filtering', desc: 'Only suppliers from your state are included — ensuring relevant, local results.' },
               { title: 'Same Scoring Engine', desc: 'Your suppliers are scored and ranked by the same decision engine as marketplace suppliers.' },
             ].map((c) => (
@@ -661,7 +661,7 @@ const GENERAL_SECTIONS: DocSection[] = [
       <div className="space-y-4 text-sm text-ink-soft leading-relaxed">
         <p>
           Set your <strong className="text-ink">city</strong> in Settings. Delivery estimates auto-calculate based on supplier distance.
-          Supplier Hub filters results to your <strong className="text-ink">state</strong>.
+          Supplier Network filters results to your <strong className="text-ink">state</strong>.
         </p>
         <div className="overflow-x-auto rounded-md border border-line">
           <table className="w-full text-xs">
@@ -677,7 +677,7 @@ const GENERAL_SECTIONS: DocSection[] = [
             </tbody>
           </table>
         </div>
-        <p className="text-xs text-muted">Change your city in <strong className="text-ink">Settings → City / Location</strong>. Supplier Hub suppliers from other states are automatically excluded from search results.</p>
+        <p className="text-xs text-muted">Change your city in <strong className="text-ink">Settings → City / Location</strong>. Supplier Network suppliers from other states are automatically excluded from search results.</p>
       </div>
     ),
   },
@@ -786,7 +786,7 @@ const GENERAL_SECTIONS: DocSection[] = [
             { title: 'Split-Cart Optimization', desc: 'Multi-item baskets are automatically split across the best suppliers or consolidated when cheaper.' },
             { title: 'Business ROI Calculator', desc: 'Interactive sliders to project monthly hours saved, salary savings, and annual cost reduction.' },
             { title: '6 Recommendation Strategies', desc: 'Same data, different business priorities — dynamically rerank suppliers without changing catalog.' },
-            { title: 'Location-Aware Delivery', desc: 'Delivery estimates auto-calculate based on city distances. Supplier Hub filters by state.' },
+            { title: 'Location-Aware Delivery', desc: 'Delivery estimates auto-calculate based on city distances. Supplier Network filters by state.' },
             { title: 'Radar Chart Explanation', desc: 'Visual trade-off analysis across all scoring dimensions for every recommendation.' },
             { title: 'Procurement Analytics', desc: 'Spend trends, category breakdowns, supplier usage, and savings tracking with date filters.' },
             { title: 'Conversational Procurement', desc: 'Ask the AI to compare, optimize, and analyze — it calls tools and responds with formatted insights.' },
@@ -822,7 +822,7 @@ const GENERAL_SECTIONS: DocSection[] = [
                 ['AI recommendations', '✅ 6 strategies with confidence score', '❌ Not available'],
                 ['Basket optimization', '✅ Split-cart optimizer', '❌ Single supplier only'],
                 ['Explainable AI', '✅ Radar chart + scoreboard', '❌ No transparency'],
-                ['Offline suppliers', '✅ Supplier Hub integration', '❌ Online only'],
+                ['Offline suppliers', '✅ Supplier Network integration', '❌ Online only'],
                 ['AI chat assistant', '✅ 8 tools with function calling', '❌ Not available'],
                 ['ROI dashboard', '✅ Savings tracking + calculator', '❌ No visibility'],
                 ['Procurement analytics', '✅ Spend trends + category breakdown', '❌ Basic order history'],
@@ -852,7 +852,7 @@ const GENERAL_SECTIONS: DocSection[] = [
             { metric: 'AI Chat Response', value: '3–5 sec', desc: 'Tool calling + LLM explanation', icon: '🧠' },
             { metric: 'Basket Optimization', value: '< 3 sec', desc: 'Multi-item split-cart analysis', icon: '🛒' },
             { metric: 'Products Compared', value: '100+', desc: 'Per search across all suppliers', icon: '📊' },
-            { metric: 'Suppliers Supported', value: '20+', desc: 'Marketplace + Supplier Hub', icon: '🏢' },
+            { metric: 'Suppliers Supported', value: '20+', desc: 'Marketplace + Supplier Network', icon: '🏢' },
             { metric: 'Concurrent Users', value: 'Scalable', desc: 'Async FastAPI + Motor', icon: '👥' },
           ].map((p) => (
             <div key={p.metric} className="rounded-md border border-line bg-bg p-4 text-center">
@@ -887,7 +887,7 @@ const GENERAL_SECTIONS: DocSection[] = [
                 { done: true, text: 'Basket optimization (split/consolidate)' },
                 { done: true, text: 'AI chat assistant with 8 tools' },
                 { done: true, text: 'Business Impact dashboard & ROI calculator' },
-                { done: true, text: 'Supplier Hub (offline supplier network)' },
+                { done: true, text: 'Supplier Network (offline supplier network)' },
                 { done: true, text: 'Location-aware delivery estimates' },
                 { done: true, text: 'Explainable AI (radar chart + scoreboard)' },
               ],
@@ -965,10 +965,10 @@ const GENERAL_SECTIONS: DocSection[] = [
             { title: 'Faster Purchasing', desc: 'From 45–60 minutes to 3–5 minutes per procurement cycle.', icon: '⚡' },
             { title: 'Transparent Recommendations', desc: 'Radar charts, scoreboards, and confidence scores — fully auditable.', icon: '🔍' },
             { title: 'Proven Business ROI', desc: 'Interactive ROI calculator with real savings metrics.', icon: '💰' },
-            { title: 'Local Supplier Support', desc: 'Supplier Hub bridges offline vendors into digital procurement.', icon: '🏢' },
+            { title: 'Local Supplier Support', desc: 'Supplier Network bridges offline vendors into digital procurement.', icon: '🏢' },
             { title: 'Enterprise-Ready Architecture', desc: 'FastAPI + MongoDB + JWT — scalable and secure.', icon: '🏗️' },
             { title: 'Explainable AI', desc: 'No black box — every recommendation comes with evidence.', icon: '🧠' },
-            { title: 'Modern UX', desc: 'Beautiful responsive UI with dark mode, charts, and smooth animations.', icon: '✨' },
+            { title: 'Modern Workspace', desc: 'Responsive dark-first workspace with charts, guided workflows, and smooth interactions.', icon: '✨' },
             { title: 'Scalable Platform', desc: 'Async architecture handles concurrent users with ease.', icon: '📈' },
           ].map((item) => (
             <div key={item.title} className="rounded-md border border-line bg-bg p-3 text-center">
@@ -992,7 +992,7 @@ const GENERAL_SECTIONS: DocSection[] = [
         {[
           { q: 'Is my data private?', a: 'Yes. All searches, history, conversations, and preferences are tied to your account and not shared.' },
           { q: 'How accurate are the prices?', a: 'Prices are generated by built-in mock providers by default. When SERPAPI_KEY is configured, real-time Google Shopping prices are blended in automatically.' },
-          { q: 'Can I add my own suppliers?', a: 'Yes! Use Supplier Hub to register your own offline suppliers with products, pricing, and delivery info. They appear alongside marketplace results in every search.' },
+          { q: 'Can I add my own suppliers?', a: 'Yes! Use Supplier Network to register your own offline suppliers with products, pricing, and delivery info. They appear alongside marketplace results in every search.' },
           { q: 'How is "estimated savings" calculated?', a: 'Savings = difference between the most expensive option and the AI-recommended option.' },
           { q: 'Can I use ProcureAI on mobile?', a: 'Yes! The interface is fully responsive and works on phones and tablets.' },
           { q: 'What does the confidence score mean?', a: 'It indicates how sure the AI is. Higher confidence (80%+) means the recommended option is significantly better.' },
@@ -1015,6 +1015,70 @@ const GENERAL_SECTIONS: DocSection[] = [
             <h4 className="mt-2 font-semibold text-ink">GitHub</h4>
             <p className="mt-1 text-xs text-muted">Report issues or suggest features on our <a href="https://github.com/Rakshitkulkarni223/ProcureAI" target="_blank" rel="noopener noreferrer" className="text-accent underline hover:text-accent-hover">GitHub repository</a>.</p>
           </div>
+        </div>
+      </div>
+    ),
+  },
+  {
+    id: 'g-current-workspace',
+    title: 'Current Workspace Guide',
+    icon: Activity,
+    badge: { label: 'Updated', tone: 'success' },
+    content: (
+      <div className="space-y-5 text-sm leading-relaxed text-ink-soft">
+        <p>
+          ProcureAI is a <strong className="text-ink">dark-first, authenticated procurement workspace</strong>. The features below describe the current user-facing behavior; visual styling changes are intentionally not listed.
+        </p>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <div className="rounded-md border border-line bg-bg p-4">
+            <h4 className="font-semibold text-ink">Account and workspace</h4>
+            <ul className="mt-2 space-y-1 text-xs text-muted">
+              <li>• Register or sign in with your own account, or use the <strong className="text-ink">Try Demo Workspace</strong> action.</li>
+              <li>• Dashboard, search, history, analytics, settings, watchlist, business impact, Supplier Network, and documentation require sign-in.</li>
+              <li>• Set default category, sort order, business type, and delivery location in Workspace Settings.</li>
+            </ul>
+          </div>
+          <div className="rounded-md border border-line bg-bg p-4">
+            <h4 className="font-semibold text-ink">Supplier Network</h4>
+            <ul className="mt-2 space-y-1 text-xs text-muted">
+              <li>• Create, edit, inspect, and remove private suppliers.</li>
+              <li>• Maintain supplier products, pricing, delivery, commercial, contact, and reliability information.</li>
+              <li>• Eligible Supplier Network products are included beside marketplace products during comparison.</li>
+            </ul>
+          </div>
+        </div>
+        <div className="rounded-md border border-line bg-bg p-4">
+          <h4 className="font-semibold text-ink">Search and basket decisions</h4>
+          <div className="mt-3 grid gap-3 sm:grid-cols-2">
+            <div>
+              <h5 className="text-xs font-semibold text-accent">Single Search</h5>
+              <p className="mt-1 text-xs text-muted">Choose a category and suppliers, then compare a product by price, delivery, rating, availability, and total cost. Filter, sort, export CSV/PDF, and add products to your watchlist directly from results.</p>
+            </div>
+            <div>
+              <h5 className="text-xs font-semibold text-accent">Basket Optimisation</h5>
+              <p className="mt-1 text-xs text-muted">Add multiple products and quantities, optionally set delivery cost per supplier, then compare a split-cart plan with a single-supplier consolidation plan.</p>
+            </div>
+          </div>
+          <p className="mt-3 text-xs text-muted">Both modes support the six recommendation strategies: Balanced, Lowest Cost, Lowest Risk, Fastest Delivery, Highest Reliability, and Best Long-Term Value.</p>
+        </div>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <div className="rounded-md border border-line bg-bg p-4">
+            <h4 className="font-semibold text-ink">Explainable AI advice</h4>
+            <p className="mt-1 text-xs text-muted">When result data is available, ProcureAI shows recommendation reasoning, confidence, factor scores, supplier intelligence, a comparison matrix, procurement health, long-term guidance, and basket risk or savings insights.</p>
+          </div>
+          <div className="rounded-md border border-line bg-bg p-4">
+            <h4 className="font-semibold text-ink">ProcureAI Advisor</h4>
+            <p className="mt-1 text-xs text-muted">Use the floating Ask ProcureAI control to receive streaming, grounded answers. You can start a new chat, resume saved conversations, and delete conversations you no longer need.</p>
+          </div>
+        </div>
+        <div className="rounded-md border border-line bg-bg p-4">
+          <h4 className="font-semibold text-ink">Tracking and reporting</h4>
+          <ul className="mt-2 grid gap-1 text-xs text-muted sm:grid-cols-2">
+            <li>• Set watchlist target prices and identify products at or below target.</li>
+            <li>• Review, rerun, expand, and delete paginated search history entries.</li>
+            <li>• Filter analytics and Business Impact data by date range.</li>
+            <li>• Review spend, savings, category activity, supplier activity, and ROI projections.</li>
+          </ul>
         </div>
       </div>
     ),
@@ -1208,7 +1272,7 @@ const DEV_SECTIONS: DocSection[] = [
             { name: 'optimize_basket', desc: 'Optimize a multi-item basket — finds the best split/consolidate plan across suppliers.', icon: '🛒', params: 'category, items[], mode?' },
             { name: 'get_analytics', desc: 'Retrieve procurement analytics: dashboard summary, spend breakdown, savings trends, or insights.', icon: '📊', params: 'metric (summary|spend|savings|insights)' },
             { name: 'get_business_impact', desc: 'Get business impact metrics: total savings, hours saved, AI accuracy, and efficiency score.', icon: '💰', params: 'none' },
-            { name: 'list_suppliers', desc: 'List the user\'s private Supplier Hub suppliers with their products and details.', icon: '🏢', params: 'none' },
+            { name: 'list_suppliers', desc: 'List the user\'s private Supplier Network suppliers with their products and details.', icon: '🏢', params: 'none' },
             { name: 'get_basket_history', desc: 'Fetch recent basket optimization history — used before re-optimizing baskets.', icon: '📋', params: 'limit?, category?' },
             { name: 'get_history', desc: 'Get recent procurement search history with timestamps and results.', icon: '🕐', params: 'limit?' },
           ].map((tool) => (
@@ -1258,7 +1322,7 @@ const DEV_SECTIONS: DocSection[] = [
     content: (
       <div className="space-y-4 text-sm text-ink-soft leading-relaxed">
         <div className="grid gap-4 sm:grid-cols-2">
-          <CodeBlock title="backend/" code={`server.py              # FastAPI entry point (Uvicorn)\nrequirements.txt       # Python dependencies\napp/\n  ├── config.py        # env vars, categories, suppliers, catalog\n  ├── database.py      # Motor async MongoDB client\n  ├── auth.py          # JWT + bcrypt, auth dependency\n  ├── schemas.py       # Pydantic validation models\n  ├── routes.py        # All API routes (/api prefix)\n  ├── routes_supplier.py # Supplier Hub CRUD routes\n  ├── seed.py          # DB seeder\n  └── services/\n      ├── core.py      # PRNG, CatalogResolver, Search, Recommendation\n      ├── basket.py    # Basket optimization\n      ├── analytics.py # Dashboard, History, Preferences\n      ├── intelligence.py # Procurement intelligence engine\n      ├── supplier_hub.py # Supplier Hub CRUD service\n      ├── serpapi_adapter.py # Optional live Google Shopping\n      ├── llm_advisor.py # Groq AI advisor (Llama 3.3 / 3.1)\n      ├── ai_service.py  # AI chat orchestrator + tool calling\n      ├── ai_tools.py    # 8 procurement function-calling tools\n      ├── ai_prompts.py  # System prompt + few-shot examples\n      └── ai_memory.py   # Conversation persistence (MongoDB)`} />
+          <CodeBlock title="backend/" code={`server.py              # FastAPI entry point (Uvicorn)\nrequirements.txt       # Python dependencies\napp/\n  ├── config.py        # env vars, categories, suppliers, catalog\n  ├── database.py      # Motor async MongoDB client\n  ├── auth.py          # JWT + bcrypt, auth dependency\n  ├── schemas.py       # Pydantic validation models\n  ├── routes.py        # All API routes (/api prefix)\n  ├── routes_supplier.py # Supplier Network CRUD routes\n  ├── seed.py          # DB seeder\n  └── services/\n      ├── core.py      # PRNG, CatalogResolver, Search, Recommendation\n      ├── basket.py    # Basket optimization\n      ├── analytics.py # Dashboard, History, Preferences\n      ├── intelligence.py # Procurement intelligence engine\n      ├── supplier_hub.py # Supplier Network CRUD service\n      ├── serpapi_adapter.py # Optional live Google Shopping\n      ├── llm_advisor.py # Groq AI advisor (Llama 3.3 / 3.1)\n      ├── ai_service.py  # AI chat orchestrator + tool calling\n      ├── ai_tools.py    # 8 procurement function-calling tools\n      ├── ai_prompts.py  # System prompt + few-shot examples\n      └── ai_memory.py   # Conversation persistence (MongoDB)`} />
           <CodeBlock title="frontend/" code={`src/\n  ├── components/    # reusable UI\n  │   ├── ui/        # Button, Card, Badge…\n  │   └── AIChatPanel.tsx  # Floating AI chat drawer\n  ├── context/       # AuthContext, ThemeContext, LocationContext\n  ├── hooks/         # useSearchSuggestions, useWatchlist\n  ├── lib/\n  │   ├── api.ts     # Main API client\n  │   ├── aiApi.ts   # AI chat API client\n  │   └── exportUtils.ts  # CSV/PDF export\n  ├── pages/         # route-level pages\n  ├── types.ts       # TypeScript interfaces\n  ├── types_ai.ts    # AI chat TypeScript types\n  ├── App.tsx        # router & providers\n  └── index.css      # Tailwind + CSS vars`} />
         </div>
       </div>
@@ -1326,7 +1390,7 @@ const DEV_SECTIONS: DocSection[] = [
                 ['GET', '/weight-profiles', '✗', 'Available weight profiles'],
                 ['GET', '/recommendation-modes', '✗', 'Available recommendation modes'],
                 ['GET', '/cities', '✗', 'Available delivery cities'],
-                ['POST', '/suppliers', '✓', 'Add a Supplier Hub supplier'],
+                ['POST', '/suppliers', '✓', 'Add a Supplier Network supplier'],
                 ['GET', '/suppliers/:id/products', '✓', 'List supplier products'],
                 ['POST', '/suppliers/:id/products', '✓', 'Add product to supplier'],
                 ['POST', '/ai/chat', '✓', 'Send message to AI assistant'],

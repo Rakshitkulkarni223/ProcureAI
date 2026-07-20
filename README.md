@@ -11,7 +11,7 @@
 - ✅ **Procurement AI Assistant** — Conversational interface with backend function calling via Groq
 - ✅ Compare online + offline suppliers in one search
 - ✅ Split-cart basket optimization across all suppliers
-- ✅ Build a private supplier network (Supplier Hub)
+- ✅ Build and manage a private Supplier Network
 - ✅ Track procurement ROI with Business Impact Dashboard
 - ✅ Natural-language explanations generated using Groq (Llama 3.3-70B)
 
@@ -61,8 +61,8 @@ This allows buyers to interact with procurement data using natural language whil
 | Feature | Description |
 |---------|-------------|
 | **Product Search** | Search any product across marketplace and private suppliers — results normalized, scored, and ranked |
-| **Supplier Hub** | Register offline suppliers with products, pricing, and delivery info — they appear in every search |
-| **Basket Optimization** | Split-cart optimizer finds the cheapest multi-item combination across suppliers |
+| **Supplier Network** | Register private suppliers and maintain their products, pricing, delivery, reliability, and commercial details. Network products appear alongside marketplace results. |
+| **Basket Optimization** | Build a multi-item list, set an optional delivery cost per supplier, and compare split-cart and consolidation plans. |
 | **Procurement AI Assistant** | Conversational AI panel on every page — ask questions, compare suppliers, optimize baskets, check savings via natural language |
 | **Explanation Panel** | Radar chart + scoreboard + business reasoning for every recommendation — natural-language explanations generated using Groq |
 | **6 Recommendation Modes** | Balanced, Lowest Cost, Lowest Risk, Fastest Delivery, Highest Reliability, Best Long-Term Value |
@@ -72,7 +72,30 @@ This allows buyers to interact with procurement data using natural language whil
 | **Export Reports** | CSV and styled PDF export from comparison results |
 | **Price Watchlist** | Track prices and set target alerts across sessions |
 | **Search History** | Paginated per-user log with basket entries tagged |
-| **Dark Mode** | Full light/dark theme support with CSS variable theming |
+| **Workspace Experience** | Dark-first authenticated workspace with responsive navigation, protected routes, an application tab icon, and no user-facing theme switch. |
+
+---
+
+## 🧭 Current Product Workflows
+
+### Authentication and workspace
+
+- **Create an account or sign in** with JWT-backed authentication. The login screen also provides a **Try Demo Workspace** action using the configured demo account.
+- **Protected routes** keep dashboard, search, analytics, history, settings, watchlist, business impact, Supplier Network, and documentation data scoped to the signed-in user.
+- **Workspace defaults** include category, sort order, business type, and delivery location. Delivery location is applied to distance-aware estimates in searches and basket optimization.
+
+### Search and decision support
+
+- **Single Search** compares selected marketplace and Supplier Network suppliers in parallel. Results support sorting, in-stock and rating filters, CSV/PDF export, and price watchlist actions.
+- **Basket Optimisation** accepts multiple items and quantities, optionally applies a delivery cost per supplier, then recommends a split-cart or consolidation plan. The result includes assignments, total cost, baseline comparison, savings, delivery window, risk, confidence, and supplier intelligence.
+- **AI decision support** exposes recommendation reasoning, factor scores, supplier comparison matrix, procurement health, long-term recommendation, supplier intelligence, and grounded advisory insights when data is available.
+
+### Tracking and assistance
+
+- **Watchlist** persists tracked products locally in the browser. You can edit a target price, identify products at or below target, open the supplier listing, or clear the list.
+- **History** stores single searches and basket optimisations per authenticated user, with pagination, expansion, rerun, and delete actions.
+- **Analytics and Business Impact** support date-range filtering for procurement value, savings, category spend, supplier activity, and ROI projections.
+- **ProcureAI Advisor** supports streaming, grounded chat responses, conversation history, new conversations, and deletion of saved conversations.
 
 ---
 
@@ -82,7 +105,7 @@ This allows buyers to interact with procurement data using natural language whil
 |---|---|---|
 | ![Dashboard](screenshots/dashboard.png) | ![Search](screenshots/search-compare.png) | ![AI](screenshots/ai-explanation.png) |
 
-| Basket Optimization | AI Assistant | Supplier Hub |
+| Basket Optimization | AI Assistant | Supplier Network |
 |---|---|---|
 | ![Basket](screenshots/basket-optimization.png) | ![AI Chat](screenshots/ai-assistant.png) | ![Suppliers](screenshots/supplier-hub.png) |
 
@@ -107,12 +130,12 @@ The Procurement AI Assistant is a conversational interface powered by **Groq** (
 
 | Tool | What It Does |
 |---|---|
-| **Product Search** | Searches the catalog across marketplace + Supplier Hub suppliers |
+| **Product Search** | Searches the catalog across marketplace + Supplier Network suppliers |
 | **Supplier Comparison** | Gets multi-factor scored recommendations with confidence levels and trade-off analysis |
 | **Basket Optimization** | Optimizes multi-item procurement across suppliers for cost, delivery, or reliability |
 | **Analytics** | Retrieves spend analytics, savings trends, and procurement insights |
 | **Business Impact** | Shows ROI metrics, hours saved, efficiency scores, and annual projections |
-| **Supplier Hub** | Lists the user's private suppliers with delivery and reliability data |
+| **Supplier Network** | Lists the user's private suppliers with delivery and reliability data |
 | **Search History** | Retrieves past procurement search history |
 | **Basket History** | Retrieves past basket optimizations with actual items and results |
 
@@ -126,7 +149,7 @@ The Procurement AI Assistant is a conversational interface powered by **Groq** (
 
 ## 🎬 Demo Video
 
-> Full walkthrough (~4 min): Login → Dashboard → Business Impact → Search & Compare → Basket Optimizer → AI Assistant → Supplier Hub → Analytics → History → Watchlist → Settings → Dark Mode → Docs
+> Full walkthrough (~4 min): Login → Dashboard → Business Impact → Search & Compare → Basket Optimizer → AI Assistant → Supplier Network → Analytics → History → Watchlist → Settings → Documentation
 
 [Demo Video]()
 
@@ -340,11 +363,11 @@ cd backend && python -m pytest tests/backend_test.py -v
 - ✅ Multi-factor decision engine (7 scoring dimensions)
 - ✅ 6 configurable procurement strategies
 - ✅ Split-cart basket optimization algorithm
-- ✅ Supplier Hub — private supplier management
+- ✅ Supplier Network — private supplier management
 - ✅ Business Impact Dashboard + ROI Calculator
 - ✅ PDF & CSV export
 - ✅ Location-aware delivery estimation
-- ✅ Responsive UI with dark mode
+- ✅ Responsive dark-first workspace
 - ✅ Built-in interactive documentation
 
 ---
