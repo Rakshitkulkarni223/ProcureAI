@@ -49,7 +49,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
         </span>
         <div className="leading-none">
           <div className="font-display text-lg font-bold tracking-tight text-ink">ProcureAI</div>
-          <div className="label-eyebrow text-[9px] mt-0.5">Procurement Intelligence Platform</div>
+          <div className="label-eyebrow text-[9px] mt-0.5">AI Procurement Platform</div>
         </div>
       </div>
 
