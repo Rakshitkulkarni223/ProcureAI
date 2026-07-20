@@ -112,7 +112,7 @@ export function ComparisonResults({
   const cheapest = useMemo(() => (products.length ? Math.min(...products.map((p) => p.price)) : 0), [products]);
 
   return (
-    <div className="space-y-4" data-testid="comparison-results">
+    <section className="space-y-4 rounded-3xl border border-line bg-gradient-to-br from-slate-950 via-surface to-sky-500/[0.06] p-4 shadow-card sm:p-5" data-testid="comparison-results">
       {/* Controls */}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2">
@@ -147,7 +147,7 @@ export function ComparisonResults({
               data-testid="filter-rating"
               value={minRating}
               onChange={(e) => setMinRating(Number(e.target.value))}
-              className="h-9 appearance-none rounded-md border border-line bg-surface pl-3 pr-8 text-xs font-medium text-ink focus:outline-none focus:border-ink"
+              className="h-9 appearance-none rounded-lg border border-line bg-bg/70 pl-3 pr-8 text-xs font-medium text-ink focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/15"
             >
               <option value={0}>Any rating</option>
               <option value={4}>4★ & up</option>
@@ -160,7 +160,7 @@ export function ComparisonResults({
               data-testid="sort-select"
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as SortOption)}
-              className="h-9 appearance-none rounded-md border border-line bg-surface pl-8 pr-8 text-xs font-medium text-ink focus:outline-none focus:border-ink"
+              className="h-9 appearance-none rounded-lg border border-line bg-bg/70 pl-8 pr-8 text-xs font-medium text-ink focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/15"
             >
               {SORTS.map((s) => (
                 <option key={s.value} value={s.value}>
@@ -180,7 +180,7 @@ export function ComparisonResults({
       ) : (
         <>
           {/* Desktop table */}
-          <div className="hidden overflow-x-auto rounded-md border border-line bg-surface lg:block">
+          <div className="hidden overflow-x-auto rounded-2xl border border-line bg-slate-950/35 shadow-[0_12px_30px_rgba(15,23,42,0.12)] lg:block">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-line bg-bg text-left">
@@ -205,7 +205,7 @@ export function ComparisonResults({
                       data-testid={`comparison-row-${p.provider}`}
                       className={cn(
                         'border-b border-line last:border-0 transition-colors',
-                        isBest ? 'bg-accent-soft/50' : idx % 2 ? 'bg-bg/40' : 'bg-surface',
+                        isBest ? 'bg-emerald-500/[0.08]' : idx % 2 ? 'bg-bg/40' : 'bg-slate-950/20',
                       )}
                     >
                       <td className="px-4 py-3">
@@ -355,7 +355,7 @@ export function ComparisonResults({
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="flex flex-wrap items-center justify-between gap-3 rounded-md border border-line bg-surface px-4 py-3 lg:mb-24">
+            <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-line bg-slate-950/35 px-4 py-3 lg:mb-24">
               <span className="text-xs text-muted">
                 Showing {(currentPage - 1) * PAGE_SIZE + 1}–{Math.min(currentPage * PAGE_SIZE, view.length)} of {view.length} products
               </span>
@@ -520,6 +520,6 @@ export function ComparisonResults({
           )}
         </>
       )}
-    </div>
+    </section>
   );
 }

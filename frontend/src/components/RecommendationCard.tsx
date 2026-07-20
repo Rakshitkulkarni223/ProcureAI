@@ -46,13 +46,13 @@ export function RecommendationCard({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
       data-testid="recommendation-card"
-      className="relative overflow-hidden rounded-md border border-accent/40 bg-accent-soft/40 shadow-card"
+      className="relative overflow-hidden rounded-3xl border border-emerald-400/30 bg-[linear-gradient(120deg,#07111f_0%,#103349_58%,#075b53_130%)] shadow-[0_20px_50px_rgba(15,23,42,0.16)]"
     >
       <div className="absolute inset-x-0 top-0 h-0.5 overflow-hidden">
         <div className="h-full w-1/2 bg-gradient-to-r from-transparent via-accent to-transparent animate-scan" />
       </div>
 
-      <div className="flex items-center justify-between gap-3 border-b border-accent/20 px-5 py-3">
+      <div className="flex items-center justify-between gap-3 border-b border-white/10 px-5 py-3">
         <div className="flex items-center gap-2 text-accent">
           <Sparkles size={16} />
           <span className="label-eyebrow text-accent">AI Recommendation</span>
@@ -62,7 +62,7 @@ export function RecommendationCard({
         </Badge>
       </div>
 
-      <div className="grid gap-6 p-5 lg:grid-cols-[1.4fr_1fr]">
+      <div className="grid gap-5 p-5 sm:p-6 lg:grid-cols-[minmax(0,1.4fr)_minmax(260px,1fr)]">
         {/* Left: supplier + reasons */}
         <div>
           <div className="flex items-center gap-3">
@@ -70,7 +70,7 @@ export function RecommendationCard({
             <div>
               <div className="label-eyebrow">Recommended supplier</div>
               <div
-                className="font-display text-2xl font-bold tracking-tight text-ink"
+                className="font-display text-2xl font-bold tracking-tight text-white"
                 data-testid="recommended-supplier-name"
               >
                 {rec.supplier}
@@ -89,12 +89,12 @@ export function RecommendationCard({
             </div>
           </div>
 
-          <p className="mt-3 text-sm text-muted">
-            for <span className="font-medium text-ink">{rec.product.title}</span>
+          <p className="mt-3 text-sm text-slate-300">
+            for <span className="font-medium text-white">{rec.product.title}</span>
           </p>
 
           {rec.aiExplanation && cleanAIText(rec.aiExplanation) && (
-            <div className="mt-4 rounded-md border border-accent/25 bg-accent/5 p-3.5">
+            <div className="mt-4 rounded-xl border border-emerald-300/20 bg-slate-950/35 p-3.5 backdrop-blur-sm">
               <div className="mb-2 flex items-center gap-1.5">
                 <MessageSquareText size={13} className="text-accent" />
                 <span className="text-[10px] font-semibold uppercase tracking-wider text-accent">AI Procurement Advisor</span>
@@ -119,7 +119,7 @@ export function RecommendationCard({
             target="_blank"
             rel="noreferrer"
             data-testid="recommendation-buy-link"
-            className="mt-5 inline-flex items-center gap-2 rounded-md bg-accent px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-accent-hover"
+            className="mt-5 inline-flex items-center gap-2 rounded-xl bg-accent px-4 py-2.5 text-sm font-medium text-white shadow-[0_8px_20px_rgba(34,197,94,0.22)] transition-all hover:-translate-y-px hover:bg-accent-hover"
           >
             Buy from {rec.supplier} <ExternalLink size={15} />
           </a>
@@ -128,7 +128,7 @@ export function RecommendationCard({
         {/* Right: savings + confidence + factors */}
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-3">
-            <div className="rounded-md border border-line shadow-sm p-3.5">
+            <div className="rounded-xl border border-white/10 bg-slate-950/45 p-3.5 backdrop-blur-sm">
               <div className="label-eyebrow flex items-center gap-1.5">
                 <TrendingDown size={12} /> Est. savings
               </div>
@@ -136,7 +136,7 @@ export function RecommendationCard({
                 {formatINR(rec.estimatedSavings)}
               </div>
             </div>
-            <div className="rounded-md border border-line shadow-sm p-3.5">
+            <div className="rounded-xl border border-white/10 bg-slate-950/45 p-3.5 backdrop-blur-sm">
               <div className="label-eyebrow flex items-center gap-1.5">
                 <Gauge size={12} /> Confidence
               </div>

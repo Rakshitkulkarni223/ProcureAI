@@ -26,9 +26,9 @@ export function ProcurementHealthMeter({ health }: { health: HealthScore }) {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
         data-testid="procurement-health-meter"
-        className="rounded-md border border-line bg-surface shadow-card"
+        className="overflow-hidden rounded-2xl border border-emerald-400/20 bg-gradient-to-br from-emerald-500/[0.10] via-surface to-slate-950 shadow-card"
       >
-        <div className="flex items-center gap-2 border-b border-line px-5 py-3">
+        <div className="flex items-center gap-2 border-b border-emerald-400/15 px-5 py-3">
           <Activity size={16} className="text-accent" />
           <span className="label-eyebrow text-accent">Procurement Health</span>
           <span className="ml-auto text-[10px] text-muted">Estimated</span>
@@ -36,7 +36,7 @@ export function ProcurementHealthMeter({ health }: { health: HealthScore }) {
 
         <div className="p-5">
           {/* Score Display */}
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between rounded-xl border border-white/8 bg-slate-950/30 p-3">
             <div>
               <div className="data-num text-4xl font-bold text-ink">
                 <span className={scoreColor}>{score}</span>

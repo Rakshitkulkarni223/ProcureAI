@@ -29,9 +29,9 @@ export function ProcurementInsightsPanel({ insights }: { insights: ProcurementIn
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
         data-testid="procurement-insights-panel"
-        className="rounded-md border border-line bg-surface shadow-card"
+        className="overflow-hidden rounded-2xl border border-sky-400/20 bg-gradient-to-br from-sky-500/[0.10] via-surface to-slate-950 shadow-card"
       >
-        <div className="flex items-center gap-2 border-b border-line px-5 py-3">
+        <div className="flex items-center gap-2 border-b border-sky-400/15 px-5 py-3">
           <Lightbulb size={16} className="text-accent" />
           <span className="label-eyebrow text-accent">Procurement Insights</span>
           <span className="ml-auto text-[10px] text-muted">Estimated</span>
@@ -42,7 +42,7 @@ export function ProcurementInsightsPanel({ insights }: { insights: ProcurementIn
             <div
               key={i}
               className={cn(
-                'flex items-start gap-2.5 rounded-md border px-3 py-2.5 text-sm',
+                'flex items-start gap-2.5 rounded-xl border px-3 py-2.5 text-sm shadow-[0_5px_16px_rgba(15,23,42,0.12)]',
                 TONE_STYLES[insight.tone] || TONE_STYLES.info,
               )}
               data-testid={`insight-${i}`}

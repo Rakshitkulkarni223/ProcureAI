@@ -25,7 +25,7 @@ function MetricCard({
     info: 'text-accent',
   }[tone];
   return (
-    <div className="rounded-lg border border-line bg-surface p-4 shadow-card">
+    <div className="rounded-xl border border-line bg-slate-950/45 p-4 shadow-[0_8px_22px_rgba(15,23,42,0.14)] transition-all duration-200 hover:-translate-y-0.5 hover:border-white/20">
       <div className="flex items-center gap-2 text-muted">
         <Icon size={14} />
         <span className="label-eyebrow">{label}</span>
@@ -73,7 +73,7 @@ function AISummaryCard({ summary: rawSummary }: { summary: string }) {
     // Fallback: if none of the structured lines matched, show as plain prose
     if (parsed.length === 0) {
       return (
-        <div className="rounded-lg border border-accent/30 bg-gradient-to-br from-accent-soft/10 to-surface p-5 shadow-card">
+        <div className="rounded-2xl border border-accent/30 bg-gradient-to-br from-accent-soft/20 via-surface to-sky-500/[0.06] p-5 shadow-card">
           <div className="mb-3 flex items-center gap-2">
             <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-accent/10">
               <Sparkles size={14} className="text-accent" />
@@ -105,7 +105,7 @@ function AISummaryCard({ summary: rawSummary }: { summary: string }) {
             const cfg = insightConfigs.find((c) => c.key === item.key) || insightConfigs[0];
             const Icon = cfg.icon;
             return (
-              <div key={i} className={cn('flex items-start gap-3 rounded-lg px-4 py-3', cfg.bg)}>
+              <div key={i} className={cn('flex items-start gap-3 rounded-xl border border-white/5 px-4 py-3', cfg.bg)}>
                 <div className={cn('mt-0.5 flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg', cfg.iconBg)}>
                   <Icon size={14} className={cfg.text} />
                 </div>
@@ -121,7 +121,7 @@ function AISummaryCard({ summary: rawSummary }: { summary: string }) {
     );
   } catch {
     return (
-      <div className="rounded-lg border border-accent/30 bg-accent-soft/20 p-5 shadow-card">
+      <div className="rounded-2xl border border-accent/30 bg-gradient-to-br from-accent-soft/25 via-surface to-sky-500/[0.06] p-5 shadow-card">
         <div className="mb-2 flex items-center gap-2">
           <Sparkles size={16} className="text-accent" />
           <span className="label-eyebrow text-accent">AI Advisor Insights</span>

@@ -153,7 +153,7 @@ export function BasketResults({
         )}
 
       {/* Supplier Mix Summary */}
-      <div className="rounded-md border border-line bg-surface p-4 shadow-card">
+      <div className="rounded-2xl border border-line bg-gradient-to-br from-slate-800/60 via-surface to-slate-950 p-4 shadow-card">
         <div className="label-eyebrow mb-3">Supplier Mix</div>
         <div className="flex flex-wrap gap-3">
           {(() => {
@@ -165,7 +165,7 @@ export function BasketResults({
               return (
                 <>
                   {marketplaceCount > 0 && (
-                    <div className="flex-1 min-w-[180px] rounded-md border border-accent/30 bg-accent-soft/20 p-3">
+                    <div className="min-w-[180px] flex-1 rounded-xl border border-accent/30 bg-accent-soft/20 p-3 shadow-[0_0_18px_rgba(52,211,153,0.10)]">
                       <div className="flex items-center gap-2 text-accent">
                         <Store size={14} />
                         <span className="text-sm font-semibold">Marketplace</span>
@@ -176,7 +176,7 @@ export function BasketResults({
                     </div>
                   )}
                   {supplierHubCount > 0 && (
-                    <div className="flex-1 min-w-[180px] rounded-md border border-line bg-bg/40 p-3">
+                    <div className="min-w-[180px] flex-1 rounded-xl border border-white/8 bg-slate-950/35 p-3">
                       <div className="flex items-center gap-2 text-ink-soft">
                         <Building2 size={14} />
                         <span className="text-sm font-semibold">My Supplier Network</span>
@@ -203,7 +203,7 @@ export function BasketResults({
             <div
               key={supplier}
               data-testid={`basket-group-${supplier}`}
-              className="flex flex-col rounded-md border border-line bg-surface p-4 shadow-card"
+              className="flex flex-col rounded-2xl border border-line bg-gradient-to-br from-slate-800/60 via-surface to-slate-950 p-4 shadow-card transition-all duration-200 hover:-translate-y-1 hover:border-white/15 hover:shadow-lift"
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
@@ -254,7 +254,7 @@ export function BasketResults({
 
       {/* Per-item breakdown */}
       <div className="overflow-hidden rounded-md border border-line bg-surface">
-        <div className="border-b border-line bg-bg px-4 py-2.5">
+        <div className="border-b border-line bg-slate-950/75 px-4 py-2.5">
           <span className="label-eyebrow">Item-by-item assignment</span>
         </div>
         <div className="divide-y divide-line">
@@ -262,7 +262,7 @@ export function BasketResults({
             <div
               key={`${item.query}-${i}`}
               data-testid={`basket-item-${i}`}
-              className={cn('flex flex-wrap items-center justify-between gap-3 px-4 py-3', !item.availability && 'opacity-70')}
+              className={cn('flex flex-wrap items-center justify-between gap-3 px-4 py-3 transition-colors hover:bg-white/[0.025]', !item.availability && 'opacity-70')}
             >
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">

@@ -25,9 +25,9 @@ export function LongTermRecommendationCard({
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
         data-testid="long-term-recommendation"
-        className="rounded-md border border-accent/30 bg-accent-soft/20 shadow-card"
+        className="overflow-hidden rounded-2xl border border-violet-400/25 bg-gradient-to-br from-violet-500/[0.12] via-surface to-slate-950 shadow-card"
       >
-        <div className="flex items-center gap-2 border-b border-accent/20 px-5 py-3">
+        <div className="flex items-center gap-2 border-b border-violet-400/15 px-5 py-3">
           <Clock size={16} className="text-accent" />
           <span className="label-eyebrow text-accent">Long-Term Procurement Recommendation</span>
           <span className="ml-auto text-[10px] text-muted">Estimated</span>
@@ -47,7 +47,7 @@ export function LongTermRecommendationCard({
           </div>
 
           {rec.aiExplanation && cleanAIText(rec.aiExplanation) && (
-            <div className="mt-4 rounded-md border border-accent/25 bg-accent/5 p-3.5">
+            <div className="mt-4 rounded-xl border border-violet-300/20 bg-slate-950/35 p-3.5 backdrop-blur-sm">
               <div className="mb-2 flex items-center gap-1.5">
                 <MessageSquareText size={13} className="text-accent" />
                 <span className="text-[10px] font-semibold uppercase tracking-wider text-accent">AI Procurement Advisor</span>
@@ -71,21 +71,21 @@ export function LongTermRecommendationCard({
           )}
 
           <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
-            <div className="rounded-md border border-line bg-bg/30 p-2.5">
+            <div className="rounded-xl border border-white/8 bg-slate-950/35 p-2.5">
               <div className="label-eyebrow flex items-center gap-1"><Shield size={11} /> Risk</div>
               <div className={cn('data-num mt-1 text-sm font-bold', riskTone === 'success' ? 'text-success' : riskTone === 'warning' ? 'text-warning' : 'text-danger')}>
                 {rec.riskLevel}
               </div>
             </div>
-            <div className="rounded-md border border-line bg-bg/30 p-2.5">
+            <div className="rounded-xl border border-white/8 bg-slate-950/35 p-2.5">
               <div className="label-eyebrow flex items-center gap-1"><TrendingUp size={11} /> Reliability</div>
               <div className="data-num mt-1 text-sm font-bold text-ink">{rec.deliveryReliability}%</div>
             </div>
-            <div className="rounded-md border border-line bg-bg/30 p-2.5">
+            <div className="rounded-xl border border-white/8 bg-slate-950/35 p-2.5">
               <div className="label-eyebrow">Supplier Score</div>
               <div className="data-num mt-1 text-sm font-bold text-ink">{rec.supplierScore}/100</div>
             </div>
-            <div className="rounded-md border border-line bg-bg/30 p-2.5">
+            <div className="rounded-xl border border-white/8 bg-slate-950/35 p-2.5">
               <div className="label-eyebrow">Total Cost</div>
               <div className="data-num mt-1 text-sm font-bold text-ink">{formatINR(rec.totalProcurementCost)}</div>
             </div>

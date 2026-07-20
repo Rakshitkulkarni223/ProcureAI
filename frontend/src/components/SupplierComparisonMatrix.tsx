@@ -21,9 +21,9 @@ export function SupplierComparisonMatrix({
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
         data-testid="supplier-comparison-matrix"
-        className="rounded-md border border-line bg-surface shadow-card"
+        className="overflow-hidden rounded-2xl border border-sky-400/20 bg-gradient-to-br from-sky-500/[0.08] via-surface to-slate-950 shadow-card"
       >
-        <div className="flex items-center gap-2 border-b border-line px-5 py-3">
+        <div className="flex items-center gap-2 border-b border-sky-400/15 px-5 py-3">
           <Table2 size={16} className="text-accent" />
           <span className="label-eyebrow text-accent">Supplier Comparison Matrix</span>
           <span className="ml-auto text-[10px] text-muted">Estimated</span>
@@ -32,7 +32,7 @@ export function SupplierComparisonMatrix({
         <div className="overflow-x-auto p-4">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-line">
+              <tr className="border-b border-line bg-slate-950/35">
                 <th className="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-muted">Criteria</th>
                 {matrix.suppliers.map(s => (
                   <th key={s} className="px-3 py-2 text-center text-[10px] font-semibold uppercase tracking-wider text-muted">
@@ -46,7 +46,7 @@ export function SupplierComparisonMatrix({
             </thead>
             <tbody>
               {matrix.criteria.map(criterion => (
-                <tr key={criterion} className="border-b border-line last:border-0">
+                <tr key={criterion} className="border-b border-line last:border-0 transition-colors hover:bg-white/[0.025]">
                   <td className="px-3 py-2.5 font-medium text-ink">{criterion}</td>
                   {matrix.suppliers.map(supplier => {
                     const isBest = matrix.matrix?.[supplier]?.[criterion];

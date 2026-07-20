@@ -23,10 +23,10 @@ export function SupplierIntelligenceCard({
     const riskTone = intelligence.riskLevel === 'Low' ? 'success' : intelligence.riskLevel === 'Medium' ? 'warning' : 'danger';
 
     return (
-      <div className="overflow-hidden rounded-md border border-line bg-surface shadow-card">
+      <div className="overflow-hidden rounded-2xl border border-line bg-gradient-to-br from-slate-800/70 via-surface to-slate-950 shadow-card transition-all hover:border-white/15">
         <button
           onClick={() => { try { setOpen(v => !v); } catch { /* silent */ } }}
-          className="flex w-full items-center justify-between gap-3 px-4 py-3 transition-colors hover:bg-bg/50"
+          className="flex w-full items-center justify-between gap-3 px-4 py-3 transition-colors hover:bg-white/[0.03]"
           data-testid={`supplier-intel-toggle-${supplier}`}
         >
           <div className="flex items-center gap-3">
@@ -60,7 +60,7 @@ export function SupplierIntelligenceCard({
               <Metric label="Business Stability" value={intelligence.businessStability} />
             </div>
 
-            <div className="mt-3 flex items-center justify-between rounded-md bg-bg/50 px-3 py-2">
+            <div className="mt-3 flex items-center justify-between rounded-xl border border-white/8 bg-slate-950/35 px-3 py-2">
               <span className="label-eyebrow">Intelligence Confidence</span>
               <span className="data-num text-sm font-bold text-ink">{intelligence.confidence}%</span>
             </div>
@@ -81,7 +81,7 @@ export function SupplierIntelligenceCard({
 
 function Metric({ icon, label, value, valueClass }: { icon?: React.ReactNode; label: string; value: string; valueClass?: string }) {
   return (
-    <div className="rounded-md border border-line bg-bg/30 p-2.5">
+    <div className="rounded-xl border border-white/8 bg-bg/50 p-2.5">
       <div className="label-eyebrow flex items-center gap-1">{icon} {label}</div>
       <div className={cn('data-num mt-1 text-sm font-bold text-ink', valueClass)}>{value}</div>
     </div>
