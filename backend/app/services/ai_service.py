@@ -163,16 +163,20 @@ async def chat(
             if not assistant_message.tool_calls:
                 final_text = _clean_response(assistant_message.content or "")
 
-                # If empty after stripping <think>, retry with fallback model
-                if not final_text and model == env.AI_PRIMARY_MODEL and env.AI_FALLBACK_MODEL:
-                    model = env.AI_FALLBACK_MODEL
-                    try:
-                        retry = await client.chat.completions.create(
-                            model=model, messages=messages, **_llm_kwargs,
-                        )
-                        final_text = _clean_response(retry.choices[0].message.content or "")
-                    except Exception:
-                        pass
+                # If empty after stripping <think>, retry with tool_choice=none to force text
+                if not final_text:
+                    for retry_model in [model, env.AI_FALLBACK_MODEL]:
+                        if not retry_model or final_text:
+                            break
+                        try:
+                            retry = await client.chat.completions.create(
+                                model=retry_model, messages=messages,
+                                tools=TOOL_DEFINITIONS, tool_choice="none",
+                                temperature=env.AI_TEMPERATURE, max_tokens=MAX_RESPONSE_TOKENS,
+                            )
+                            final_text = _clean_response(retry.choices[0].message.content or "")
+                        except Exception:
+                            pass
 
                 if not final_text:
                     final_text = "I couldn't generate a response. Please try again."
@@ -365,6 +369,11 @@ async def chat_stream(
             choice = response.choices[0]
             assistant_message = choice.message
 
+            has_tools = bool(assistant_message.tool_calls)
+            has_content = bool(assistant_message.content)
+            content_len = len(assistant_message.content or "")
+            print(f"[AI-STREAM] Round {_round}: has_tools={has_tools}, has_content={has_content}, content_len={content_len}")
+
             # No tool calls → we already have the answer from this call
             if not assistant_message.tool_calls:
                 break
@@ -426,66 +435,75 @@ async def chat_stream(
 
                 yield _sse_event("tool_done", tool_name)
 
-        # ---------- Final response: true streaming from Groq ----------
-        # If the last non-streaming call already had text (no tools), use it.
-        # Otherwise, make a new streaming call to generate the answer after tools.
-        have_text = (
-            not assistant_message.tool_calls
-            and _clean_response(assistant_message.content or "")
-        )
+        # ---------- Final response ----------
+        # Try to extract text from the loop's last response first.
+        final_text = ""
+        if not assistant_message.tool_calls and assistant_message.content:
+            raw_content = assistant_message.content
+            final_text = _clean_response(raw_content)
+            if not final_text and raw_content:
+                print(f"[AI-STREAM] Response was think-only ({len(raw_content)} chars). Will retry with tool_choice=none.")
 
-        if have_text:
-            # Already have the answer from the loop — just yield it
-            final_text = _clean_response(assistant_message.content or "")
+        if final_text:
+            # Already have a clean answer — yield it in chunks
             for i in range(0, len(final_text), 8):
                 yield _sse_event("token", final_text[i:i + 8])
         else:
-            # Stream the final answer token-by-token
+            # No text yet (think-only response or exhausted tool rounds).
+            # Make a streaming call with tool_choice="none" to force a text answer.
             yield _sse_event("thinking")
-            final_text = ""
-            in_think = False
-            _stream_kwargs = dict(
-                temperature=env.AI_TEMPERATURE,
-                max_tokens=MAX_RESPONSE_TOKENS,
-                stream=True,
-            )
-            try:
-                stream = await client.chat.completions.create(
-                    model=model, messages=messages, **_stream_kwargs,
-                )
-                async for chunk in stream:
-                    delta = chunk.choices[0].delta if chunk.choices else None
-                    if not delta or not delta.content:
-                        continue
-                    tok = delta.content
-                    # Strip <think> blocks in real-time
-                    if "<think>" in tok:
-                        in_think = True
-                        tok = tok.split("<think>")[0]
-                    if "</think>" in tok:
-                        in_think = False
-                        tok = tok.split("</think>")[-1]
-                    if in_think:
-                        continue
-                    if tok:
-                        final_text += tok
-                        yield _sse_event("token", tok)
-            except Exception as stream_err:
-                # If streaming fails, try non-streaming fallback
-                if not final_text:
+            raw_stream = ""
+            for attempt_model in [model, env.AI_FALLBACK_MODEL]:
+                if not attempt_model or final_text:
+                    break
+                try:
+                    stream = await client.chat.completions.create(
+                        model=attempt_model,
+                        messages=messages,
+                        tools=TOOL_DEFINITIONS,
+                        temperature=env.AI_TEMPERATURE,
+                        max_tokens=MAX_RESPONSE_TOKENS,
+                        tool_choice="none",
+                        stream=True,
+                    )
+                    async for chunk in stream:
+                        delta = chunk.choices[0].delta if chunk.choices else None
+                        if not delta or not delta.content:
+                            continue
+                        raw_stream += delta.content
+                        # Buffer-based think stripping: only yield text outside <think> blocks
+                        cleaned = _clean_response(raw_stream)
+                        new_chars = cleaned[len(final_text):]
+                        if new_chars:
+                            final_text = cleaned
+                            yield _sse_event("token", new_chars)
+                    # Final clean pass
+                    final_text = _clean_response(raw_stream).strip()
+                    if final_text:
+                        break
+                except Exception:
+                    continue
+
+            # Last resort: non-streaming fallback
+            if not final_text:
+                for fb_model in [model, env.AI_FALLBACK_MODEL]:
+                    if not fb_model or final_text:
+                        break
                     try:
                         fb = await client.chat.completions.create(
-                            model=env.AI_FALLBACK_MODEL or model,
+                            model=fb_model,
                             messages=messages,
+                            tools=TOOL_DEFINITIONS,
                             temperature=env.AI_TEMPERATURE,
                             max_tokens=MAX_RESPONSE_TOKENS,
+                            tool_choice="none",
                         )
-                        final_text = _clean_response(fb.choices[0].message.content or "")
-                        yield _sse_event("token", final_text)
+                        final_text = _clean_response(fb.choices[0].message.content or "").strip()
+                        if final_text:
+                            yield _sse_event("token", final_text)
+                            break
                     except Exception:
-                        pass
-
-            final_text = final_text.strip()
+                        continue
 
         if not final_text:
             final_text = "I couldn't generate a response. Please try again."
