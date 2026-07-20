@@ -48,7 +48,7 @@ def _get_client() -> AsyncOpenAI:
 # ---------------------------------------------------------------------------
 
 MAX_TOOL_ROUNDS = 5          # Max tool-call loops per user message
-MAX_RESPONSE_TOKENS = 1024   # Max tokens for final response
+MAX_RESPONSE_TOKENS = 4096   # Max tokens for final response
 TOOL_RESULT_MAX_CHARS = 3000 # Truncate tool results to keep within context
 
 # Regex to strip Qwen <think>...</think> chain-of-thought blocks
