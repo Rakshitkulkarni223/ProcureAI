@@ -14,9 +14,9 @@ const ICON_MAP: Record<string, React.ReactNode> = {
 };
 
 const TONE_STYLES: Record<string, string> = {
-  success: 'border-success/30 bg-success-bg/30 text-emerald-700',
-  info: 'border-accent/30 bg-accent-soft/30 text-accent',
-  warning: 'border-warning/30 bg-warning-bg/30 text-amber-700',
+  success: 'border-emerald-400/40 bg-emerald-500/10 text-emerald-400',
+  info: 'border-sky-400/40 bg-sky-500/10 text-sky-400',
+  warning: 'border-amber-400/40 bg-amber-500/10 text-amber-400',
 };
 
 export function ProcurementInsightsPanel({ insights }: { insights: ProcurementInsight[] }) {
