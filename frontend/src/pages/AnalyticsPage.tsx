@@ -115,7 +115,7 @@ export function AnalyticsPage() {
           </CardBody>
         </Card>
 
-        <Card className="self-start overflow-hidden rounded-2xl border-0 bg-gradient-to-br from-violet-500/[0.10] via-surface to-surface shadow-card transition-all duration-200 hover:-translate-y-1 hover:shadow-lift">
+        <Card className="h-[327px] self-start overflow-hidden rounded-2xl border-0 bg-gradient-to-br from-violet-500/[0.10] via-surface to-surface shadow-card transition-all duration-200 hover:-translate-y-1 hover:shadow-lift">
           <CardHeader className="border-line/60">
             <h3 className="font-display text-base font-semibold tracking-tight text-ink">Category-wise Spend</h3>
           </CardHeader>
@@ -156,13 +156,13 @@ export function AnalyticsPage() {
           </CardBody>
         </Card>
 
-        <Card className="overflow-hidden rounded-2xl border-0 bg-gradient-to-br from-cyan-500/[0.10] via-surface to-surface shadow-card transition-all duration-200 hover:-translate-y-1 hover:shadow-lift">
+        <Card className="flex h-[327px] flex-col overflow-hidden rounded-2xl border-0 bg-gradient-to-br from-cyan-500/[0.10] via-surface to-surface shadow-card transition-all duration-200 hover:-translate-y-1 hover:shadow-lift">
           <CardHeader className="border-line/60">
             <h3 className="font-display text-base font-semibold tracking-tight text-ink">Supplier Recommendations</h3>
           </CardHeader>
-          <CardBody>
+          <CardBody className="min-h-0 flex-1">
             <ChartOrEmpty empty={!spend?.supplierUsage.length}>
-              <div className="space-y-2.5" data-testid="supplier-usage">
+              <div className="scrollbar-hidden h-full space-y-2.5 overflow-y-auto pr-1" data-testid="supplier-usage">
                 {(spend?.supplierUsage || []).map((s, i) => {
                   const max = Math.max(...(spend?.supplierUsage || []).map((x) => x.count));
                   return (

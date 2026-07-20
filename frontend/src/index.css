@@ -145,6 +145,15 @@ body::-webkit-scrollbar {
   background: var(--scrollbar-thumb-hover);
 }
 
+.scrollbar-hidden {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hidden::-webkit-scrollbar {
+  display: none;
+}
+
 @layer components {
   .label-eyebrow {
     @apply text-[11px] uppercase tracking-[0.18em] font-semibold text-muted;
