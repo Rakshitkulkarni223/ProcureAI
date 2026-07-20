@@ -37,6 +37,13 @@ import {
   ArrowDown,
   MapPin,
   Target,
+  Workflow,
+  Trophy,
+  Rocket,
+  Activity,
+  Sparkles,
+  Timer,
+  Bot,
 } from 'lucide-react';
 import { Card, CardBody, CardHeader } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
@@ -81,7 +88,7 @@ const GENERAL_SECTIONS: DocSection[] = [
           <h4 className="mb-2 font-semibold text-ink text-base">The Solution</h4>
           <p>
             ProcureAI <strong className="text-ink">automates</strong> supplier discovery, AI-powered comparison,
-            basket optimization, and procurement reporting.
+            basket optimization, procurement reporting, and conversational AI assistance.
           </p>
         </div>
 
@@ -92,10 +99,10 @@ const GENERAL_SECTIONS: DocSection[] = [
             {[
               { icon: '⭐', text: 'Up to 90% faster supplier comparison' },
               { icon: '📉', text: 'Reduce manual procurement work' },
-              { icon: '🤖', text: 'AI-powered purchasing recommendations' },
-              { icon: '📊', text: 'Business Impact Dashboard' },
-              { icon: '💰', text: 'ROI Calculator' },
-              { icon: '🧠', text: 'Explainable AI' },
+              { icon: '🤖', text: '6 AI procurement strategies' },
+              { icon: '📊', text: 'Business Impact Dashboard & ROI Calculator' },
+              { icon: '🧠', text: 'AI Chat Assistant with 8 tools' },
+              { icon: '💬', text: 'Explainable AI with radar charts' },
             ].map((p) => (
               <div key={p.text} className="flex items-center gap-2 rounded-md border border-line bg-bg p-3">
                 <span className="text-base leading-none">{p.icon}</span>
@@ -138,9 +145,10 @@ const GENERAL_SECTIONS: DocSection[] = [
                 ['Time per procurement', '45–60 minutes', '3–5 minutes'],
                 ['Websites visited', '5–10 per purchase', '1 (ProcureAI)'],
                 ['Manual calculations', 'Required (Excel/paper)', 'Eliminated — scoring engine handles it'],
-                ['Recommendations', '❌ Not available', '✅ Weighted scoring + explanation'],
+                ['Recommendations', '❌ Not available', '✅ 6 strategies with weighted scoring + explanation'],
                 ['Procurement reports', 'Manual preparation', 'One-click CSV & PDF'],
                 ['Multi-item optimization', 'Not feasible', '✅ Split-cart optimizer'],
+                ['AI chat assistant', '❌ Not available', '✅ Conversational AI with 8 tools'],
                 ['Savings tracking', 'No visibility', '✅ Real-time dashboard'],
               ].map(([metric, before, after]) => (
                 <tr key={metric}><td className="px-3 py-2 font-medium text-ink">{metric}</td><td className="px-3 py-2 text-muted">{before}</td><td className="px-3 py-2 text-muted">{after}</td></tr>
@@ -206,7 +214,7 @@ const GENERAL_SECTIONS: DocSection[] = [
       <div className="space-y-4 text-sm text-ink-soft leading-relaxed">
         {/* Visual workflow */}
         <div className="flex flex-wrap items-center justify-center gap-2 rounded-md border border-line bg-bg p-4 text-xs font-medium">
-          {['🏢 Business Need', '🤖 ProcureAI', '📊 Recommendation', '💰 Business Impact'].map((s, i, arr) => (
+          {['🏢 Business Need', '🤖 ProcureAI', '📊 Recommendation', '🧠 AI Chat', '💰 Business Impact'].map((s, i, arr) => (
             <React.Fragment key={s}>
               <span className="rounded-md bg-accent-soft px-3 py-1.5 text-accent whitespace-nowrap">{s}</span>
               {i < arr.length - 1 && <ArrowRight size={14} className="text-muted shrink-0" />}
@@ -215,12 +223,13 @@ const GENERAL_SECTIONS: DocSection[] = [
         </div>
         <div className="space-y-3">
           {[
-            { step: 1, title: 'Search', desc: 'Type a product name, pick a category — ProcureAI queries all configured suppliers simultaneously.' },
-            { step: 2, title: 'Compare', desc: 'Results are normalized and displayed in a sortable comparison table.' },
-            { step: 3, title: 'Recommend', desc: 'The decision engine scores every option on price, delivery, rating, discount, warranty, and returns.' },
+            { step: 1, title: 'Search', desc: 'Type a product name, pick a category and strategy — ProcureAI queries all configured suppliers simultaneously.' },
+            { step: 2, title: 'Compare', desc: 'Results are normalized and displayed in a sortable comparison table with 6 recommendation strategies.' },
+            { step: 3, title: 'Recommend', desc: 'The decision engine scores every option on price, delivery, rating, discount, warranty, returns, risk, and total cost.' },
             { step: 4, title: 'Explain', desc: 'Click "Why this recommendation?" for a radar chart and supplier scoreboard.' },
             { step: 5, title: 'Optimize', desc: 'Add multiple items to a basket for split-cart optimization across suppliers.' },
-            { step: 6, title: 'Export & Track', desc: 'Download CSV/PDF reports. Track savings on the Business Impact dashboard.' },
+            { step: 6, title: 'Ask AI', desc: 'Open the AI Chat Assistant to ask questions, compare products, or optimize baskets conversationally.' },
+            { step: 7, title: 'Export & Track', desc: 'Download CSV/PDF reports. Track savings on the Business Impact dashboard.' },
           ].map((s) => (
             <div key={s.step} className="flex gap-4 rounded-md border border-line bg-bg p-4">
               <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-accent text-white text-sm font-bold">{s.step}</span>
@@ -247,8 +256,9 @@ const GENERAL_SECTIONS: DocSection[] = [
           <h4 className="mb-3 font-semibold text-ink">Step-by-step</h4>
           <ol className="space-y-2 text-xs text-muted list-decimal list-inside">
             <li>Go to <strong className="text-ink">Search & Compare</strong> from the sidebar.</li>
-            <li>Pick a <strong className="text-ink">category</strong> — Electronics, Fashion, Grocery, etc.</li>
+            <li>Pick a <strong className="text-ink">category</strong> — Electronics, Fashion, Grocery, Furniture, Office, Cleaning, Medical, or Industrial.</li>
             <li>Choose which <strong className="text-ink">suppliers</strong> to compare (or leave all selected).</li>
+            <li>Select an <strong className="text-ink">AI Procurement Strategy</strong> — Balanced, Lowest Cost, Lowest Risk, Fastest Delivery, Highest Reliability, or Best Long-Term Value.</li>
             <li>Type your product in the search box and click <strong className="text-ink">Search</strong>.</li>
             <li>Review the comparison table — the AI-recommended option is highlighted.</li>
             <li>Click <strong className="text-ink">"Why this recommendation?"</strong> for the AI explanation panel.</li>
@@ -379,8 +389,9 @@ const GENERAL_SECTIONS: DocSection[] = [
             </ul>
           </div>
           <div className="rounded-md border border-line bg-bg p-4">
-            <h4 className="mb-2 font-semibold text-ink">AI Optimization Strategies</h4>
+            <h4 className="mb-2 font-semibold text-ink">AI Optimization Strategies (6 Modes)</h4>
             <ul className="space-y-1 text-xs text-muted">
+              <li>• <strong className="text-ink">Balanced</strong> — Even weight across price, speed, quality</li>
               <li>• <strong className="text-ink">Lowest Cost</strong> — Minimize total spend</li>
               <li>• <strong className="text-ink">Lowest Risk</strong> — Diversify across suppliers</li>
               <li>• <strong className="text-ink">Fastest Delivery</strong> — Prioritize speed</li>
@@ -409,9 +420,11 @@ const GENERAL_SECTIONS: DocSection[] = [
           suppliers</strong> — or tells you if buying everything from one place is actually cheaper.
         </p>
         <div className="rounded-md border border-line bg-bg p-4">
-          <h4 className="mb-3 font-semibold text-ink">How to use it</h4>
+          <h4 className="mb-3 font-semibold text-ink">How to use it (Search page)</h4>
           <ol className="space-y-2 text-xs text-muted list-decimal list-inside">
             <li>Switch to <strong className="text-ink">Basket Optimiser</strong> mode on the Search page.</li>
+            <li>Select a <strong className="text-ink">category</strong> and choose suppliers to include.</li>
+            <li>Pick an <strong className="text-ink">AI Procurement Strategy</strong> (Balanced, Lowest Cost, etc.).</li>
             <li>Add items one by one — enter the product name and quantity.</li>
             <li>Click <strong className="text-ink">Optimise Basket</strong>.</li>
             <li>Review the recommendation: <strong className="text-ink">Split</strong> (buy from different suppliers) or <strong className="text-ink">Consolidate</strong> (buy all from one).</li>
@@ -420,12 +433,22 @@ const GENERAL_SECTIONS: DocSection[] = [
         <div className="grid gap-3 sm:grid-cols-2">
           <div className="rounded-md border border-line bg-bg p-3">
             <h5 className="text-xs font-semibold text-ink">Split Plan</h5>
-            <p className="mt-1 text-[11px] text-muted">Each item goes to the cheapest supplier. Best savings, but multiple deliveries.</p>
+            <p className="mt-1 text-[11px] text-muted">Each item goes to the best supplier per your chosen strategy. Best savings, but multiple deliveries.</p>
           </div>
           <div className="rounded-md border border-line bg-bg p-3">
             <h5 className="text-xs font-semibold text-ink">Consolidate Plan</h5>
-            <p className="mt-1 text-[11px] text-muted">Everything from one supplier. Simpler logistics, one delivery.</p>
+            <p className="mt-1 text-[11px] text-muted">Everything from one supplier. Simpler logistics, one delivery. A consolidation penalty is applied to compare fairly.</p>
           </div>
+        </div>
+        <div className="rounded-md border border-line bg-bg p-4">
+          <h4 className="mb-3 font-semibold text-ink">Via AI Chat Assistant</h4>
+          <p className="text-xs text-muted mb-2">You can also optimize baskets conversationally:</p>
+          <ol className="space-y-1.5 text-xs text-muted list-decimal list-inside">
+            <li>Ask the AI: <em className="text-ink">"Optimize my grocery basket"</em></li>
+            <li>The AI fetches your <strong className="text-ink">basket history</strong> automatically.</li>
+            <li>It optimizes using only items from your past baskets — no hallucinated products.</li>
+            <li>Ask to <em className="text-ink">"re-optimize with lowest risk"</em> to try a different strategy.</li>
+          </ol>
         </div>
       </div>
     ),
@@ -654,41 +677,441 @@ const GENERAL_SECTIONS: DocSection[] = [
             </tbody>
           </table>
         </div>
-        <p className="text-xs text-muted">Change your city in <strong className="text-ink">Settings → Location Preferences</strong>. Supplier Hub suppliers from other states are automatically excluded from search results.</p>
+        <p className="text-xs text-muted">Change your city in <strong className="text-ink">Settings → City / Location</strong>. Supplier Hub suppliers from other states are automatically excluded from search results.</p>
       </div>
     ),
   },
 
-  /* ── 13. SETTINGS & WEIGHT PROFILES ── */
+  /* ── 13. SETTINGS & PREFERENCES ── */
   {
     id: 'g-settings',
-    title: 'Settings & Weight Profiles',
+    title: 'Settings & Preferences',
     icon: Settings,
     content: (
       <div className="space-y-4 text-sm text-ink-soft leading-relaxed">
-        <p>Manage your profile and tell the AI what matters most to <em>your</em> business with weight profiles.</p>
-        <div className="grid gap-3 sm:grid-cols-2">
-          {[
-            { name: 'Balanced', desc: 'Equal importance to price, speed, and quality. Good default for most purchases.', icon: '⚖️' },
-            { name: 'Budget', desc: 'Maximizes cost savings. Best when budget is the #1 priority.', icon: '💰' },
-            { name: 'Urgent', desc: 'Prioritizes availability and fast delivery. Critical when stock and speed matter most.', icon: '⚡' },
-            { name: 'Fast', desc: 'Fast, reliable delivery. Speed first, price secondary.', icon: '🚀' },
-          ].map((p) => (
-            <div key={p.name} className="rounded-md border border-line bg-bg p-3">
-              <div className="flex items-center gap-2">
-                <span className="text-lg">{p.icon}</span>
-                <h4 className="font-semibold text-ink">{p.name}</h4>
+        <p>Configure your <strong className="text-ink">procurement preferences</strong> and personal profile from the Settings page.</p>
+        <div className="rounded-md border border-line bg-bg p-4">
+          <h4 className="mb-3 font-semibold text-ink">What you can configure</h4>
+          <div className="grid gap-2 sm:grid-cols-2">
+            {[
+              { title: 'Default Category', desc: 'Pre-selects your most-used category (e.g. Grocery, Electronics) when you open Search.' },
+              { title: 'Default Sort', desc: 'Choose how results are sorted: Lowest Price, Lowest Total Cost, Highest Rating, Fastest Delivery, or Highest Discount.' },
+              { title: 'City / Location', desc: 'Set your delivery city — delivery estimates auto-calculate based on supplier distance.' },
+              { title: 'Business Type', desc: 'Helps the AI tailor recommendations to your industry context.' },
+            ].map((item) => (
+              <div key={item.title} className="flex gap-2 rounded border border-line bg-surface px-3 py-2">
+                <CheckCircle2 size={12} className="mt-0.5 shrink-0 text-success" />
+                <div><span className="text-xs font-semibold text-ink">{item.title}</span><p className="text-[11px] text-muted">{item.desc}</p></div>
               </div>
-              <p className="mt-1 text-xs text-muted">{p.desc}</p>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-        <p className="text-xs text-muted">Change your default profile in <strong className="text-ink">Settings → Procurement Preferences</strong>.</p>
+        <div className="rounded-md border border-line bg-bg p-4">
+          <h4 className="mb-3 font-semibold text-ink">AI Procurement Strategies (on Search page)</h4>
+          <p className="text-xs text-muted mb-3">Select a strategy before searching or optimizing a basket. The same product catalog produces different "best" suppliers depending on which strategy you pick.</p>
+          <div className="grid gap-2 sm:grid-cols-3">
+            {[
+              { name: 'Balanced', desc: 'Even consideration of price, speed, reliability and value.', icon: '⚖️' },
+              { name: 'Lowest Cost', desc: 'Prioritizes the lowest total procurement cost.', icon: '💰' },
+              { name: 'Lowest Risk', desc: 'Selects suppliers with the lowest procurement risk.', icon: '🛡️' },
+              { name: 'Fastest Delivery', desc: 'Optimizes for the shortest delivery time.', icon: '⚡' },
+              { name: 'Highest Reliability', desc: 'Chooses the most reliable supplier by rating and consistency.', icon: '⭐' },
+              { name: 'Best Long-Term Value', desc: 'Balances cost, reliability, risk, and stability.', icon: '🚀' },
+            ].map((p) => (
+              <div key={p.name} className="rounded-md border border-line bg-bg p-3">
+                <div className="flex items-center gap-2">
+                  <span className="text-lg">{p.icon}</span>
+                  <h4 className="font-semibold text-ink text-xs">{p.name}</h4>
+                </div>
+                <p className="mt-1 text-[11px] text-muted">{p.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+        <p className="text-xs text-muted">Go to <strong className="text-ink">Settings</strong> from the sidebar to update your preferences. Strategies are selected on the <strong className="text-ink">Search & Compare</strong> page.</p>
       </div>
     ),
   },
 
-  /* ── 11. FAQ & SUPPORT ── */
+  /* ── 14. AI WORKFLOW PIPELINE ── */
+  {
+    id: 'g-ai-workflow',
+    title: 'AI Workflow Pipeline',
+    icon: Workflow,
+    badge: { label: 'Architecture', tone: 'accent' },
+    content: (
+      <div className="space-y-4 text-sm text-ink-soft leading-relaxed">
+        <p>
+          When you ask the <strong className="text-ink">ProcureAI Advisor</strong> a question, it follows a deterministic multi-stage pipeline — not a random guess.
+        </p>
+        <div className="space-y-2">
+          {[
+            { step: '1', title: 'User Asks', desc: 'You type a natural language question (e.g. "Compare laptop prices across suppliers").' },
+            { step: '2', title: 'Intent Detection', desc: 'The LLM identifies what you need — product search, optimization, analytics, or general procurement advice.' },
+            { step: '3', title: 'Tool Selection', desc: 'The AI selects 1–3 backend tools (from 8 available) via OpenAI-compatible function calling.' },
+            { step: '4', title: 'Backend Execution', desc: 'Selected tools execute against live services — supplier adapters, scoring engine, MongoDB history.' },
+            { step: '5', title: 'Recommendation Engine', desc: 'Results pass through the weighted decision engine with your selected procurement strategy.' },
+            { step: '6', title: 'LLM Explanation', desc: 'The LLM receives structured tool results and generates a human-readable explanation with tables and insights.' },
+            { step: '7', title: 'Formatted Response', desc: 'The response is rendered with markdown tables, lists, and formatted data — ready for decision-making.' },
+          ].map((s) => (
+            <div key={s.step} className="flex gap-3 rounded-md border border-line bg-bg p-3">
+              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-accent text-white text-xs font-bold">{s.step}</span>
+              <div>
+                <h4 className="text-xs font-semibold text-ink">{s.title}</h4>
+                <p className="mt-0.5 text-[11px] text-muted">{s.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="rounded-md border border-accent/20 bg-accent-soft p-4">
+          <h4 className="mb-1 flex items-center gap-2 text-xs font-semibold text-accent"><Lightbulb size={14} /> Key Insight</h4>
+          <p className="text-xs text-ink-soft">The AI never guesses. Every response is grounded in <strong className="text-ink">real tool results</strong> from your live procurement data — with 21 anti-hallucination rules enforced in the system prompt. Up to 5 rounds of tool calling are allowed per query for complex multi-step questions.</p>
+        </div>
+      </div>
+    ),
+  },
+
+  /* ── 15. DECISION ENGINE ── */
+  {
+    id: 'g-decision-engine',
+    title: 'Decision Engine — How Scoring Works',
+    icon: Calculator,
+    badge: { label: 'Scoring', tone: 'success' },
+    content: (
+      <div className="space-y-4 text-sm text-ink-soft leading-relaxed">
+        <p>
+          The recommendation engine uses a <strong className="text-ink">deterministic weighted scoring algorithm</strong> — not random AI output. Every supplier receives a score out of 100 based on measurable factors.
+        </p>
+        <div className="rounded-md border border-line bg-bg p-4">
+          <h4 className="mb-3 font-semibold text-ink">Balanced Profile — Default Weights</h4>
+          <div className="space-y-2">
+            {[
+              { factor: 'Price', weight: 30, color: 'bg-green-500', desc: 'Unit cost normalized against cheapest option' },
+              { factor: 'Delivery', weight: 20, color: 'bg-blue-500', desc: 'Estimated delivery days (location-aware)' },
+              { factor: 'Rating', weight: 20, color: 'bg-yellow-500', desc: 'Supplier reliability rating (0–5)' },
+              { factor: 'Discount', weight: 10, color: 'bg-purple-500', desc: 'Percentage discount from list price' },
+              { factor: 'Availability', weight: 10, color: 'bg-orange-500', desc: 'In-stock probability' },
+              { factor: 'Warranty', weight: 5, color: 'bg-teal-500', desc: 'Coverage duration in months' },
+              { factor: 'Return Policy', weight: 5, color: 'bg-pink-500', desc: 'Return window in days' },
+            ].map((f) => (
+              <div key={f.factor} className="flex items-center gap-3">
+                <span className="w-20 text-xs font-semibold text-ink">{f.factor}</span>
+                <div className="flex-1 h-5 rounded-full bg-surface overflow-hidden border border-line">
+                  <div className={cn('h-full rounded-full', f.color)} style={{ width: `${f.weight}%` }} />
+                </div>
+                <span className="w-10 text-right text-xs font-bold text-ink">{f.weight}%</span>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="rounded-md border border-line bg-bg p-4">
+          <h4 className="mb-3 font-semibold text-ink">How Ranking Works</h4>
+          <div className="flex flex-wrap items-center justify-center gap-2 text-xs font-medium">
+            {['Normalize Factors', 'Apply Weights', 'Compute Score (0–100)', 'Rank Suppliers', 'Top = Recommendation'].map((s, i, arr) => (
+              <React.Fragment key={s}>
+                <span className="rounded-md bg-accent-soft px-3 py-1.5 text-accent whitespace-nowrap">{s}</span>
+                {i < arr.length - 1 && <ArrowRight size={12} className="text-muted shrink-0" />}
+              </React.Fragment>
+            ))}
+          </div>
+        </div>
+        <div className="rounded-md border border-accent/20 bg-accent-soft p-4">
+          <h4 className="mb-1 flex items-center gap-2 text-xs font-semibold text-accent"><Lightbulb size={14} /> Key Insight</h4>
+          <p className="text-xs text-ink-soft">Switching to a different <strong className="text-ink">procurement strategy</strong> (e.g. Lowest Cost) changes the weight distribution — the same suppliers get different scores, producing different "best" recommendations. The algorithm is fully deterministic and auditable.</p>
+        </div>
+      </div>
+    ),
+  },
+
+  /* ── 16. AI BACKEND TOOLS ── */
+  {
+    id: 'g-ai-tools',
+    title: 'AI Backend Tools (8 Functions)',
+    icon: Bot,
+    content: (
+      <div className="space-y-4 text-sm text-ink-soft leading-relaxed">
+        <p>
+          The AI assistant connects to <strong className="text-ink">8 backend tools</strong> via OpenAI-compatible function calling.
+          Every answer is grounded in real data — the AI cannot invent suppliers or prices.
+        </p>
+        <div className="grid gap-2 sm:grid-cols-2">
+          {[
+            { name: 'search_products', desc: 'Search & compare products across all marketplace suppliers with pricing, delivery, and ratings.', icon: '🔍' },
+            { name: 'get_recommendation', desc: 'Get an AI-powered supplier recommendation with scoring, reasons, and confidence level.', icon: '⭐' },
+            { name: 'optimize_basket', desc: 'Optimize a multi-item basket — finds the best split/consolidate plan across suppliers.', icon: '🛒' },
+            { name: 'get_analytics', desc: 'Retrieve procurement analytics: dashboard summary, spend breakdown, savings trends, or insights.', icon: '📊' },
+            { name: 'get_business_impact', desc: 'Get business impact metrics: total savings, hours saved, AI accuracy, and efficiency score.', icon: '💰' },
+            { name: 'list_suppliers', desc: 'List your private Supplier Hub suppliers with their products and details.', icon: '🏢' },
+            { name: 'get_basket_history', desc: 'Fetch recent basket optimization history — used before re-optimizing baskets.', icon: '📋' },
+            { name: 'get_history', desc: 'Get recent procurement search history with timestamps and results.', icon: '🕐' },
+          ].map((tool) => (
+            <div key={tool.name} className="flex gap-3 rounded-md border border-line bg-bg p-3">
+              <span className="text-lg leading-none mt-0.5">{tool.icon}</span>
+              <div>
+                <code className="text-xs font-bold text-accent">{tool.name}</code>
+                <p className="mt-0.5 text-[11px] text-muted">{tool.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="rounded-md border border-accent/20 bg-accent-soft p-4">
+          <h4 className="mb-1 flex items-center gap-2 text-xs font-semibold text-accent"><Lightbulb size={14} /> Key Insight</h4>
+          <p className="text-xs text-ink-soft">The AI can call <strong className="text-ink">multiple tools in parallel</strong> for cross-category queries (e.g. "Compare laptops and office chairs"). Up to 5 rounds of tool calling per conversation turn ensures complex questions are fully answered.</p>
+        </div>
+      </div>
+    ),
+  },
+
+  /* ── 17. PROCUREMENT JOURNEY ── */
+  {
+    id: 'g-procurement-journey',
+    title: 'Complete Procurement Journey',
+    icon: Layers,
+    content: (
+      <div className="space-y-4 text-sm text-ink-soft leading-relaxed">
+        <p>The end-to-end procurement workflow — from identifying a need to tracking ROI.</p>
+        <div className="space-y-2">
+          {[
+            { step: '1', title: 'Identify Need', desc: 'A business need arises — new equipment, restocking supplies, or a procurement request.', icon: '🏢' },
+            { step: '2', title: 'Search Products', desc: 'Search across 8 categories and 20+ suppliers simultaneously. Select a procurement strategy.', icon: '🔍' },
+            { step: '3', title: 'Compare Suppliers', desc: 'View normalized comparison table with prices, delivery, ratings, warranty, and stock status.', icon: '📊' },
+            { step: '4', title: 'AI Recommendation', desc: 'The decision engine scores every supplier and highlights the best option with confidence level.', icon: '⭐' },
+            { step: '5', title: 'AI Explanation', desc: 'Click "Why?" for radar chart, supplier scoreboard, and business reasoning.', icon: '🧠' },
+            { step: '6', title: 'Basket Optimization', desc: 'Add multiple items — the optimizer finds the best split across suppliers.', icon: '🛒' },
+            { step: '7', title: 'Ask AI Chat', desc: 'Ask the AI assistant for deeper insights, re-optimization, or analytics.', icon: '💬' },
+            { step: '8', title: 'Export & Purchase', desc: 'Download CSV/PDF report. Proceed with purchase from recommended supplier.', icon: '📄' },
+            { step: '9', title: 'Track Savings', desc: 'Business Impact dashboard shows cumulative savings, hours freed, and procurement ROI.', icon: '💰' },
+          ].map((s) => (
+            <div key={s.step} className="flex gap-3 rounded-md border border-line bg-bg p-3">
+              <div className="flex flex-col items-center gap-1">
+                <span className="text-lg leading-none">{s.icon}</span>
+                <span className="text-[10px] font-bold text-accent">{s.step}</span>
+              </div>
+              <div>
+                <h4 className="text-xs font-semibold text-ink">{s.title}</h4>
+                <p className="mt-0.5 text-[11px] text-muted">{s.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    ),
+  },
+
+  /* ── 18. INNOVATION HIGHLIGHTS ── */
+  {
+    id: 'g-innovation',
+    title: 'Innovation Highlights',
+    icon: Sparkles,
+    badge: { label: 'Unique', tone: 'accent' },
+    content: (
+      <div className="space-y-4 text-sm text-ink-soft leading-relaxed">
+        <p>What makes ProcureAI stand out from traditional procurement tools.</p>
+        <div className="grid gap-2 sm:grid-cols-2">
+          {[
+            { title: 'Explainable Procurement AI', desc: 'Every recommendation includes a radar chart and scored supplier breakdown — no black-box decisions.' },
+            { title: 'Hybrid Supplier Network', desc: 'Combine online marketplace data with your own offline suppliers in a single search.' },
+            { title: 'AI Chat with Tool Calling', desc: '8 backend tools accessible via conversational AI — grounded in real procurement data.' },
+            { title: 'Split-Cart Optimization', desc: 'Multi-item baskets are automatically split across the best suppliers or consolidated when cheaper.' },
+            { title: 'Business ROI Calculator', desc: 'Interactive sliders to project monthly hours saved, salary savings, and annual cost reduction.' },
+            { title: '6 Recommendation Strategies', desc: 'Same data, different business priorities — dynamically rerank suppliers without changing catalog.' },
+            { title: 'Location-Aware Delivery', desc: 'Delivery estimates auto-calculate based on city distances. Supplier Hub filters by state.' },
+            { title: 'Radar Chart Explanation', desc: 'Visual trade-off analysis across all scoring dimensions for every recommendation.' },
+            { title: 'Procurement Analytics', desc: 'Spend trends, category breakdowns, supplier usage, and savings tracking with date filters.' },
+            { title: 'Conversational Procurement', desc: 'Ask the AI to compare, optimize, and analyze — it calls tools and responds with formatted insights.' },
+          ].map((item) => (
+            <div key={item.title} className="flex gap-2 rounded-md border border-line bg-bg px-3 py-2">
+              <CheckCircle2 size={12} className="mt-0.5 shrink-0 text-success" />
+              <div>
+                <span className="text-xs font-semibold text-ink">{item.title}</span>
+                <p className="text-[11px] text-muted">{item.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    ),
+  },
+
+  /* ── 19. COMPETITIVE ADVANTAGE ── */
+  {
+    id: 'g-competitive',
+    title: 'Competitive Advantage',
+    icon: Trophy,
+    badge: { label: 'Unique', tone: 'success' },
+    content: (
+      <div className="space-y-4 text-sm text-ink-soft leading-relaxed">
+        <p>How ProcureAI compares to traditional marketplace procurement.</p>
+        <div className="overflow-x-auto rounded-md border border-line">
+          <table className="w-full text-xs">
+            <thead><tr className="border-b border-line bg-bg text-left"><th className="px-3 py-2 font-semibold text-ink">Feature</th><th className="px-3 py-2 font-semibold text-accent">ProcureAI</th><th className="px-3 py-2 font-semibold text-muted">Traditional Marketplace</th></tr></thead>
+            <tbody className="divide-y divide-line">
+              {[
+                ['Multi-supplier comparison', '✅ One-click across 20+ suppliers', '❌ Manual tab switching'],
+                ['AI recommendations', '✅ 6 strategies with confidence score', '❌ Not available'],
+                ['Basket optimization', '✅ Split-cart optimizer', '❌ Single supplier only'],
+                ['Explainable AI', '✅ Radar chart + scoreboard', '❌ No transparency'],
+                ['Offline suppliers', '✅ Supplier Hub integration', '❌ Online only'],
+                ['AI chat assistant', '✅ 8 tools with function calling', '❌ Not available'],
+                ['ROI dashboard', '✅ Savings tracking + calculator', '❌ No visibility'],
+                ['Procurement analytics', '✅ Spend trends + category breakdown', '❌ Basic order history'],
+                ['Location-aware delivery', '✅ City-based estimates', '❌ Generic estimates'],
+                ['Export reports', '✅ CSV + styled PDF', '❌ Not available'],
+              ].map(([feature, procure, market]) => (
+                <tr key={feature}><td className="px-3 py-2 font-medium text-ink">{feature}</td><td className="px-3 py-2 text-green-600">{procure}</td><td className="px-3 py-2 text-muted">{market}</td></tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    ),
+  },
+
+  /* ── 20. PERFORMANCE ── */
+  {
+    id: 'g-performance',
+    title: 'Performance',
+    icon: Timer,
+    content: (
+      <div className="space-y-4 text-sm text-ink-soft leading-relaxed">
+        <p>ProcureAI is built for speed and scalability.</p>
+        <div className="grid gap-3 sm:grid-cols-3">
+          {[
+            { metric: 'Search Response', value: '< 2 sec', desc: 'Multi-supplier product search', icon: '⚡' },
+            { metric: 'AI Chat Response', value: '3–5 sec', desc: 'Tool calling + LLM explanation', icon: '🧠' },
+            { metric: 'Basket Optimization', value: '< 3 sec', desc: 'Multi-item split-cart analysis', icon: '🛒' },
+            { metric: 'Products Compared', value: '100+', desc: 'Per search across all suppliers', icon: '📊' },
+            { metric: 'Suppliers Supported', value: '20+', desc: 'Marketplace + Supplier Hub', icon: '🏢' },
+            { metric: 'Concurrent Users', value: 'Scalable', desc: 'Async FastAPI + Motor', icon: '👥' },
+          ].map((p) => (
+            <div key={p.metric} className="rounded-md border border-line bg-bg p-4 text-center">
+              <span className="text-2xl">{p.icon}</span>
+              <h4 className="mt-2 text-lg font-bold text-accent">{p.value}</h4>
+              <p className="text-xs font-semibold text-ink">{p.metric}</p>
+              <p className="mt-0.5 text-[11px] text-muted">{p.desc}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    ),
+  },
+
+  /* ── 21. FUTURE ROADMAP ── */
+  {
+    id: 'g-roadmap',
+    title: 'Future Roadmap',
+    icon: Rocket,
+    badge: { label: 'Vision', tone: 'accent' },
+    content: (
+      <div className="space-y-4 text-sm text-ink-soft leading-relaxed">
+        <p>ProcureAI's product roadmap — from current capabilities to enterprise-grade autonomous procurement.</p>
+        <div className="space-y-4">
+          {[
+            {
+              phase: 'Phase 1 — Foundation',
+              status: 'completed',
+              items: [
+                { done: true, text: 'Multi-supplier comparison engine' },
+                { done: true, text: 'AI-powered recommendations (6 strategies)' },
+                { done: true, text: 'Basket optimization (split/consolidate)' },
+                { done: true, text: 'AI chat assistant with 8 tools' },
+                { done: true, text: 'Business Impact dashboard & ROI calculator' },
+                { done: true, text: 'Supplier Hub (offline supplier network)' },
+                { done: true, text: 'Location-aware delivery estimates' },
+                { done: true, text: 'Explainable AI (radar chart + scoreboard)' },
+              ],
+            },
+            {
+              phase: 'Phase 2 — Enterprise Integration',
+              status: 'planned',
+              items: [
+                { done: false, text: 'ERP integration (SAP, Oracle Procurement)' },
+                { done: false, text: 'Microsoft Dynamics connector' },
+                { done: false, text: 'SSO / LDAP authentication' },
+                { done: false, text: 'Role-based access control (RBAC)' },
+                { done: false, text: 'Approval workflows' },
+              ],
+            },
+            {
+              phase: 'Phase 3 — Automation',
+              status: 'planned',
+              items: [
+                { done: false, text: 'Purchase order generation' },
+                { done: false, text: 'Invoice OCR & processing' },
+                { done: false, text: 'Vendor contract management' },
+                { done: false, text: 'Predictive procurement (demand forecasting)' },
+                { done: false, text: 'Budget alerts & spend limits' },
+              ],
+            },
+            {
+              phase: 'Phase 4 — Autonomous Procurement',
+              status: 'planned',
+              items: [
+                { done: false, text: 'Autonomous procurement agent' },
+                { done: false, text: 'Multi-agent collaboration' },
+                { done: false, text: 'Voice-based procurement' },
+                { done: false, text: 'Real-time market intelligence' },
+                { done: false, text: 'Supplier risk monitoring' },
+              ],
+            },
+          ].map((phase) => (
+            <div key={phase.phase} className="rounded-md border border-line bg-bg p-4">
+              <div className="flex items-center gap-2 mb-2">
+                <h4 className="font-semibold text-ink">{phase.phase}</h4>
+                {phase.status === 'completed' && <Badge tone="success">Done</Badge>}
+                {phase.status === 'planned' && <Badge tone="neutral">Planned</Badge>}
+              </div>
+              <div className="grid gap-1 sm:grid-cols-2">
+                {phase.items.map((item) => (
+                  <div key={item.text} className="flex items-center gap-2 text-xs">
+                    {item.done
+                      ? <CheckCircle2 size={12} className="shrink-0 text-success" />
+                      : <span className="flex h-3 w-3 shrink-0 items-center justify-center rounded border border-line text-[8px] text-muted">□</span>
+                    }
+                    <span className={item.done ? 'text-ink' : 'text-muted'}>{item.text}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    ),
+  },
+
+  /* ── 22. WHY PROCUREAI WINS ── */
+  {
+    id: 'g-why-procureai',
+    title: 'Why ProcureAI Wins',
+    icon: Trophy,
+    badge: { label: 'Summary', tone: 'accent' },
+    content: (
+      <div className="space-y-4 text-sm text-ink-soft leading-relaxed">
+        <p>The definitive reasons to choose ProcureAI for your procurement operations.</p>
+        <div className="grid gap-2 sm:grid-cols-3">
+          {[
+            { title: 'AI-First Procurement', desc: 'Every decision powered by intelligent scoring, not manual guesswork.', icon: '🤖' },
+            { title: 'Faster Purchasing', desc: 'From 45–60 minutes to 3–5 minutes per procurement cycle.', icon: '⚡' },
+            { title: 'Transparent Recommendations', desc: 'Radar charts, scoreboards, and confidence scores — fully auditable.', icon: '🔍' },
+            { title: 'Proven Business ROI', desc: 'Interactive ROI calculator with real savings metrics.', icon: '💰' },
+            { title: 'Local Supplier Support', desc: 'Supplier Hub bridges offline vendors into digital procurement.', icon: '🏢' },
+            { title: 'Enterprise-Ready Architecture', desc: 'FastAPI + MongoDB + JWT — scalable and secure.', icon: '🏗️' },
+            { title: 'Explainable AI', desc: 'No black box — every recommendation comes with evidence.', icon: '🧠' },
+            { title: 'Modern UX', desc: 'Beautiful responsive UI with dark mode, charts, and smooth animations.', icon: '✨' },
+            { title: 'Scalable Platform', desc: 'Async architecture handles concurrent users with ease.', icon: '📈' },
+          ].map((item) => (
+            <div key={item.title} className="rounded-md border border-line bg-bg p-3 text-center">
+              <span className="text-2xl">{item.icon}</span>
+              <h4 className="mt-1.5 text-xs font-bold text-ink">{item.title}</h4>
+              <p className="mt-0.5 text-[11px] text-muted">{item.desc}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    ),
+  },
+
+  /* ── FAQ & SUPPORT ── */
   {
     id: 'g-faq',
     title: 'FAQ & Support',
@@ -696,12 +1119,14 @@ const GENERAL_SECTIONS: DocSection[] = [
     content: (
       <div className="space-y-4 text-sm text-ink-soft leading-relaxed">
         {[
-          { q: 'Is my data private?', a: 'Yes. All searches, history, and preferences are tied to your account and not shared.' },
+          { q: 'Is my data private?', a: 'Yes. All searches, history, conversations, and preferences are tied to your account and not shared.' },
           { q: 'How accurate are the prices?', a: 'Prices are generated by built-in mock providers by default. When SERPAPI_KEY is configured, real-time Google Shopping prices are blended in automatically.' },
           { q: 'Can I add my own suppliers?', a: 'Yes! Use Supplier Hub to register your own offline suppliers with products, pricing, and delivery info. They appear alongside marketplace results in every search.' },
           { q: 'How is "estimated savings" calculated?', a: 'Savings = difference between the most expensive option and the AI-recommended option.' },
           { q: 'Can I use ProcureAI on mobile?', a: 'Yes! The interface is fully responsive and works on phones and tablets.' },
           { q: 'What does the confidence score mean?', a: 'It indicates how sure the AI is. Higher confidence (80%+) means the recommended option is significantly better.' },
+          { q: 'What AI model does the chat assistant use?', a: 'It uses Groq-hosted models — Qwen 3.6-27B as the primary model with Llama 3.1-8B as fallback. Both support function calling for real-time data access.' },
+          { q: 'What are recommendation modes vs weight profiles?', a: 'Recommendation modes (6 strategies like Balanced, Lowest Cost, etc.) are user-facing and selected on the Search page. Weight profiles are internal configurations that power those modes behind the scenes.' },
         ].map((faq) => (
           <div key={faq.q} className="rounded-md border border-line bg-bg p-4">
             <h4 className="font-semibold text-ink">{faq.q}</h4>
@@ -745,11 +1170,12 @@ const DEV_SECTIONS: DocSection[] = [
               <li>• React 18 + TypeScript</li>
               <li>• Tailwind CSS with CSS-variable theming</li>
               <li>• React Router v6</li>
-              <li>• Context API (Auth, Theme)</li>
+              <li>• Context API (Auth, Theme, Location)</li>
               <li>• Recharts (Radar, Area, Bar, Pie)</li>
               <li>• Autocomplete Search </li>
               <li>• CSV/PDF export engine</li>
               <li>• localStorage Watchlist</li>
+              <li>• AI Chat Assistant panel (floating drawer)</li>
               <li>• Date range filter (Dashboard, Analytics & Business Impact)</li>
               <li>• Business Impact page (metrics, before/after, ROI calculator)</li>
             </ul>
@@ -810,7 +1236,7 @@ const DEV_SECTIONS: DocSection[] = [
       <div className="space-y-4 text-sm text-ink-soft leading-relaxed">
         <div className="grid gap-4 sm:grid-cols-2">
           <CodeBlock title="backend/" code={`server.py              # FastAPI entry point (Uvicorn)\nrequirements.txt       # Python dependencies\napp/\n  ├── config.py        # env vars, categories, suppliers, catalog\n  ├── database.py      # Motor async MongoDB client\n  ├── auth.py          # JWT + bcrypt, auth dependency\n  ├── schemas.py       # Pydantic validation models\n  ├── routes.py        # All API routes (/api prefix)\n  ├── routes_supplier.py # Supplier Hub CRUD routes\n  ├── seed.py          # DB seeder\n  └── services/\n      ├── core.py      # PRNG, CatalogResolver, Search, Recommendation\n      ├── basket.py    # Basket optimization\n      ├── analytics.py # Dashboard, History, Preferences\n      ├── intelligence.py # Procurement intelligence engine\n      ├── supplier_hub.py # Supplier Hub CRUD service\n      ├── serpapi_adapter.py # Optional live Google Shopping\n      ├── llm_advisor.py # Groq AI advisor (Qwen / Llama)\n      ├── ai_service.py  # AI chat orchestrator + tool calling\n      ├── ai_tools.py    # 8 procurement function-calling tools\n      ├── ai_prompts.py  # System prompt + few-shot examples\n      └── ai_memory.py   # Conversation persistence (MongoDB)`} />
-          <CodeBlock title="frontend/" code={`src/\n  ├── components/    # reusable UI\n  │   └── ui/        # Button, Card, Badge…\n  ├── context/       # AuthContext, ThemeContext, LocationContext\n  ├── hooks/         # useSearchSuggestions, useWatchlist\n  ├── lib/           # api, bloomFilter, exportUtils\n  ├── pages/         # route-level pages\n  ├── types.ts       # TypeScript interfaces\n  ├── App.tsx        # router & providers\n  └── index.css      # Tailwind + CSS vars`} />
+          <CodeBlock title="frontend/" code={`src/\n  ├── components/    # reusable UI\n  │   ├── ui/        # Button, Card, Badge…\n  │   └── AIChatPanel.tsx  # Floating AI chat drawer\n  ├── context/       # AuthContext, ThemeContext, LocationContext\n  ├── hooks/         # useSearchSuggestions, useWatchlist\n  ├── lib/\n  │   ├── api.ts     # Main API client\n  │   ├── aiApi.ts   # AI chat API client\n  │   └── exportUtils.ts  # CSV/PDF export\n  ├── pages/         # route-level pages\n  ├── types.ts       # TypeScript interfaces\n  ├── types_ai.ts    # AI chat TypeScript types\n  ├── App.tsx        # router & providers\n  └── index.css      # Tailwind + CSS vars`} />
         </div>
       </div>
     ),
@@ -909,7 +1335,10 @@ const DEV_SECTIONS: DocSection[] = [
   "query": "Laptop",
   "category": "electronics",
   "suppliers": ["amazon", "flipkart"],
-  "weightProfile": "balanced"
+  "weightProfile": "balanced",
+  "recommendationMode": "lowest_cost",
+  "includeSupplierHub": true,
+  "userCity": "Hyderabad"
 }`} />
         <CodeBlock title="Response shape" code={`{
   "query": "Laptop",
@@ -949,7 +1378,11 @@ const DEV_SECTIONS: DocSection[] = [
     { "query": "Premium Basmati Rice 10kg", "quantity": 2 },
     { "query": "Sunflower Cooking Oil 5L", "quantity": 1 }
   ],
-  "weightProfile": "balanced"
+  "weightProfile": "balanced",
+  "recommendationMode": "lowest_cost",
+  "consolidationPenalty": 50,
+  "includeSupplierHub": true,
+  "userCity": "Hyderabad"
 }`} />
         <CodeBlock title="Response shape" code={`{
   "recommendedPlan": "split" | "consolidate",
@@ -1013,8 +1446,8 @@ const DEV_SECTIONS: DocSection[] = [
         <div className="grid gap-3 sm:grid-cols-3">
           {[
             { category: 'Frontend', items: ['React 18', 'TypeScript', 'Tailwind CSS', 'React Router v6', 'Recharts (Radar)', 'Bloom Filter', 'Framer Motion', 'Lucide Icons'] },
-            { category: 'Backend', items: ['Python 3.13', 'FastAPI', 'Uvicorn', 'Motor (async MongoDB)', 'Pydantic', 'PyJWT / bcrypt'] },
-            { category: 'Infrastructure', items: ['MongoDB', 'pip', 'npm', 'Pytest (E2E)', 'Git / GitHub'] },
+            { category: 'Backend', items: ['Python 3.13', 'FastAPI', 'Uvicorn', 'Motor (async MongoDB)', 'Pydantic', 'PyJWT / bcrypt', 'Groq AI (Qwen 3.6-27B)', 'OpenAI-compatible function calling'] },
+            { category: 'Infrastructure', items: ['MongoDB', 'pip', 'npm', 'Pytest (E2E)', 'Git / GitHub', 'SerpAPI (optional)'] },
           ].map((group) => (
             <div key={group.category} className="rounded-md border border-line bg-bg p-4">
               <h4 className="mb-2 text-xs font-bold uppercase tracking-wider text-muted">{group.category}</h4>
