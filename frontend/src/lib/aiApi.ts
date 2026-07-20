@@ -58,11 +58,12 @@ export interface StreamCallbacks {
   onError?: (msg: string) => void;
 }
 
-/** Send a chat message via SSE streaming. */
+/** Send a chat message via SSE streaming. Pass an AbortSignal to cancel mid-stream. */
 export async function sendChatMessageStream(
   message: string,
   conversationId: string | undefined,
   callbacks: StreamCallbacks,
+  signal?: AbortSignal,
 ): Promise<void> {
   try {
     const token = tokenStore.get();
@@ -78,6 +79,7 @@ export async function sendChatMessageStream(
         message,
         conversation_id: conversationId || undefined,
       }),
+      signal,
     });
 
     if (!resp.ok) {

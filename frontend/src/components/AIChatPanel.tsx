@@ -11,6 +11,7 @@ import {
   ChevronLeft,
   Wrench,
   Sparkles,
+  Square,
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import {
@@ -236,6 +237,7 @@ export function AIChatPanel() {
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const abortRef = useRef<AbortController | null>(null);
 
   // Auto-scroll to bottom
   useEffect(() => {
@@ -311,6 +313,10 @@ export function AIChatPanel() {
       setStreamingText('');
       setStreamingTool(null);
 
+      // Create abort controller for this request
+      const controller = new AbortController();
+      abortRef.current = controller;
+
       // Add user message optimistically
       const userMsg: AIChatMessage = { role: 'user', content: text, timestamp: new Date().toISOString() };
       setMessages((prev) => [...prev, userMsg]);
@@ -345,7 +351,6 @@ export function AIChatPanel() {
           onDone: (meta) => {
             try {
               setToolsUsed(meta.tools_used || []);
-              // Finalize: move streaming text into messages
               const finalText = accumulated || 'No response received.';
               setMessages((prev) => [
                 ...prev,
@@ -354,10 +359,13 @@ export function AIChatPanel() {
               setStreamingText('');
               setStreamingTool(null);
               setLoading(false);
+              abortRef.current = null;
             } catch { /* ignore */ }
           },
           onError: (msg) => {
             try {
+              // Ignore abort errors — handled by handleStop
+              if (controller.signal.aborted) return;
               setError(msg);
               setMessages((prev) => [
                 ...prev,
@@ -366,10 +374,12 @@ export function AIChatPanel() {
               setStreamingText('');
               setStreamingTool(null);
               setLoading(false);
+              abortRef.current = null;
             } catch { /* ignore */ }
           },
-        });
+        }, controller.signal);
       } catch (err: any) {
+        if (controller.signal.aborted) return;
         setError(err?.message || 'Failed to get response');
         setMessages((prev) => [
           ...prev,
@@ -377,11 +387,36 @@ export function AIChatPanel() {
         ]);
         setStreamingText('');
         setLoading(false);
+        abortRef.current = null;
       }
     } catch {
       setLoading(false);
+      abortRef.current = null;
     }
   }, [input, loading, conversationId]);
+
+  const handleStop = useCallback(() => {
+    try {
+      if (abortRef.current) {
+        abortRef.current.abort();
+        abortRef.current = null;
+      }
+      // Finalize any partial streaming text into messages
+      setStreamingText((prev) => {
+        if (prev.trim()) {
+          setMessages((msgs) => [
+            ...msgs,
+            { role: 'assistant', content: prev.trim() + '\n\n*(stopped)*', timestamp: new Date().toISOString() },
+          ]);
+        }
+        return '';
+      });
+      setStreamingTool(null);
+      setLoading(false);
+    } catch {
+      setLoading(false);
+    }
+  }, []);
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
@@ -606,18 +641,28 @@ export function AIChatPanel() {
                   style={{ minHeight: '44px' }}
                   disabled={loading}
                 />
-                <button
-                  onClick={handleSend}
-                  disabled={!input.trim() || loading}
-                  className={cn(
-                    'flex-shrink-0 rounded-xl p-3 transition-all',
-                    input.trim() && !loading
-                      ? 'bg-accent text-white hover:bg-accent/90'
-                      : 'bg-bg text-muted cursor-not-allowed',
-                  )}
-                >
-                  {loading ? <Loader2 size={18} className="animate-spin" /> : <Send size={18} />}
-                </button>
+                {loading ? (
+                  <button
+                    onClick={handleStop}
+                    className="flex-shrink-0 rounded-xl p-3 transition-all bg-danger/90 text-white hover:bg-danger"
+                    title="Stop generating"
+                  >
+                    <Square size={18} />
+                  </button>
+                ) : (
+                  <button
+                    onClick={handleSend}
+                    disabled={!input.trim()}
+                    className={cn(
+                      'flex-shrink-0 rounded-xl p-3 transition-all',
+                      input.trim()
+                        ? 'bg-accent text-white hover:bg-accent/90'
+                        : 'bg-bg text-muted cursor-not-allowed',
+                    )}
+                  >
+                    <Send size={18} />
+                  </button>
+                )}
               </div>
               <div className="text-center mt-2">
                 <span className="text-[10px] text-muted/50">Powered by Groq · AI responses may be approximate</span>
