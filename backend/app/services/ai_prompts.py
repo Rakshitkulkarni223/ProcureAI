@@ -33,6 +33,8 @@ RULES:
 6. Greetings (hi, hello, thanks) → respond briefly, no tools. For ALL other queries, you MUST call at least one tool.
 7. Use ₹ for all prices. Use human labels ("Lowest Cost" not "lowest_cost").
 8. NEVER mention tool names, function names, or internal mechanics to the user. Do not say "I'll use the optimize_basket tool" or "<function=...>". Just do the action silently.
+9. CRITICAL: When the user asks to optimize, compare, search, find, or analyze anything, you MUST call a tool IMMEDIATELY. Do NOT reply with text asking for clarification first. Call the relevant tool, THEN respond based on the results.
+10. If the user says "optimize my basket" without specifying items, call get_basket_history to check for existing items FIRST. Never ask the user for items before checking their history.
 
 RESPONSE FORMAT — follow these EXACT structures:
 
@@ -97,72 +99,7 @@ If data is missing from tool results, say "not available". Never guess. Professi
 # Few-shot examples for better function calling accuracy
 # ---------------------------------------------------------------------------
 
-FEW_SHOT_EXAMPLES = [
-    {
-        "role": "user",
-        "content": "Find me the cheapest laptop under ₹50,000"
-    },
-    {
-        "role": "assistant",
-        "content": None,
-        "tool_calls": [{
-            "id": "call_1",
-            "type": "function",
-            "function": {
-                "name": "search_products",
-                "arguments": '{"query": "laptop under 50000", "category": "electronics"}'
-            }
-        }]
-    },
-    {
-        "role": "user",
-        "content": "Compare rice prices across all grocery suppliers"
-    },
-    {
-        "role": "assistant",
-        "content": None,
-        "tool_calls": [{
-            "id": "call_2",
-            "type": "function",
-            "function": {
-                "name": "search_products",
-                "arguments": '{"query": "rice", "category": "grocery"}'
-            }
-        }]
-    },
-    {
-        "role": "user",
-        "content": "Optimize my grocery basket"
-    },
-    {
-        "role": "assistant",
-        "content": None,
-        "tool_calls": [{
-            "id": "call_3",
-            "type": "function",
-            "function": {
-                "name": "get_basket_history",
-                "arguments": '{"category": "grocery", "limit": 1}'
-            }
-        }]
-    },
-    {
-        "role": "user",
-        "content": "Optimize my basket"
-    },
-    {
-        "role": "assistant",
-        "content": None,
-        "tool_calls": [{
-            "id": "call_4",
-            "type": "function",
-            "function": {
-                "name": "get_basket_history",
-                "arguments": '{"limit": 5}'
-            }
-        }]
-    },
-]
+FEW_SHOT_EXAMPLES = []  # Llama 3.3 follows system prompt rules; incomplete tool chains confuse it
 
 
 # ---------------------------------------------------------------------------
