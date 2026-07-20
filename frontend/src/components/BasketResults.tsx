@@ -62,13 +62,13 @@ export function BasketResults({
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
         data-testid="basket-summary"
-        className="relative overflow-hidden rounded-md border border-accent/60 bg-accent-soft/60 shadow-card dark:shadow-card-dark"
+        className="relative overflow-hidden rounded-3xl border border-emerald-400/30 bg-[linear-gradient(120deg,#07111f_0%,#103349_58%,#075b53_130%)] shadow-[0_20px_50px_rgba(15,23,42,0.16)]"
       >
         <div className="absolute inset-x-0 top-0 h-1 overflow-hidden">
           <div className="h-full w-1/2 bg-gradient-to-r from-transparent via-accent to-transparent animate-scan" />
         </div>
 
-        <div className="grid gap-6 p-5 lg:grid-cols-[1.5fr_1fr]">
+        <div className="grid gap-5 p-5 sm:p-6 lg:grid-cols-[minmax(0,1.5fr)_minmax(260px,1fr)]">
           <div>
             <div className="flex items-center gap-2 text-accent">
               {isSplit ? <Split size={16} /> : <Layers size={16} />}
@@ -77,20 +77,20 @@ export function BasketResults({
               </span>
             </div>
             <h3
-              className="mt-2 font-display text-2xl font-bold leading-tight tracking-tight text-ink"
+              className="mt-2 font-display text-2xl font-bold leading-tight tracking-tight text-white"
               data-testid="basket-headline"
             >
               {headline}
             </h3>
-            <div className="mt-3 flex flex-wrap items-center gap-4 text-sm text-muted">
+            <div className="mt-3 flex flex-wrap items-center gap-4 text-sm text-slate-300">
               <span className="flex items-center gap-1.5">
-                <Truck size={14} /> Delivered by <span className="font-semibold text-ink">{result.estimatedDelivery}</span>
+                <Truck size={14} /> Delivered by <span className="font-semibold text-white">{result.estimatedDelivery}</span>
               </span>
               <span className="flex items-center gap-1.5">
-                <Gauge size={14} /> <span className="data-num font-semibold text-ink">{confidencePct}%</span> confidence
+                <Gauge size={14} /> <span className="data-num font-semibold text-white">{confidencePct}%</span> confidence
               </span>
               <span className="flex items-center gap-1.5">
-                <Store size={14} /> <span className="data-num font-semibold text-ink">{result.supplierCount}</span>{' '}
+                <Store size={14} /> <span className="data-num font-semibold text-white">{result.supplierCount}</span>{' '}
                 supplier{result.supplierCount > 1 ? 's' : ''}
               </span>
             </div>
@@ -103,20 +103,20 @@ export function BasketResults({
           </div>
 
           <div className="grid grid-cols-2 gap-3">
-            <div className="rounded-md border border-line bg-surface p-3.5">
+            <div className="rounded-xl border border-white/10 bg-slate-950/45 p-3.5 backdrop-blur-sm">
               <div className="label-eyebrow">Optimised total</div>
               <div className="data-num mt-1.5 text-2xl font-bold text-ink" data-testid="basket-total">
                 {formatINR(result.splitTotal)}
               </div>
             </div>
-            <div className="rounded-md border border-line bg-surface p-3.5">
+            <div className="rounded-xl border border-white/10 bg-slate-950/45 p-3.5 backdrop-blur-sm">
               <div className="label-eyebrow">Single supplier</div>
               <div className="data-num mt-1.5 text-lg font-semibold text-muted line-through">
                 {formatINR(result.baseline.total)}
               </div>
               <div className="mt-0.5 text-[11px] text-muted">{result.baseline.supplier || '—'}</div>
             </div>
-            <div className="col-span-2 rounded-md border border-success/30 bg-success-bg/50 p-3.5">
+            <div className="col-span-2 rounded-xl border border-emerald-300/35 bg-emerald-400/10 p-3.5 shadow-[0_0_22px_rgba(52,211,153,0.12)]">
               <div className="label-eyebrow text-emerald-700">You save</div>
               <div className="data-num mt-1 text-2xl font-bold text-success" data-testid="basket-savings">
                 {formatINR(result.estimatedSavings)}

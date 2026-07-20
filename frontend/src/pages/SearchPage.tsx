@@ -327,7 +327,7 @@ export function SearchPage() {
 
   return (
     <div className="space-y-7">
-      <section className="flex flex-col gap-4 overflow-hidden rounded-3xl border border-line bg-gradient-to-br from-slate-950 via-surface to-emerald-500/[0.08] p-5 shadow-card sm:flex-row sm:items-end sm:justify-between sm:p-6">
+      <section className="relative flex flex-col gap-4 overflow-hidden rounded-3xl border border-emerald-400/15 bg-[linear-gradient(120deg,#07111f_0%,#0b2940_58%,#075b53_130%)] p-5 shadow-[0_20px_50px_rgba(15,23,42,0.16)] sm:flex-row sm:items-end sm:justify-between sm:p-6">
         <div>
           <div className="label-eyebrow">Procurement</div>
           <h1 className="mt-1 font-display text-3xl font-bold tracking-tight text-ink">Search &amp; Compare</h1>
@@ -336,13 +336,13 @@ export function SearchPage() {
           </p>
         </div>
         {/* Mode toggle */}
-        <div className="inline-flex rounded-md border border-line bg-surface p-1" data-testid="mode-toggle">
+        <div className="relative inline-flex rounded-xl border border-white/10 bg-slate-950/45 p-1.5 backdrop-blur-sm" data-testid="mode-toggle">
           <button
             data-testid="mode-single"
             onClick={() => switchMode('single')}
             className={cn(
-              'inline-flex items-center gap-2 rounded-md px-3.5 py-2 text-sm font-medium transition-colors',
-              mode === 'single' ? 'bg-accent text-white' : 'text-muted hover:text-ink',
+              'inline-flex items-center gap-2 rounded-lg px-3.5 py-2 text-sm font-medium transition-all duration-200',
+              mode === 'single' ? 'bg-accent text-white shadow-[0_8px_18px_rgba(34,197,94,0.18)]' : 'text-muted hover:bg-white/5 hover:text-ink',
             )}
           >
             <Search size={15} /> Single Search
@@ -351,8 +351,8 @@ export function SearchPage() {
             data-testid="mode-basket"
             onClick={() => switchMode('basket')}
             className={cn(
-              'inline-flex items-center gap-2 rounded-md px-3.5 py-2 text-sm font-medium transition-colors',
-              mode === 'basket' ? 'bg-accent text-white' : 'text-muted hover:text-ink',
+              'inline-flex items-center gap-2 rounded-lg px-3.5 py-2 text-sm font-medium transition-all duration-200',
+              mode === 'basket' ? 'bg-accent text-white shadow-[0_8px_18px_rgba(34,197,94,0.18)]' : 'text-muted hover:bg-white/5 hover:text-ink',
             )}
           >
             <ShoppingBasket size={15} /> Basket Optimiser
@@ -361,8 +361,8 @@ export function SearchPage() {
       </section>
 
       {/* Search panel */}
-      <Card>
-        <CardBody className="space-y-6">
+      <Card className="overflow-hidden rounded-3xl border border-line bg-gradient-to-br from-[#111827] via-surface to-slate-950 shadow-[0_16px_40px_rgba(15,23,42,0.14)]">
+        <CardBody className="space-y-5 p-4 sm:p-6">
           {/* Categories */}
           <div>
             <div className="label-eyebrow mb-2.5">1 · Category</div>
@@ -377,8 +377,8 @@ export function SearchPage() {
                     onClick={() => setCat(c.slug)}
                     aria-pressed={active}
                     className={cn(
-                      'inline-flex items-center gap-2 rounded-md border px-3 py-2 text-sm font-medium transition-colors duration-200',
-                      active ? 'border-accent bg-accent text-white' : 'border-line bg-surface text-ink-soft hover:border-accent/40',
+                      'inline-flex items-center gap-2 rounded-xl border px-3.5 py-2.5 text-sm font-medium transition-all duration-200',
+                      active ? 'border-accent bg-accent text-white shadow-[0_8px_18px_rgba(34,197,94,0.18)]' : 'border-line bg-bg text-ink-soft hover:-translate-y-px hover:border-accent/40 hover:bg-surface',
                     )}
                   >
                     <Icon size={15} />
@@ -473,7 +473,7 @@ export function SearchPage() {
                       setQuery(ex);
                       runSearch(ex);
                     }}
-                    className="rounded-full border border-line bg-surface px-2.5 py-1 text-xs text-muted transition-colors hover:border-ink/40 hover:text-ink"
+                    className="rounded-full border border-line bg-bg px-2.5 py-1 text-xs text-muted transition-colors hover:border-accent/40 hover:text-ink"
                   >
                     {ex}
                   </button>
@@ -505,14 +505,14 @@ export function SearchPage() {
                       min={1}
                       value={row.quantity}
                       onChange={(e) => updateRow(i, { quantity: parseInt(e.target.value || '1', 10) })}
-                      className="h-11 w-16 rounded-md border border-line bg-surface px-2 text-center text-sm text-ink focus:border-ink focus:outline-none"
+                      className="h-12 w-16 rounded-xl border border-line bg-bg px-2 text-center text-sm text-ink focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/15"
                     />
                     <button
                       data-testid={`basket-remove-${i}`}
                       onClick={() => removeRow(i)}
                       disabled={basketRows.length <= 1}
                       aria-label={`Remove item ${i + 1}`}
-                      className="flex h-11 w-11 items-center justify-center rounded-md border border-line text-muted transition-colors hover:border-danger/40 hover:text-danger disabled:opacity-40"
+                      className="flex h-12 w-11 items-center justify-center rounded-xl border border-line bg-bg text-muted transition-colors hover:border-danger/40 hover:bg-danger/10 hover:text-danger disabled:opacity-40"
                     >
                       <Trash2 size={15} />
                     </button>
@@ -523,7 +523,7 @@ export function SearchPage() {
                 <button
                   data-testid="basket-add-item"
                   onClick={addRow}
-                  className="inline-flex items-center gap-1.5 rounded-md border border-dashed border-line px-3 py-2 text-sm font-medium text-muted transition-colors hover:border-ink/40 hover:text-ink"
+                  className="inline-flex items-center gap-1.5 rounded-xl border border-dashed border-line bg-bg px-3 py-2.5 text-sm font-medium text-muted transition-colors hover:border-accent/50 hover:text-ink"
                 >
                   <Plus size={15} /> Add item
                 </button>
@@ -535,7 +535,7 @@ export function SearchPage() {
                     min={0}
                     value={penalty}
                     onChange={(e) => setPenalty(Math.max(0, parseInt(e.target.value || '0', 10)))}
-                    className="h-9 w-20 rounded-md border border-line bg-surface px-2 text-center text-sm text-ink focus:border-ink focus:outline-none"
+                    className="h-10 w-20 rounded-xl border border-line bg-bg px-2 text-center text-sm text-ink focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/15"
                   />
                 </label>
                 <Button
@@ -576,7 +576,7 @@ export function SearchPage() {
           {/* Quick metrics for basket results */}
           {mode === 'basket' && basketResult && !basketLoading && (
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
-              <div className="rounded-lg border border-success/30 bg-success-bg/30 p-3">
+              <div className="rounded-xl border border-success/30 bg-success-bg/30 p-3 shadow-[0_0_18px_rgba(52,211,153,0.10)]">
                 <div className="flex items-center gap-1.5 text-emerald-600">
                   <TrendingDown size={13} />
                   <span className="label-eyebrow text-emerald-700">Est. Savings</span>
@@ -585,7 +585,7 @@ export function SearchPage() {
                   {formatINR(basketResult.estimatedSavings)}
                 </div>
               </div>
-              <div className="rounded-lg border border-line bg-surface p-3">
+              <div className="rounded-xl border border-line bg-bg/70 p-3 transition-all duration-200 hover:-translate-y-0.5 hover:border-white/20">
                 <div className="flex items-center gap-1.5 text-muted">
                   <Gauge size={13} />
                   <span className="label-eyebrow">AI Confidence</span>
@@ -594,7 +594,7 @@ export function SearchPage() {
                   {Math.round(basketResult.confidence * 100)}%
                 </div>
               </div>
-              <div className="rounded-lg border border-line bg-surface p-3">
+              <div className="rounded-xl border border-line bg-bg/70 p-3 transition-all duration-200 hover:-translate-y-0.5 hover:border-white/20">
                 <div className="flex items-center gap-1.5 text-muted">
                   <Shield size={13} />
                   <span className="label-eyebrow">Risk</span>
@@ -608,7 +608,7 @@ export function SearchPage() {
                   {basketResult.intelligence?.risk?.level ?? '—'}
                 </div>
               </div>
-              <div className="rounded-lg border border-line bg-surface p-3">
+              <div className="rounded-xl border border-line bg-bg/70 p-3 transition-all duration-200 hover:-translate-y-0.5 hover:border-white/20">
                 <div className="flex items-center gap-1.5 text-muted">
                   <Truck size={13} />
                   <span className="label-eyebrow">Delivery</span>
@@ -617,7 +617,7 @@ export function SearchPage() {
                   {basketResult.estimatedDelivery}
                 </div>
               </div>
-              <div className="rounded-lg border border-accent/30 bg-accent-soft/20 p-3">
+              <div className="rounded-xl border border-accent/30 bg-accent-soft/20 p-3 shadow-[0_0_18px_rgba(52,211,153,0.10)]">
                 <div className="flex items-center gap-1.5 text-accent">
                   <Sparkles size={13} />
                   <span className="label-eyebrow text-accent">Strategy</span>
