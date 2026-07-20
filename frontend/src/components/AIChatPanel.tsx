@@ -516,13 +516,13 @@ export function AIChatPanel() {
         }}
         className={cn(
           'fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 flex items-center gap-2 rounded-full border border-emerald-300/50 bg-slate-950/90',
-          'px-3.5 py-3 sm:px-5 sm:py-3.5',
-          'text-white shadow-[0_12px_32px_rgba(2,44,34,0.4)] backdrop-blur-sm transition-all duration-200',
-          'hover:scale-105 hover:border-emerald-300/80 hover:bg-emerald-400/10 hover:shadow-[0_0_28px_rgba(52,211,153,0.28)]',
+          'px-3 py-2.5 sm:px-4 sm:py-3',
+          'text-white opacity-80 shadow-[0_10px_26px_rgba(2,44,34,0.3)] backdrop-blur-sm transition-all duration-200',
+          'hover:scale-105 hover:border-emerald-300/80 hover:bg-emerald-400/10 hover:opacity-100 hover:shadow-[0_0_28px_rgba(52,211,153,0.28)]',
           open && 'hidden',
         )}
       >
-        <Sparkles size={20} />
+        <Sparkles size={18} />
         <span className="font-semibold text-sm hidden sm:inline">Ask ProcureAI</span>
       </button>
 

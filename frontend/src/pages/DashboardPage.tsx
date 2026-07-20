@@ -75,21 +75,21 @@ export function DashboardPage() {
 
   return (
     <div className="space-y-6 lg:space-y-8">
-      <section className="relative overflow-hidden rounded-3xl bg-[linear-gradient(120deg,#07111f_0%,#0b2940_58%,#075b53_130%)] px-5 py-6 text-white shadow-[0_20px_50px_rgba(15,23,42,0.16)] sm:px-7 sm:py-8">
+      <section className="relative overflow-hidden rounded-3xl bg-[linear-gradient(120deg,#07111f_0%,#0b2940_58%,#075b53_130%)] px-5 py-5 text-white shadow-[0_20px_50px_rgba(15,23,42,0.16)] sm:px-7 sm:py-6">
         <div className="absolute -right-20 -top-24 h-64 w-64 rounded-full border border-emerald-300/20" />
         <div className="absolute right-[18%] top-0 h-full w-px bg-gradient-to-b from-transparent via-white/10 to-transparent" />
-        <div className="relative flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
+        <div className="relative flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
           <div className="max-w-3xl">
             <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-emerald-200">
               <Sparkles size={12} /> Explainable AI
             </div>
-            <h1 className="mt-4 font-display text-3xl font-bold tracking-tight sm:text-4xl">
+            <h1 className="mt-3 font-display text-3xl font-bold tracking-tight sm:text-4xl">
               Find the best supplier. Every time.
             </h1>
             <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-300">
               Compare suppliers, optimize purchasing decisions, and measure business impact with explainable AI.
             </p>
-            <div className="mt-5 grid grid-cols-2 gap-x-6 gap-y-3 text-xs text-slate-300 sm:flex sm:flex-wrap sm:gap-x-8 sm:gap-y-2 sm:text-sm">
+            <div className="mt-3 grid grid-cols-2 gap-x-6 gap-y-2 text-xs text-slate-300 sm:flex sm:flex-wrap sm:gap-x-8 sm:gap-y-2 sm:text-sm">
               <span className="whitespace-nowrap"><strong className="data-num text-emerald-300">{formatINR(data?.totalSavings || 0)}</strong> saved</span>
               <span className="hidden text-white/30 sm:inline">•</span>
               <span className="whitespace-nowrap"><strong className="data-num text-white">{formatNumber(data?.procurementRequests || 0)}</strong> decisions</span>
@@ -99,11 +99,11 @@ export function DashboardPage() {
               <span className="whitespace-nowrap"><strong className="data-num text-sky-200">{impact ? `${impact.hoursSaved.toFixed(0)}h` : '—'}</strong> hours saved</span>
             </div>
           </div>
-          <div className="flex flex-col gap-3 sm:flex-row xl:flex-col xl:items-stretch">
+          <div className="flex flex-col gap-2 sm:flex-row xl:flex-col xl:items-stretch">
             <button
               onClick={() => navigate('/search')}
               data-testid="dashboard-new-search"
-              className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl bg-emerald-400 px-4 py-3 text-sm font-semibold text-slate-950 transition-all hover:-translate-y-px hover:bg-emerald-300 xl:flex-none"
+              className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl bg-emerald-400 px-4 py-2.5 text-sm font-semibold text-slate-950 transition-all hover:-translate-y-px hover:bg-emerald-300 xl:flex-none"
             >
               <Search size={16} /> Start Procurement
             </button>
@@ -114,13 +114,13 @@ export function DashboardPage() {
                 } catch {
                 }
               }}
-              className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl border border-emerald-300/45 bg-slate-950/40 px-4 py-3 text-sm font-semibold text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur-sm transition-all hover:-translate-y-px hover:border-emerald-300/80 hover:bg-emerald-400/10 hover:shadow-[0_0_24px_rgba(52,211,153,0.22)] xl:flex-none"
+              className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl border border-emerald-300/45 bg-slate-950/40 px-4 py-2.5 text-sm font-semibold text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur-sm transition-all hover:-translate-y-px hover:border-emerald-300/80 hover:bg-emerald-400/10 hover:shadow-[0_0_24px_rgba(52,211,153,0.22)] xl:flex-none"
             >
               <Sparkles size={17} className="text-emerald-300" /> Ask ProcureAI
             </button>
           </div>
         </div>
-        <div className="relative mt-6 border-t border-white/10 pt-4">
+        <div className="relative mt-4 border-t border-white/10 pt-3">
           <DateRangeFilter value={dateRange} onChange={handleDateChange} />
         </div>
       </section>
@@ -140,16 +140,16 @@ export function DashboardPage() {
               View full business impact <ArrowRight size={15} />
             </button>
           </div>
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <div className="grid grid-cols-2 gap-3 xl:grid-cols-4">
             {[
-              { icon: PiggyBank, label: 'Total Saved', value: formatINR(impact.totalSavings), color: 'text-accent' },
-              { icon: Clock, label: 'Hours Saved', value: `${impact.hoursSaved.toFixed(1)}h`, color: 'text-sky-400' },
-              { icon: Zap, label: 'Efficiency', value: `${impact.efficiencyScore}/100`, color: 'text-violet-400' },
-              { icon: Target, label: 'Procurement Searches', value: formatNumber(impact.optimizedPurchases), color: 'text-cyan-400' },
+              { icon: PiggyBank, label: 'Total Saved', value: formatINR(impact.totalSavings), color: 'text-accent', glow: 'bg-emerald-400/10 shadow-[0_0_18px_rgba(52,211,153,0.15)]' },
+              { icon: Clock, label: 'Hours Saved', value: `${impact.hoursSaved.toFixed(1)}h`, color: 'text-sky-400', glow: 'bg-sky-400/10 shadow-[0_0_18px_rgba(56,189,248,0.15)]' },
+              { icon: Zap, label: 'Efficiency', value: `${impact.efficiencyScore}/100`, color: 'text-violet-400', glow: 'bg-violet-400/10 shadow-[0_0_18px_rgba(167,139,250,0.15)]' },
+              { icon: Target, label: 'Procurement Searches', value: formatNumber(impact.optimizedPurchases), color: 'text-cyan-400', glow: 'bg-cyan-400/10 shadow-[0_0_18px_rgba(34,211,238,0.15)]' },
             ].map((m) => (
-              <div key={m.label} className="rounded-2xl border border-line bg-surface/75 p-3.5 shadow-[0_8px_24px_rgba(15,23,42,0.05)]">
-                <m.icon size={16} className={m.color} />
-                <div className={`data-num mt-5 text-xl font-bold ${m.color}`}>{m.value}</div>
+              <div key={m.label} className="group min-w-0 rounded-2xl border border-line bg-surface/75 p-3.5 shadow-[0_8px_24px_rgba(15,23,42,0.05)] transition-all duration-200 hover:-translate-y-1 hover:border-white/20 hover:shadow-[0_14px_30px_rgba(15,23,42,0.16)]">
+                <span className={`flex h-8 w-8 items-center justify-center rounded-lg ${m.glow}`}><m.icon size={16} className={m.color} /></span>
+                <div className={`data-num mt-4 truncate text-lg font-bold sm:text-xl ${m.color}`}>{m.value}</div>
                 <div className="mt-1 text-[11px] font-medium text-muted">{m.label}</div>
               </div>
             ))}
@@ -175,12 +175,23 @@ export function DashboardPage() {
             insights.slice(0, 3).map((ins, i) => {
               const Icon = insightIcon[ins.icon] || Sparkles;
               return (
-                <div key={`${ins.text}-${i}`} className="flex gap-3 rounded-xl bg-[#1a2435] p-3.5 transition-colors hover:bg-[#1f2937]">
+                <button
+                  key={`${ins.text}-${i}`}
+                  type="button"
+                  onClick={() => {
+                    try {
+                      window.dispatchEvent(new Event('open-procureai-chat'));
+                    } catch {
+                    }
+                  }}
+                  className="group flex w-full items-center gap-3 rounded-xl bg-[#1a2435] p-3.5 text-left transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#1f2937] hover:shadow-[0_10px_24px_rgba(15,23,42,0.16)]"
+                >
                   <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-accent-soft text-accent">
                     <Icon size={15} />
                   </span>
-                  <p className="text-sm leading-5 text-ink-soft">{ins.text}</p>
-                </div>
+                  <p className="flex-1 text-sm leading-5 text-ink-soft">{ins.text}</p>
+                  <ArrowUpRight size={15} className="shrink-0 text-muted opacity-0 transition-all group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:opacity-100" />
+                </button>
               );
             })
           ) : (
@@ -199,7 +210,7 @@ export function DashboardPage() {
             transition={{ delay: i * 0.06 }}
             className={i === 0 ? 'sm:col-span-2 xl:col-span-2' : ''}
           >
-            <Card className={`rounded-2xl border border-line transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#1f2937] hover:shadow-lift ${i === 0 ? 'bg-slate-950 shadow-[0_16px_32px_rgba(15,23,42,0.15)]' : i === 1 ? 'bg-gradient-to-br from-sky-500/[0.10] via-surface to-surface shadow-card' : i === 2 ? 'bg-gradient-to-br from-emerald-500/[0.10] via-surface to-surface shadow-card' : 'bg-gradient-to-br from-violet-500/[0.08] via-surface to-surface shadow-card'}`}>  
+            <Card className={`rounded-2xl border border-line transition-all duration-200 hover:-translate-y-1 hover:border-white/20 hover:bg-[#1f2937] hover:shadow-lift ${i === 0 ? 'bg-slate-950 shadow-[0_16px_32px_rgba(15,23,42,0.15)]' : i === 1 ? 'bg-gradient-to-br from-sky-500/[0.10] via-surface to-surface shadow-card' : i === 2 ? 'bg-gradient-to-br from-emerald-500/[0.10] via-surface to-surface shadow-card' : 'bg-gradient-to-br from-violet-500/[0.08] via-surface to-surface shadow-card'}`}>  
               <CardBody className="p-4 sm:p-5">
                 <div className="flex items-start justify-between gap-3">
                   <div>
