@@ -342,8 +342,8 @@ export function BusinessImpactPage() {
             <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-emerald-200">
               <BarChart3 size={12} /> Measurable Impact
             </div>
-            <h1 className="mt-3 font-display text-3xl font-bold tracking-tight text-white sm:text-4xl">Business impact, made visible.</h1>
-            <p className="mt-2 text-sm leading-6 text-slate-300">Measure how ProcureAI reduces procurement costs, saves employee time, and improves purchasing decisions.</p>
+            <h1 className="mt-3 font-display text-3xl font-bold tracking-tight text-white sm:text-4xl">Measurable Business Impact.</h1>
+            <p className="mt-2 text-sm leading-6 text-slate-300">See how AI transforms procurement into measurable savings, efficiency, and smarter decisions.</p>
           </div>
           <div className="mt-5 border-t border-white/10 pt-3">
             <DateRangeFilter value={dateRange} onChange={handleDateChange} />
