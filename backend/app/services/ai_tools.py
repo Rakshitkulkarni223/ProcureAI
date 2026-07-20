@@ -22,27 +22,27 @@ TOOL_DEFINITIONS: list[dict[str, Any]] = [
         "type": "function",
         "function": {
             "name": "search_products",
-            "description": "Search and compare products across marketplace suppliers. Returns product listings with prices, delivery times, ratings, and AI recommendation.",
+            "description": "Search products across suppliers.",
             "parameters": {
                 "type": "object",
                 "properties": {
                     "query": {
                         "type": "string",
-                        "description": "Product search query (e.g. 'laptop', 'basmati rice 5kg')"
+                        "description": "Product query"
                     },
                     "category": {
                         "type": "string",
-                        "description": "Product category slug",
+                        "description": "Category slug",
                         "enum": [c["slug"] for c in CATEGORIES]
                     },
                     "suppliers": {
                         "type": "array",
                         "items": {"type": "string"},
-                        "description": "Optional list of specific suppliers to search. If omitted, searches all suppliers in the category."
+                        "description": "Optional supplier filter"
                     },
                     "recommendation_mode": {
                         "type": "string",
-                        "description": "Recommendation strategy",
+                        "description": "Strategy",
                         "enum": ["balanced", "lowest_cost", "lowest_risk", "fastest_delivery", "highest_reliability", "best_long_term_value"]
                     }
                 },
@@ -54,22 +54,22 @@ TOOL_DEFINITIONS: list[dict[str, Any]] = [
         "type": "function",
         "function": {
             "name": "get_recommendation",
-            "description": "Get an AI-powered supplier recommendation for a specific product query. Includes scoring, reasons, and confidence level.",
+            "description": "Recommend the best supplier for a product.",
             "parameters": {
                 "type": "object",
                 "properties": {
                     "query": {
                         "type": "string",
-                        "description": "Product to get recommendation for"
+                        "description": "Product query"
                     },
                     "category": {
                         "type": "string",
-                        "description": "Product category slug",
+                        "description": "Category slug",
                         "enum": [c["slug"] for c in CATEGORIES]
                     },
                     "mode": {
                         "type": "string",
-                        "description": "Recommendation mode",
+                        "description": "Strategy",
                         "enum": ["balanced", "lowest_cost", "lowest_risk", "fastest_delivery", "highest_reliability", "best_long_term_value"]
                     }
                 },
@@ -81,30 +81,30 @@ TOOL_DEFINITIONS: list[dict[str, Any]] = [
         "type": "function",
         "function": {
             "name": "optimize_basket",
-            "description": "Optimize a multi-item procurement basket. Finds the best combination of suppliers to minimize cost while considering delivery and reliability.",
+            "description": "Optimize a multi-item basket across suppliers.",
             "parameters": {
                 "type": "object",
                 "properties": {
                     "category": {
                         "type": "string",
-                        "description": "Product category slug",
+                        "description": "Category slug",
                         "enum": [c["slug"] for c in CATEGORIES]
                     },
                     "items": {
                         "type": "array",
-                        "description": "List of items to procure",
+                        "description": "Items to procure",
                         "items": {
                             "type": "object",
                             "properties": {
-                                "query": {"type": "string", "description": "Product name"},
-                                "quantity": {"type": "integer", "description": "Quantity needed", "default": 1}
+                                "query": {"type": "string", "description": "Product"},
+                                "quantity": {"type": "integer", "description": "Quantity", "default": 1}
                             },
                             "required": ["query"]
                         }
                     },
                     "mode": {
                         "type": "string",
-                        "description": "Optimization strategy",
+                        "description": "Strategy",
                         "enum": ["balanced", "lowest_cost", "fastest_delivery"]
                     }
                 },
@@ -116,13 +116,13 @@ TOOL_DEFINITIONS: list[dict[str, Any]] = [
         "type": "function",
         "function": {
             "name": "get_analytics",
-            "description": "Get procurement analytics: dashboard summary, spend breakdown, savings trends, or AI insights.",
+            "description": "Get procurement analytics.",
             "parameters": {
                 "type": "object",
                 "properties": {
                     "metric": {
                         "type": "string",
-                        "description": "Which analytics to retrieve",
+                        "description": "Metric to retrieve",
                         "enum": ["summary", "spend", "savings", "insights"]
                     }
                 },
@@ -134,7 +134,7 @@ TOOL_DEFINITIONS: list[dict[str, Any]] = [
         "type": "function",
         "function": {
             "name": "get_business_impact",
-            "description": "Get business impact metrics: total savings, hours saved, AI accuracy, efficiency score, and annual projections.",
+            "description": "Get business impact metrics.",
             "parameters": {
                 "type": "object",
                 "properties": {},
@@ -146,7 +146,7 @@ TOOL_DEFINITIONS: list[dict[str, Any]] = [
         "type": "function",
         "function": {
             "name": "list_suppliers",
-            "description": "List the user's private Supplier Hub suppliers with details including city, state, reliability score, delivery days, preferred categories, and contact info. ALWAYS call this tool when the user asks about their suppliers, best/good suppliers, nearby suppliers, supplier location, or supplier quality.",
+            "description": "List the user's suppliers (name, city, reliability, delivery, categories). Use for supplier questions.",
             "parameters": {
                 "type": "object",
                 "properties": {},
@@ -158,18 +158,18 @@ TOOL_DEFINITIONS: list[dict[str, Any]] = [
         "type": "function",
         "function": {
             "name": "get_basket_history",
-            "description": "Get the user's recent basket optimization history. Use this to find out what items were in previous baskets. ALWAYS call this before answering questions about the user's basket contents.",
+            "description": "Get recent basket history. Call before answering basket-content questions.",
             "parameters": {
                 "type": "object",
                 "properties": {
                     "limit": {
                         "type": "integer",
-                        "description": "Number of recent basket entries to return (default 5)",
+                        "description": "Entries to return",
                         "default": 5
                     },
                     "category": {
                         "type": "string",
-                        "description": "Filter by category slug (optional)"
+                        "description": "Category slug filter"
                     }
                 },
                 "required": []
@@ -180,14 +180,14 @@ TOOL_DEFINITIONS: list[dict[str, Any]] = [
         "type": "function",
         "function": {
             "name": "get_history",
-            "description": "Get the user's recent procurement search history.",
+            "description": "Get recent search history.",
             "parameters": {
                 "type": "object",
                 "properties": {
                     "limit": {
                         "type": "integer",
-                        "description": "Number of recent entries to return (default 10)",
-                        "default": 10
+                        "description": "Entries to return",
+                        "default": 5
                     }
                 },
                 "required": []
@@ -257,38 +257,34 @@ async def _tool_search_products(args: dict, user_id: str) -> dict:
         result = await SearchService.search(user_id, req)
 
         # Summarise for the LLM (keep token count manageable)
-        products = result.get("results", [])[:8]  # Top 8
+        products = result.get("results", [])[:5]  # Top 5
         summary_products = []
         for p in products:
             summary_products.append({
                 "supplier": p.get("provider", ""),
-                "title": p.get("title", "")[:80],
+                "title": p.get("title", "")[:60],
                 "price": p.get("price", 0),
                 "delivery_days": p.get("deliveryDays", 0),
                 "rating": p.get("rating", 0),
-                "discount": p.get("discount", 0),
                 "availability": p.get("availability", False),
             })
 
+        # Compact headline summary so the model can answer without scanning rows
         rec = result.get("recommendation")
-        recommendation_summary = None
-        if rec:
-            recommendation_summary = {
-                "supplier": rec.get("supplier", ""),
-                "price": rec.get("product", {}).get("price", 0),
-                "savings": rec.get("estimatedSavings", 0),
-                "confidence": rec.get("confidence", 0),
-                "reasons": rec.get("reasons", [])[:3],
-                "mode": rec.get("recommendationMode", mode),
-            }
+        best_supplier = rec.get("supplier", "") if rec else (summary_products[0]["supplier"] if summary_products else "")
+        lowest_price = min((p["price"] for p in summary_products), default=0)
+        highest_rating = max((p["rating"] for p in summary_products), default=0)
 
         return {
-            "query": query,
-            "category": category,
-            "total_results": result.get("count", 0),
+            "summary": {
+                "total_results": result.get("count", 0),
+                "best_supplier": best_supplier,
+                "lowest_price": lowest_price,
+                "highest_rating": highest_rating,
+                "savings": rec.get("estimatedSavings", 0) if rec else 0,
+            },
             "products": summary_products,
-            "recommendation": recommendation_summary,
-            "_note": "ONLY use supplier names and prices from this result. Do NOT invent or modify any values.",
+            "_note": "Use only these values. Do not invent or modify them.",
         }
     except Exception as e:
         return {"error": f"Search failed: {str(e)}"}
@@ -325,11 +321,11 @@ async def _tool_get_recommendation(args: dict, user_id: str) -> dict:
             "savings": rec.get("estimatedSavings", 0),
             "confidence": f"{round(rec.get('confidence', 0) * 100)}%",
             "mode": rec.get("recommendationMode", mode),
-            "reasons": rec.get("reasons", [])[:5],
+            "reasons": rec.get("reasons", [])[:3],
             "ai_explanation": rec.get("aiExplanation", ""),
             "scoreboard": [
                 {"supplier": s.get("supplier"), "price": s.get("price"), "score": s.get("score")}
-                for s in rec.get("scoreboard", [])[:5]
+                for s in rec.get("scoreboard", [])[:3]
             ],
         }
     except Exception as e:
@@ -426,32 +422,86 @@ async def _tool_optimize_basket(args: dict, user_id: str) -> dict:
         return {"error": f"Basket optimization failed: {str(e)}"}
 
 
+def _filter_analytics(metric: str, data: dict) -> dict:
+    """Trim heavy analytics payloads to the fields the model needs.
+
+    DashboardService returns full arrays (recent searches, per-month/category/
+    supplier breakdowns) meant for charts. For the AI we keep only compact,
+    bounded summaries to reduce tokens, cost, and hallucination surface.
+    """
+    try:
+        if not isinstance(data, dict):
+            return data
+
+        if metric == "summary":
+            return {
+                "totalSearches": data.get("totalSearches", 0),
+                "procurementRequests": data.get("procurementRequests", 0),
+                "estimatedMonthlySavings": data.get("estimatedMonthlySavings", 0),
+                "totalSavings": data.get("totalSavings", 0),
+                "projectedAnnualSavings": data.get("projectedAnnualSavings", 0),
+                "preferredSupplier": data.get("preferredSupplier"),
+                "topCategory": data.get("topCategory"),
+                "activeCategories": data.get("activeCategories", 0),
+            }
+
+        if metric == "spend":
+            return {
+                "monthlySpend": data.get("monthlySpend", [])[-12:],
+                "categorySpend": data.get("categorySpend", [])[:6],
+                "topSuppliers": data.get("supplierUsage", [])[:8],
+            }
+
+        if metric == "savings":
+            return {
+                "savingsTrend": data.get("savingsTrend", [])[-12:],
+                "totalSavings": data.get("totalSavings", 0),
+            }
+
+        if metric == "insights":
+            return {
+                "insights": [i.get("text", "") for i in data.get("insights", [])[:6]],
+            }
+
+        return data
+    except Exception:
+        return data
+
+
 async def _tool_get_analytics(args: dict, user_id: str) -> dict:
-    """Get analytics data from DashboardService."""
+    """Get analytics data from DashboardService (filtered for the AI)."""
     try:
         from app.services.analytics import DashboardService
 
         metric = args.get("metric", "summary")
 
         if metric == "summary":
-            return await DashboardService.summary(user_id)
+            raw = await DashboardService.summary(user_id)
         elif metric == "spend":
-            return await DashboardService.spend(user_id)
+            raw = await DashboardService.spend(user_id)
         elif metric == "savings":
-            return await DashboardService.savings(user_id)
+            raw = await DashboardService.savings(user_id)
         elif metric == "insights":
-            return await DashboardService.insights(user_id)
+            raw = await DashboardService.insights(user_id)
         else:
             return {"error": f"Unknown metric: {metric}"}
+
+        return _filter_analytics(metric, raw)
     except Exception as e:
         return {"error": f"Analytics failed: {str(e)}"}
 
 
 async def _tool_get_business_impact(user_id: str) -> dict:
-    """Get business impact metrics."""
+    """Get business impact metrics (core KPIs only)."""
     try:
         from app.services.analytics import DashboardService
-        return await DashboardService.business_impact(user_id)
+        data = await DashboardService.business_impact(user_id)
+        return {
+            "total_savings": data.get("totalSavings", 0),
+            "hours_saved": data.get("hoursSaved", 0),
+            "manual_work_reduced": data.get("manualEliminatedPct", 0),
+            "annual_projection": data.get("annualProjection", 0),
+        }
     except Exception as e:
         return {"error": f"Business impact failed: {str(e)}"}
 
@@ -466,33 +516,23 @@ async def _tool_list_suppliers(user_id: str) -> dict:
             return {"count": 0, "suppliers": [], "message": "No suppliers in your Supplier Hub yet. Add suppliers from the Supplier Hub page."}
 
         supplier_list = []
-        for s in suppliers[:20]:
+        for s in suppliers[:10]:
             entry: dict[str, Any] = {
                 "name": s.get("name", ""),
-                "type": s.get("supplierType", ""),
                 "city": s.get("city", ""),
-                "state": s.get("state", ""),
-                "country": s.get("country", ""),
-                "active": s.get("active", True),
+                "reliability": s.get("reliabilityScore"),
                 "delivery_days": s.get("deliveryDays"),
-                "reliability_score": s.get("reliabilityScore"),
-                "preferred_categories": s.get("preferredCategories", []),
-                "contact_person": s.get("contactPerson", ""),
-                "phone": s.get("phone", ""),
-                "email": s.get("email", ""),
-                "delivery_charges": s.get("deliveryCharges"),
-                "credit_period": s.get("creditPeriod"),
-                "payment_terms": s.get("paymentTerms", ""),
+                "categories": s.get("preferredCategories", []),
             }
             supplier_list.append(entry)
 
         # Sort by reliability score (highest first) for "best supplier" queries
-        supplier_list.sort(key=lambda x: x.get("reliability_score") or 0, reverse=True)
+        supplier_list.sort(key=lambda x: x.get("reliability") or 0, reverse=True)
 
         return {
             "count": len(supplier_list),
             "suppliers": supplier_list,
-            "_note": "Use reliability_score (0-10) to rank supplier quality. Use city/state to determine proximity. ONLY report data present here.",
+            "_note": "Rank by reliability (0-10). Use city for proximity. For contact/payment details, the user must ask.",
         }
     except Exception as e:
         return {"error": f"Supplier Hub failed: {str(e)}"}
@@ -529,7 +569,7 @@ async def _tool_get_basket_history(args: dict, user_id: str) -> dict:
                         "supplier": i.get("supplier", ""),
                         "price": i.get("price", 0),
                     }
-                    for i in d.get("items", [])[:15]
+                    for i in d.get("items", [])[:10]
                 ],
                 "total_cost": d.get("splitTotal", 0),
                 "savings": d.get("estimatedSavings", 0),
@@ -544,10 +584,10 @@ async def _tool_get_basket_history(args: dict, user_id: str) -> dict:
 
 
 async def _tool_get_history(args: dict, user_id: str) -> dict:
-    """Get recent search history."""
+    """Get recent search history (compact, capped at 5)."""
     try:
         from app.services.analytics import HistoryService
-        limit = min(args.get("limit", 10), 20)
+        limit = min(args.get("limit", 5), 10)
         data = await HistoryService.paginated(user_id, page=1, limit=limit)
         return {
             "total": data.get("total", 0),
@@ -556,11 +596,8 @@ async def _tool_get_history(args: dict, user_id: str) -> dict:
                     "query": i.get("query", ""),
                     "category": i.get("category", ""),
                     "supplier": i.get("recommendedSupplier", ""),
-                    "price": i.get("bestPrice", 0),
-                    "savings": i.get("estimatedSavings", 0),
-                    "date": i.get("createdAt", ""),
                 }
-                for i in data.get("items", [])[:limit]
+                for i in data.get("items", [])[:5]
             ]
         }
     except Exception as e:

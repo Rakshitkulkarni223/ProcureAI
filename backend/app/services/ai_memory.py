@@ -213,7 +213,7 @@ class ConversationMemory:
         """Get conversation messages formatted for the LLM API.
 
         Returns messages in OpenAI chat format (role, content, tool_calls, etc.).
-        Only includes the last 20 messages to fit context window.
+        Only includes the last 12 messages to fit context window and cut tokens.
         """
         try:
             db = get_db()
@@ -224,7 +224,7 @@ class ConversationMemory:
             if not doc:
                 return []
 
-            messages = doc.get("messages", [])[-20:]
+            messages = doc.get("messages", [])[-12:]
             llm_messages = []
             for m in messages:
                 msg: dict[str, Any] = {"role": m["role"]}

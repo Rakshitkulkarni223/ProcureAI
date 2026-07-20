@@ -49,7 +49,7 @@ def _get_client() -> AsyncOpenAI:
 # ---------------------------------------------------------------------------
 
 MAX_TOOL_ROUNDS = 3          # Max tool-call loops per user message
-MAX_RESPONSE_TOKENS = 4096   # Max tokens for final response
+MAX_RESPONSE_TOKENS = 2048   # Max tokens for final response
 TOOL_RESULT_MAX_CHARS = 3000 # Truncate tool results to keep within context
 
 # Regex to strip <think>...</think> chain-of-thought blocks (safety net)
@@ -136,6 +136,7 @@ async def chat(
             tools=TOOL_DEFINITIONS,
             tool_choice="auto",
             temperature=env.AI_TEMPERATURE,
+            top_p=env.AI_TOP_P,
             max_tokens=MAX_RESPONSE_TOKENS,
         )
 
@@ -346,6 +347,7 @@ async def chat_stream(
             tools=TOOL_DEFINITIONS,
             tool_choice="auto",
             temperature=env.AI_TEMPERATURE,
+            top_p=env.AI_TOP_P,
             max_tokens=MAX_RESPONSE_TOKENS,
         )
 

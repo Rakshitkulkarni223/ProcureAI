@@ -43,7 +43,8 @@ class Env:
     GROQ_API_KEY: str = os.getenv("GROQ_API_KEY", "")
     AI_PRIMARY_MODEL: str = os.getenv("AI_PRIMARY_MODEL", "llama-3.3-70b-versatile")
     AI_FALLBACK_MODEL: str = os.getenv("AI_FALLBACK_MODEL", "llama-3.1-8b-instant")
-    AI_TEMPERATURE: float = float(os.getenv("AI_TEMPERATURE", "0.3"))
+    AI_TEMPERATURE: float = float(os.getenv("AI_TEMPERATURE", "0.2"))
+    AI_TOP_P: float = float(os.getenv("AI_TOP_P", "0.9"))
     AI_MAX_TOKENS: int = int(os.getenv("AI_MAX_TOKENS", "1024"))
 
 
