@@ -1,12 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { Check, User as UserIcon, MapPin, Package } from 'lucide-react';
-import type { Category, Preferences } from '../types';
+import type { Category, Preferences, SortOption } from '../types';
 import { api, apiError } from '../lib/api';
 import { Card, CardBody, CardHeader } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { Badge } from '../components/ui/Badge';
 import { useAuth } from '../context/AuthContext';
 import { useLocation } from '../context/LocationContext';
+
+const SORTS: { value: SortOption; label: string }[] = [
+  { value: 'lowest_price', label: 'Lowest Price' },
+  { value: 'lowest_total_cost', label: 'Lowest Total Cost' },
+  { value: 'highest_rating', label: 'Highest Rating' },
+  { value: 'fastest_delivery', label: 'Fastest Delivery' },
+  { value: 'highest_discount', label: 'Highest Discount' },
+];
 
 const BUSINESS_TYPES = [
   { value: 'startup', label: 'Startup' },
@@ -28,6 +36,7 @@ export function SettingsPage() {
   const hasUnsavedChanges = Boolean(
     prefs && savedPrefs && (
       prefs.defaultCategory !== savedPrefs.defaultCategory ||
+      prefs.sortPreference !== savedPrefs.sortPreference ||
       prefs.businessType !== savedPrefs.businessType ||
       prefs.city !== savedPrefs.city
     )
@@ -74,6 +83,7 @@ export function SettingsPage() {
     try {
       const updated = await api.updatePreferences({
         defaultCategory: prefs.defaultCategory,
+        sortPreference: prefs.sortPreference,
         businessType: prefs.businessType,
         city: prefs.city,
       });
@@ -96,26 +106,27 @@ export function SettingsPage() {
         <p className="mt-1 max-w-2xl text-sm leading-6 text-muted">Manage your account, procurement preferences, AI behavior, and workspace configuration.</p>
       </div>
 
-      <Card className="border border-line bg-surface shadow-card">
-        <CardHeader className="flex items-center gap-2 border-line">
-          <UserIcon size={16} className="text-sky-400" />
-          <h2 className="font-display text-base font-semibold tracking-tight text-ink">Account</h2>
-        </CardHeader>
-        <CardBody className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:p-6">
-          <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-accent-soft text-xl font-display font-bold text-accent">
-            {user?.name?.[0]?.toUpperCase() || 'U'}
-          </span>
-          <div className="min-w-0">
-            <div className="flex flex-wrap items-center gap-2">
-              <h3 className="font-display text-lg font-semibold text-ink">{user?.name || 'User'}</h3>
-              <Badge tone="accent">{user?.role || 'User'}</Badge>
+      <div className="grid gap-5 xl:grid-cols-[minmax(250px,0.75fr)_minmax(0,1.75fr)]">
+        <Card className="border border-line bg-surface shadow-card">
+          <CardHeader className="flex items-center gap-2 border-line">
+            <UserIcon size={16} className="text-sky-400" />
+            <h2 className="font-display text-base font-semibold tracking-tight text-ink">Account</h2>
+          </CardHeader>
+          <CardBody className="space-y-4 p-5 sm:p-6">
+            <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-accent-soft text-xl font-display font-bold text-accent">
+              {user?.name?.[0]?.toUpperCase() || 'U'}
+            </span>
+            <div>
+              <div className="flex flex-wrap items-center gap-2">
+                <h3 className="font-display text-lg font-semibold text-ink">{user?.name || 'User'}</h3>
+                <Badge tone="accent">{user?.role || 'User'}</Badge>
+              </div>
+              <p className="mt-1 text-sm text-muted">{user?.email || '—'}</p>
             </div>
-            <p className="mt-1 text-sm text-muted">{user?.email || '—'}</p>
-          </div>
-        </CardBody>
-      </Card>
+          </CardBody>
+        </Card>
 
-      <Card className="border border-line bg-surface shadow-card">
+        <Card className="border border-line bg-surface shadow-card">
           <CardHeader className="flex items-center gap-2 border-line">
             <Package size={16} className="text-accent" />
             <div>
@@ -132,25 +143,31 @@ export function SettingsPage() {
               options={categories.map((category) => ({ value: category.slug, label: category.name }))}
             />
             <SelectField
+              label="Default sorting"
+              testId="pref-sort"
+              value={prefs?.sortPreference || 'lowest_total_cost'}
+              onChange={(value) => update({ sortPreference: value as SortOption })}
+              options={SORTS.map((sort) => ({ value: sort.value, label: sort.label }))}
+            />
+            <SelectField
               label="Business type"
               value={prefs?.businessType || 'general'}
               onChange={(value) => update({ businessType: value })}
               options={BUSINESS_TYPES}
             />
             {availableCities.length > 0 && (
-              <div className="sm:col-span-2">
-                <SelectField
-                  label="Delivery location"
-                  testId="pref-city"
-                  value={prefs?.city || contextCity || 'Hyderabad'}
-                  onChange={(value) => update({ city: value })}
-                  options={availableCities.map((city) => ({ value: city, label: city }))}
-                  description="Used for distance-based delivery estimates."
-                />
-              </div>
+              <SelectField
+                label="Delivery location"
+                testId="pref-city"
+                value={prefs?.city || contextCity || 'Hyderabad'}
+                onChange={(value) => update({ city: value })}
+                options={availableCities.map((city) => ({ value: city, label: city }))}
+                description="Used for distance-based delivery estimates."
+              />
             )}
           </CardBody>
-      </Card>
+        </Card>
+      </div>
 
       {error && <div className="rounded-xl border border-danger/30 bg-danger/10 px-4 py-3 text-sm text-danger">{error}</div>}
 
@@ -193,6 +210,7 @@ function SelectField({
           value={value}
           onChange={(event) => onChange(event.target.value)}
           className="h-11 w-full appearance-none rounded-md border border-line bg-bg px-3.5 text-sm text-ink outline-none transition-colors focus:border-accent focus:ring-2 focus:ring-accent/15"
+          style={{ colorScheme: 'dark' }}
         >
           {options.map((option) => (
             <option key={option.value} value={option.value}>{option.label}</option>
