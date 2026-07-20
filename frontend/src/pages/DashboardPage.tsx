@@ -11,7 +11,6 @@ import {
   ArrowUpRight,
   ArrowRight,
   TrendingUp,
-  Award,
   Sparkles,
   Clock,
   Gauge,
@@ -19,23 +18,17 @@ import {
   Target,
 } from 'lucide-react';
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
-import type { DashboardSummary, Insight, BusinessImpact } from '../types';
+import type { DashboardSummary, BusinessImpact } from '../types';
 import { api } from '../lib/api';
 import { Card, CardBody, CardHeader } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
 import { SupplierLogo } from '../components/SupplierLogo';
-import { useAuth } from '../context/AuthContext';
 import { formatINR, formatNumber, relativeTime } from '../lib/format';
-import { getIcon } from '../lib/icons';
 import { DateRangeFilter, DateRange } from '../components/DateRangeFilter';
 
-const insightIcon: Record<string, any> = { TrendingUp, Award, Layers, PiggyBank, Sparkles };
-
 export function DashboardPage() {
-  const { user } = useAuth();
   const navigate = useNavigate();
   const [data, setData] = useState<DashboardSummary | null>(null);
-  const [insights, setInsights] = useState<Insight[]>([]);
   const [trend, setTrend] = useState<{ month: string; amount: number }[]>([]);
   const [impact, setImpact] = useState<BusinessImpact | null>(null);
   const [dateRange, setDateRange] = useState<DateRange>({});
@@ -44,7 +37,6 @@ export function DashboardPage() {
     try {
       const { from, to } = range;
       api.dashboard(from, to).then(setData).catch(() => {});
-      api.insights(from, to).then((r) => setInsights(r.insights)).catch(() => {});
       api.savings(from, to).then((r) => setTrend(r.savingsTrend)).catch(() => {});
       api.businessImpact(from, to).then(setImpact).catch(() => {});
     } catch {
@@ -157,46 +149,29 @@ export function DashboardPage() {
         </section>
       )}
 
-      <section className="rounded-2xl border border-line bg-[#111827] p-4 shadow-card sm:p-5" data-testid="dashboard-ai-recommendations">
-        <div className="flex flex-col gap-3 border-b border-line pb-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-2">
-            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent-soft text-accent">
-              <Sparkles size={16} />
+      <section className="rounded-2xl border border-line bg-[#111827] p-4 shadow-card sm:p-5" data-testid="dashboard-ai-advisor">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-start gap-3">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-accent-soft text-accent">
+              <Sparkles size={18} />
             </span>
             <div>
-              <h2 className="font-display text-base font-semibold text-ink">Today's AI Recommendations</h2>
-              <p className="text-xs text-muted">Actionable procurement intelligence from your latest activity</p>
+              <h2 className="font-display text-base font-semibold text-ink">ProcureAI Advisor</h2>
+              <p className="mt-1 max-w-2xl text-sm leading-6 text-muted">Ask a procurement question, evaluate a supplier trade-off, or get help planning your next purchase.</p>
             </div>
           </div>
-          <span className="w-fit rounded-full bg-accent-soft px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-accent">AI active</span>
-        </div>
-        <div className="mt-4 grid gap-3 lg:grid-cols-3">
-          {insights.length ? (
-            insights.slice(0, 3).map((ins, i) => {
-              const Icon = insightIcon[ins.icon] || Sparkles;
-              return (
-                <button
-                  key={`${ins.text}-${i}`}
-                  type="button"
-                  onClick={() => {
-                    try {
-                      window.dispatchEvent(new Event('open-procureai-chat'));
-                    } catch {
-                    }
-                  }}
-                  className="group flex w-full items-center gap-3 rounded-xl bg-[#1a2435] p-3.5 text-left transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#1f2937] hover:shadow-[0_10px_24px_rgba(15,23,42,0.16)]"
-                >
-                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-accent-soft text-accent">
-                    <Icon size={15} />
-                  </span>
-                  <p className="flex-1 text-sm leading-5 text-ink-soft">{ins.text}</p>
-                  <ArrowUpRight size={15} className="shrink-0 text-muted opacity-0 transition-all group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:opacity-100" />
-                </button>
-              );
-            })
-          ) : (
-            <div className="lg:col-span-3 py-3 text-sm text-muted">AI recommendations will appear as procurement activity is analyzed.</div>
-          )}
+          <button
+            type="button"
+            onClick={() => {
+              try {
+                window.dispatchEvent(new Event('open-procureai-chat'));
+              } catch {
+              }
+            }}
+            className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-accent px-4 py-2.5 text-sm font-semibold text-slate-950 transition-all hover:-translate-y-px hover:bg-accent-hover"
+          >
+            <Sparkles size={16} /> Ask ProcureAI
+          </button>
         </div>
       </section>
 
@@ -352,31 +327,6 @@ export function DashboardPage() {
           </Card>
         </div>
 
-        {/* Right: AI insights + Business Impact */}
-        <div className="space-y-5">
-          {/* Business Impact Summary */}
-          <Card className="rounded-2xl border-0 bg-accent-soft/45 shadow-card">
-            <CardHeader className="flex items-center gap-2 border-accent/20 px-4 sm:px-5">
-              <Sparkles size={15} className="text-accent" />
-              <h3 className="font-display text-base font-semibold tracking-tight text-accent">ProcureAI Advisor</h3>
-            </CardHeader>
-            <CardBody className="p-4 sm:p-5" data-testid="ai-insights">
-              <p className="text-sm leading-6 text-ink-soft">Ask a procurement question, explore a supplier trade-off, or get help planning your next purchase.</p>
-              <button
-                type="button"
-                onClick={() => {
-                  try {
-                    window.dispatchEvent(new Event('open-procureai-chat'));
-                  } catch {
-                  }
-                }}
-                className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-accent px-4 py-2.5 text-sm font-semibold text-slate-950 transition-all hover:-translate-y-px hover:bg-accent-hover"
-              >
-                <Sparkles size={16} /> Ask ProcureAI
-              </button>
-            </CardBody>
-          </Card>
-        </div>
       </div>
     </div>
   );
