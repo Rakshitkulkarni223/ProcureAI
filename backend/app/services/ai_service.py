@@ -36,7 +36,7 @@ def _get_client() -> AsyncOpenAI:
             _client = AsyncOpenAI(
                 api_key=env.GROQ_API_KEY,
                 base_url="https://api.groq.com/openai/v1",
-                timeout=30.0,
+                timeout=90.0,
             )
         return _client
     except Exception:
@@ -344,8 +344,8 @@ async def chat_stream(
             max_tokens=MAX_RESPONSE_TOKENS,
         )
 
+        # ---------- Tool-calling loop (non-streaming to detect tool calls) ----------
         for _round in range(MAX_TOOL_ROUNDS):
-            # Non-streaming call for tool-calling rounds
             try:
                 response = await client.chat.completions.create(
                     model=model, messages=messages, **_llm_kwargs,
@@ -365,41 +365,9 @@ async def chat_stream(
             choice = response.choices[0]
             assistant_message = choice.message
 
-            # If no tool calls, stream the final response
+            # No tool calls → we already have the answer from this call
             if not assistant_message.tool_calls:
-                # We already have the full text from this non-streaming call
-                final_text = _clean_response(assistant_message.content or "")
-
-                if not final_text and model == env.AI_PRIMARY_MODEL and env.AI_FALLBACK_MODEL:
-                    model = env.AI_FALLBACK_MODEL
-                    try:
-                        retry = await client.chat.completions.create(
-                            model=model, messages=messages, **_llm_kwargs,
-                        )
-                        final_text = _clean_response(retry.choices[0].message.content or "")
-                    except Exception:
-                        pass
-
-                if not final_text:
-                    final_text = "I couldn't generate a response. Please try again."
-
-                # Stream tokens in chunks for smooth UI
-                chunk_size = 12
-                for i in range(0, len(final_text), chunk_size):
-                    yield _sse_event("token", final_text[i:i + chunk_size])
-
-                # Persist assistant response
-                await ConversationMemory.add_message(
-                    user_id, conversation_id, "assistant", content=final_text
-                )
-
-                latency_ms = int((time.time() - start) * 1000)
-                yield _sse_event("done", {
-                    "tools_used": tools_used,
-                    "model": model,
-                    "latency_ms": latency_ms,
-                })
-                return
+                break
 
             # --- Execute tool calls ---
             tool_calls_serialized = []
@@ -458,12 +426,75 @@ async def chat_stream(
 
                 yield _sse_event("tool_done", tool_name)
 
-            yield _sse_event("thinking")
+        # ---------- Final response: true streaming from Groq ----------
+        # If the last non-streaming call already had text (no tools), use it.
+        # Otherwise, make a new streaming call to generate the answer after tools.
+        have_text = (
+            not assistant_message.tool_calls
+            and _clean_response(assistant_message.content or "")
+        )
 
-        # Exhausted all rounds
-        fallback = "I've gathered the data but ran into complexity. Could you simplify your question?"
-        await ConversationMemory.add_message(user_id, conversation_id, "assistant", content=fallback)
-        yield _sse_event("token", fallback)
+        if have_text:
+            # Already have the answer from the loop — just yield it
+            final_text = _clean_response(assistant_message.content or "")
+            for i in range(0, len(final_text), 8):
+                yield _sse_event("token", final_text[i:i + 8])
+        else:
+            # Stream the final answer token-by-token
+            yield _sse_event("thinking")
+            final_text = ""
+            in_think = False
+            _stream_kwargs = dict(
+                temperature=env.AI_TEMPERATURE,
+                max_tokens=MAX_RESPONSE_TOKENS,
+                stream=True,
+            )
+            try:
+                stream = await client.chat.completions.create(
+                    model=model, messages=messages, **_stream_kwargs,
+                )
+                async for chunk in stream:
+                    delta = chunk.choices[0].delta if chunk.choices else None
+                    if not delta or not delta.content:
+                        continue
+                    tok = delta.content
+                    # Strip <think> blocks in real-time
+                    if "<think>" in tok:
+                        in_think = True
+                        tok = tok.split("<think>")[0]
+                    if "</think>" in tok:
+                        in_think = False
+                        tok = tok.split("</think>")[-1]
+                    if in_think:
+                        continue
+                    if tok:
+                        final_text += tok
+                        yield _sse_event("token", tok)
+            except Exception as stream_err:
+                # If streaming fails, try non-streaming fallback
+                if not final_text:
+                    try:
+                        fb = await client.chat.completions.create(
+                            model=env.AI_FALLBACK_MODEL or model,
+                            messages=messages,
+                            temperature=env.AI_TEMPERATURE,
+                            max_tokens=MAX_RESPONSE_TOKENS,
+                        )
+                        final_text = _clean_response(fb.choices[0].message.content or "")
+                        yield _sse_event("token", final_text)
+                    except Exception:
+                        pass
+
+            final_text = final_text.strip()
+
+        if not final_text:
+            final_text = "I couldn't generate a response. Please try again."
+            yield _sse_event("token", final_text)
+
+        # Persist and finish
+        await ConversationMemory.add_message(
+            user_id, conversation_id, "assistant", content=final_text
+        )
         latency_ms = int((time.time() - start) * 1000)
         yield _sse_event("done", {
             "tools_used": tools_used,
