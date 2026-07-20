@@ -47,7 +47,7 @@ def _get_client() -> AsyncOpenAI:
 # Constants
 # ---------------------------------------------------------------------------
 
-MAX_TOOL_ROUNDS = 5          # Max tool-call loops per user message
+MAX_TOOL_ROUNDS = 3          # Max tool-call loops per user message
 MAX_RESPONSE_TOKENS = 4096   # Max tokens for final response
 TOOL_RESULT_MAX_CHARS = 3000 # Truncate tool results to keep within context
 

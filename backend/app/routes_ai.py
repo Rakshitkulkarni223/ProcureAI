@@ -8,6 +8,8 @@ Provides endpoints for:
 """
 from __future__ import annotations
 
+import asyncio
+
 from fastapi import APIRouter, Depends, HTTPException, Query
 from fastapi.responses import StreamingResponse
 
@@ -16,6 +18,46 @@ from app.schemas_ai import ChatRequest, UpdateTitleRequest
 from app.services.ai_service import chat as ai_chat, chat_stream as ai_chat_stream
 from app.services.ai_memory import ConversationMemory
 from app.config import env
+
+
+async def _with_keepalive(agen, interval: float = 15.0):
+    """Wrap an async generator, injecting SSE keepalive comments during silence.
+
+    When the inner generator goes silent for `interval` seconds (e.g. during a
+    blocking LLM call), this yields an SSE comment (`: keepalive\\n\\n`) to
+    prevent Cloudflare / browser from dropping the idle connection.
+    """
+    queue: asyncio.Queue = asyncio.Queue()
+    sentinel = object()
+
+    async def _producer():
+        try:
+            async for item in agen:
+                await queue.put(item)
+        except Exception as exc:
+            await queue.put(exc)
+        finally:
+            await queue.put(sentinel)
+
+    task = asyncio.create_task(_producer())
+    try:
+        while True:
+            try:
+                item = await asyncio.wait_for(queue.get(), timeout=interval)
+            except asyncio.TimeoutError:
+                yield ": keepalive\n\n"
+                continue
+            if item is sentinel:
+                break
+            if isinstance(item, Exception):
+                raise item
+            yield item
+    finally:
+        task.cancel()
+        try:
+            await task
+        except (asyncio.CancelledError, Exception):
+            pass
 
 router = APIRouter(prefix="/ai", tags=["AI Assistant"])
 
@@ -50,12 +92,13 @@ async def chat_endpoint(body: ChatRequest, user: dict = Depends(get_current_user
 async def chat_stream_endpoint(body: ChatRequest, user: dict = Depends(get_current_user)):
     """Stream AI assistant response via Server-Sent Events."""
     try:
+        raw_stream = ai_chat_stream(
+            user_id=user["sub"],
+            message=body.message,
+            conversation_id=body.conversation_id,
+        )
         return StreamingResponse(
-            ai_chat_stream(
-                user_id=user["sub"],
-                message=body.message,
-                conversation_id=body.conversation_id,
-            ),
+            _with_keepalive(raw_stream, interval=15.0),
             media_type="text/event-stream",
             headers={
                 "Cache-Control": "no-cache",
