@@ -749,12 +749,12 @@ function EmptyState({ mode }: { mode: Mode }) {
           {basket ? <ShoppingBasket size={22} /> : <Search size={22} />}
         </span>
         <h3 className="font-display text-lg font-semibold text-ink">
-          {basket ? 'Build your procurement basket' : 'Run your first comparison'}
+          {basket ? 'Optimise your basket' : 'Find your best supplier'}
         </h3>
         <p className="max-w-md text-sm text-muted">
           {basket
-            ? 'Add several items and ProcureAI finds the optimal supplier for each — maximising total savings and telling you exactly what to buy where.'
-            : 'ProcureAI queries every selected supplier in parallel, normalizes the results, and returns an explainable recommendation with quantified savings.'}
+            ? 'Add the items you need. We’ll compare the best supplier combinations, total delivery cost, and expected savings in one plan.'
+            : 'Search a product to compare suppliers by price, delivery, and reliability — then get a clear, explainable recommendation.'}
         </p>
       </CardBody>
     </Card>

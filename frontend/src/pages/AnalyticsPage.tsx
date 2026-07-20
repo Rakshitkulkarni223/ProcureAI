@@ -115,14 +115,14 @@ export function AnalyticsPage() {
           </CardBody>
         </Card>
 
-        <Card className="overflow-hidden rounded-2xl border-0 bg-gradient-to-br from-violet-500/[0.10] via-surface to-surface shadow-card transition-all duration-200 hover:-translate-y-1 hover:shadow-lift">
+        <Card className="self-start overflow-hidden rounded-2xl border-0 bg-gradient-to-br from-violet-500/[0.10] via-surface to-surface shadow-card transition-all duration-200 hover:-translate-y-1 hover:shadow-lift">
           <CardHeader className="border-line/60">
             <h3 className="font-display text-base font-semibold tracking-tight text-ink">Category-wise Spend</h3>
           </CardHeader>
           <CardBody>
             <ChartOrEmpty empty={!spend?.categorySpend.length}>
               <div className="flex flex-col items-center gap-4 sm:flex-row">
-                <ResponsiveContainer width="100%" height={280}>
+                <ResponsiveContainer width="100%" height={230}>
                   <PieChart>
                     <Pie
                       data={spend?.categorySpend || []}
