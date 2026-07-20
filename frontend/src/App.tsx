@@ -42,32 +42,29 @@ export default function App() {
     }
   }, []);
 
-  if (showSplash) {
-    return <SplashScreen onFinish={hideSplash} />;
-  }
-
   return (
     <ThemeProvider>
-    <AuthProvider>
-      <LocationProvider>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
-          <Route path="/" element={protectedRoute(<DashboardPage />)} />
-          <Route path="/search" element={protectedRoute(<SearchPage />)} />
-          <Route path="/analytics" element={protectedRoute(<AnalyticsPage />)} />
-          <Route path="/history" element={protectedRoute(<HistoryPage />)} />
-          <Route path="/settings" element={protectedRoute(<SettingsPage />)} />
-          <Route path="/watchlist" element={protectedRoute(<WatchlistPage />)} />
-          <Route path="/impact" element={protectedRoute(<BusinessImpactPage />)} />
-          <Route path="/supplier-hub" element={protectedRoute(<SupplierHubPage />)} />
-          <Route path="/docs" element={protectedRoute(<DocsPage />)} />
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </BrowserRouter>
-      </LocationProvider>
-    </AuthProvider>
+      <AuthProvider>
+        <LocationProvider>
+          <BrowserRouter>
+            <Routes>
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/register" element={<RegisterPage />} />
+              <Route path="/" element={protectedRoute(<DashboardPage />)} />
+              <Route path="/search" element={protectedRoute(<SearchPage />)} />
+              <Route path="/analytics" element={protectedRoute(<AnalyticsPage />)} />
+              <Route path="/history" element={protectedRoute(<HistoryPage />)} />
+              <Route path="/settings" element={protectedRoute(<SettingsPage />)} />
+              <Route path="/watchlist" element={protectedRoute(<WatchlistPage />)} />
+              <Route path="/impact" element={protectedRoute(<BusinessImpactPage />)} />
+              <Route path="/supplier-hub" element={protectedRoute(<SupplierHubPage />)} />
+              <Route path="/docs" element={protectedRoute(<DocsPage />)} />
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          </BrowserRouter>
+        </LocationProvider>
+      </AuthProvider>
+      {showSplash && <SplashScreen onFinish={hideSplash} />}
     </ThemeProvider>
   );
 }
