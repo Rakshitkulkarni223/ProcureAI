@@ -49,7 +49,7 @@ export function LoginPage() {
       </div>
 
       <h2 className="font-display text-3xl font-bold tracking-tight text-ink">Welcome to ProcureAI</h2>
-      <p className="mt-1.5 text-sm text-muted">Sign in to your procurement workspace.</p>
+      <p className="mt-1.5 text-sm text-muted">Sign in to access AI-powered procurement insights.</p>
 
       <form onSubmit={submit} className="mt-7 space-y-4" data-testid="login-form">
         <Input
@@ -79,7 +79,7 @@ export function LoginPage() {
             {error}
           </div>
         )}
-        <Button type="submit" className="w-full" size="lg" loading={loading} data-testid="login-submit">
+        <Button type="submit" className="w-full" size="md" loading={loading} data-testid="login-submit">
           Sign in
         </Button>
       </form>

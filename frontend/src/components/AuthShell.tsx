@@ -14,7 +14,7 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
           <div className="absolute left-[24%] top-[62%] h-px w-[54%] -rotate-[32deg] bg-gradient-to-r from-transparent via-sky-300/50 to-transparent" />
           <div className="absolute left-[47%] top-[22%] h-[51%] w-px rotate-[30deg] bg-gradient-to-b from-transparent via-emerald-300/40 to-transparent" />
           <div className="absolute left-[13%] top-[27%] flex h-14 w-14 items-center justify-center rounded-2xl border border-emerald-300/20 bg-emerald-400/10 text-emerald-300 shadow-[0_0_44px_rgba(16,185,129,0.2)] backdrop-blur-xl"><Boxes size={24} /></div>
-          <div className="absolute left-[69%] top-[39%] flex h-12 w-12 items-center justify-center rounded-2xl border border-sky-300/20 bg-sky-400/10 text-sky-300 shadow-[0_0_40px_rgba(56,189,248,0.16)] backdrop-blur-xl"><Sparkles size={20} /></div>
+          <div className="absolute right-[8%] top-[35%] flex h-12 w-12 items-center justify-center rounded-2xl border border-sky-300/20 bg-sky-400/10 text-sky-300 shadow-[0_0_40px_rgba(56,189,248,0.16)] backdrop-blur-xl"><Sparkles size={20} /></div>
           <div className="absolute left-[35%] top-[68%] flex h-11 w-11 items-center justify-center rounded-2xl border border-emerald-300/20 bg-emerald-400/10 text-emerald-300 backdrop-blur-xl"><TrendingDown size={19} /></div>
           <div className="absolute right-[9%] top-[12%] w-48 rounded-2xl border border-white/10 bg-slate-900/60 p-4 shadow-2xl shadow-black/20 backdrop-blur-xl">
             <div className="flex items-center justify-between"><span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" /><span className="h-1.5 w-12 rounded-full bg-slate-600" /></div>
@@ -30,7 +30,7 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
             </div>
 
             <div className="max-w-lg">
-              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-emerald-300/15 bg-emerald-400/10 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.18em] text-emerald-300">
+              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-emerald-300/20 bg-emerald-400/10 px-4 py-2 text-[10px] font-bold uppercase tracking-[0.23em] text-emerald-300 shadow-[0_0_24px_rgba(16,185,129,0.08)]">
                 <Sparkles size={12} /> AI Procurement Intelligence
               </div>
               <h1 className="font-display text-5xl font-extrabold leading-[1.06] tracking-tight xl:text-6xl">
@@ -43,9 +43,9 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
               </p>
               <div className="mt-9 grid gap-2.5">
                 {[
-                  { icon: Sparkles, text: 'Explainable AI recommendations with confidence scores' },
-                  { icon: TrendingDown, text: 'Track measurable procurement savings and business impact' },
-                  { icon: ShieldCheck, text: 'Configurable weight profiles per business type' },
+                  { icon: Sparkles, text: 'Explainable AI with confidence scoring' },
+                  { icon: TrendingDown, text: 'Track procurement savings and business impact' },
+                  { icon: ShieldCheck, text: 'Customizable decision models for every business' },
                 ].map((f, i) => (
                   <div key={i} className="flex items-center gap-3 rounded-xl border border-white/[0.08] bg-white/[0.055] px-3.5 py-3 text-sm text-white/85 backdrop-blur-sm">
                     <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-400/10 text-emerald-300">
