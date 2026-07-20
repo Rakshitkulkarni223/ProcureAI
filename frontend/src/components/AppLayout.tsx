@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard,
   Search,
@@ -33,6 +33,7 @@ const NAV = [
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
   const { user, logout } = useAuth();
+  const location = useLocation();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
 
@@ -88,7 +89,11 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
             } catch {
             }
           }}
-          className="flex w-full items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium text-muted transition-colors hover:bg-bg hover:text-ink"
+          aria-current={location.pathname === '/settings' ? 'page' : undefined}
+          className={cn(
+            'flex w-full items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition-colors',
+            location.pathname === '/settings' ? 'bg-accent text-white' : 'text-muted hover:bg-bg hover:text-ink',
+          )}
         >
           <Settings size={17} />
           Workspace Settings
