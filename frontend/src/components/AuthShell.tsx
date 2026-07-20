@@ -14,7 +14,6 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
           <div className="absolute right-[-13rem] top-[-10rem] h-[35rem] w-[35rem] rounded-full border border-violet-300/[0.10]" />
           <div className="absolute left-[16%] top-[38%] h-44 w-44 rounded-full bg-emerald-400/[0.12] blur-3xl" />
           <div className="absolute right-[7%] bottom-[14%] h-44 w-44 rounded-full bg-sky-400/[0.12] blur-3xl" />
-          <div className="absolute left-[13%] top-[27%] flex h-14 w-14 items-center justify-center rounded-2xl border border-emerald-300/20 bg-emerald-400/10 text-emerald-300 shadow-[0_0_44px_rgba(16,185,129,0.2)] backdrop-blur-xl"><Boxes size={24} /></div>
           <div className="absolute right-[8%] top-[35%] flex h-12 w-12 items-center justify-center rounded-2xl border border-sky-300/20 bg-sky-400/10 text-sky-300 shadow-[0_0_40px_rgba(56,189,248,0.16)] backdrop-blur-xl"><Sparkles size={20} /></div>
           <div className="absolute left-[35%] top-[68%] flex h-11 w-11 items-center justify-center rounded-2xl border border-emerald-300/20 bg-emerald-400/10 text-emerald-300 backdrop-blur-xl"><TrendingDown size={19} /></div>
           <div className="absolute right-[9%] top-[12%] w-48 rounded-2xl border border-white/10 bg-slate-900/60 p-4 shadow-2xl shadow-black/20 backdrop-blur-xl">
@@ -43,7 +42,7 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
               <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-emerald-300/20 bg-emerald-400/10 px-4 py-2 text-[10px] font-bold uppercase tracking-[0.23em] text-emerald-300 shadow-[0_0_24px_rgba(16,185,129,0.08)]">
                 <Sparkles size={12} /> AI Procurement Platform
               </div>
-              <h1 className="font-display text-5xl font-extrabold leading-[1.06] tracking-tight xl:text-6xl">
+              <h1 className="font-display text-4xl font-extrabold leading-[1.12] tracking-tight xl:text-5xl">
                 <span className="block">Search once.</span>
                 <span className="block">Compare every supplier.</span>
                 <span className="block text-emerald-300">Procure smarter.</span>
