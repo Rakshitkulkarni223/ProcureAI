@@ -158,7 +158,7 @@ TOOL_DEFINITIONS: list[dict[str, Any]] = [
         "type": "function",
         "function": {
             "name": "get_basket_history",
-            "description": "Get recent basket history. Call before answering basket-content questions.",
+            "description": "Get past basket optimizations; not the current basket.",
             "parameters": {
                 "type": "object",
                 "properties": {
@@ -344,25 +344,17 @@ async def _tool_optimize_basket(args: dict, user_id: str) -> dict:
         if not category:
             return {"error": "'category' is required"}
 
-        # Fetch existing basket items from history — use ONLY those
-        try:
-            from bson import ObjectId
-            from app.database import get_db
-            db = get_db()
-            latest_basket = await db.baskethistories.find_one(
-                {"userId": ObjectId(user_id), "category": category},
-                sort=[("createdAt", -1)],
-            )
-            if latest_basket and latest_basket.get("items"):
-                items = [
-                    {"query": i.get("query", ""), "quantity": i.get("quantity", 1)}
-                    for i in latest_basket["items"] if i.get("query")
-                ]
-        except Exception:
-            pass  # If history fetch fails, use whatever items were passed
-
+        items = [
+            {"query": item.get("query", ""), "quantity": item.get("quantity", 1)}
+            for item in items if item.get("query", "").strip()
+        ]
         if not items:
-            return {"message": f"Your {category} basket is empty. Add items via the Search page first, then come back to optimize."}
+            return {
+                "message": (
+                    f"No current {category} basket items were provided. Basket history is not your "
+                    "current basket; ask the user for their items or have them optimize from the Search page."
+                )
+            }
 
         suppliers = CATEGORY_SUPPLIERS.get(category, [])
         req = {
