@@ -594,9 +594,9 @@ export function AIChatPanel() {
                   </p>
                   <div className="space-y-2 w-full">
                     {[
-                      'Compare UltraBook Pro 14 Laptop across different suppliers',
+                      'Summarize my procurement savings and business impact',
                       'Optimize my grocery basket',
-                      'How much have I saved this month?',
+                      'What is the business impact of choosing Bharat Industrial Tools for this drill?',
                       'Find the fastest delivery for office chairs',
                     ].map((q) => (
                       <button

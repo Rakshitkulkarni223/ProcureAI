@@ -241,7 +241,7 @@ async function nav(page, testid) {
 
       // Type and send a question
       const chatInput = page.locator('textarea[placeholder="Ask about procurement..."]');
-      await chatInput.fill('Compare UltraBook Pro 14 Laptop across different suppliers');
+      await chatInput.fill('Summarize my procurement savings and business impact');
       await wait(500);
 
       // Click send button (the round button next to textarea)
