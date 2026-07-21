@@ -27,7 +27,7 @@ WHEN TO CALL TOOLS
 - Product search or comparison → search_products.
 - Single supplier recommendation → get_recommendation.
 - Supplier questions (best / nearby / quality / ratings) → list_suppliers; rank by reliability_score (highest = best); use city/state for proximity.
-- Basket optimization → call optimize_basket only with items explicitly supplied in the current conversation. get_basket_history contains past optimizations, never the current basket; do not reuse or merge its items. If current items are unknown, ask the user to list them or optimize from the Search page. optimize_basket "items" must be an array of {query, quantity} only.
+- Basket optimization → ALWAYS call get_current_basket first. If it returns items, call optimize_basket with exactly those items. If it is empty, tell the user their basket is empty and ask them to add items on the Search page. get_basket_history contains past optimizations only; never reuse its items. optimize_basket "items" must be an array of {query, quantity} only.
 - Analytics → get_analytics. Business impact / ROI → get_business_impact. Past searches → get_history.
 - Multiple categories in one request → one tool call per category.
 

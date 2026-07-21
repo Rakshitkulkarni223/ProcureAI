@@ -88,6 +88,12 @@ export const api = {
   }) => unwrap<SearchResponse>(API.post('/search', body)),
 
   // Split-cart / basket optimization
+  currentBasket: (category: string) =>
+    unwrap<{ category: string; items: { query: string; quantity: number }[] }>(
+      API.get('/basket/current', { params: { category } }),
+    ),
+  updateCurrentBasket: (body: { category: string; items: { query: string; quantity: number }[] }) =>
+    unwrap<{ category: string; items: { query: string; quantity: number }[] }>(API.put('/basket/current', body)),
   basketOptimize: (body: {
     category: string;
     suppliers: string[];

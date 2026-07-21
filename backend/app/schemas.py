@@ -90,3 +90,8 @@ class BasketInput(BaseModel):
     recommendationMode: Optional[RecommendationMode] = None
     includeSupplierHub: Optional[bool] = True
     userCity: Optional[str] = None
+
+
+class CurrentBasketInput(BaseModel):
+    category: str = Field(..., min_length=1)
+    items: list[BasketItem] = Field(default_factory=list)

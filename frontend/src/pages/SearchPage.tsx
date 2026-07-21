@@ -117,6 +117,7 @@ export function SearchPage() {
   const [penalty, setPenalty] = useState(0);
   const [basketResult, setBasketResult] = useState<BasketOptimizeResponse | null>(null);
   const [basketLoading, setBasketLoading] = useState(false);
+  const [basketReady, setBasketReady] = useState(false);
 
   const autoRan = useRef(false);
   const basketSynced = useRef(false);
@@ -124,13 +125,33 @@ export function SearchPage() {
   useEffect(() => {
     if (!basketSynced.current && category && !basketResult) {
       basketSynced.current = true;
-      if (BASKET_PRESETS[category]) {
-        setBasketRows(BASKET_PRESETS[category].map((p) => makeRow(p.query, p.quantity)));
-      } else {
-        setBasketRows([makeRow()]);
-      }
+      setBasketReady(false);
+      api.currentBasket(category)
+        .then((current) => {
+          const items = current.items.length > 0
+            ? current.items
+            : BASKET_PRESETS[category] ?? [];
+          setBasketRows(items.length > 0 ? items.map((item) => makeRow(item.query, item.quantity)) : [makeRow()]);
+        })
+        .catch((e) => {
+          setError(apiError(e));
+          const items = BASKET_PRESETS[category] ?? [];
+          setBasketRows(items.length > 0 ? items.map((item) => makeRow(item.query, item.quantity)) : [makeRow()]);
+        })
+        .finally(() => setBasketReady(true));
     }
   }, [category, basketResult]);
+
+  useEffect(() => {
+    if (!category || !basketReady) return;
+    const timeout = window.setTimeout(() => {
+      const items = basketRows
+        .filter((row) => row.query.trim())
+        .map((row) => ({ query: row.query.trim(), quantity: row.quantity || 1 }));
+      api.updateCurrentBasket({ category, items }).catch((e) => setError(apiError(e)));
+    }, 400);
+    return () => window.clearTimeout(timeout);
+  }, [category, basketReady, basketRows]);
 
   useEffect(() => {
     Promise.all([api.categories(), api.weightProfiles(), api.recommendationModes(), api.preferences()])

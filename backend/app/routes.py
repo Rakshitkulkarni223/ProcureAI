@@ -14,6 +14,7 @@ from app.auth import get_current_user, hash_password, sign_token, verify_passwor
 from app.database import get_db
 from app.schemas import (
     BasketInput,
+    CurrentBasketInput,
     LoginInput,
     PreferenceInput,
     RecommendationInput,
@@ -286,6 +287,43 @@ async def recommendation_modes(user: dict = Depends(get_current_user)):
 # ===================================================================
 # Basket
 # ===================================================================
+
+@router.get("/basket/current")
+async def get_current_basket(
+    category: str = Query(..., min_length=1),
+    user: dict = Depends(get_current_user),
+):
+    try:
+        db = get_db()
+        doc = await db.currentbaskets.find_one({
+            "userId": ObjectId(user["sub"]),
+            "category": category,
+        })
+        return ok({
+            "category": category,
+            "items": doc.get("items", []) if doc else [],
+        })
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.put("/basket/current")
+async def update_current_basket(body: CurrentBasketInput, user: dict = Depends(get_current_user)):
+    try:
+        db = get_db()
+        items = [
+            {"query": item.query.strip(), "quantity": item.quantity or 1}
+            for item in body.items if item.query.strip()
+        ]
+        await db.currentbaskets.update_one(
+            {"userId": ObjectId(user["sub"]), "category": body.category},
+            {"$set": {"items": items, "updatedAt": datetime.utcnow()}},
+            upsert=True,
+        )
+        return ok({"category": body.category, "items": items})
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 
 @router.post("/basket/optimize")
 async def basket_optimize(body: BasketInput, user: dict = Depends(get_current_user)):

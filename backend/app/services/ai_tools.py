@@ -80,6 +80,24 @@ TOOL_DEFINITIONS: list[dict[str, Any]] = [
     {
         "type": "function",
         "function": {
+            "name": "get_current_basket",
+            "description": "Get current basket items.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "category": {
+                        "type": "string",
+                        "description": "Category slug",
+                        "enum": [c["slug"] for c in CATEGORIES]
+                    }
+                },
+                "required": ["category"]
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
             "name": "optimize_basket",
             "description": "Optimize a multi-item basket across suppliers.",
             "parameters": {
@@ -212,6 +230,8 @@ async def execute_tool(tool_name: str, arguments: dict[str, Any], user_id: str) 
             return await _tool_search_products(arguments, user_id)
         elif tool_name == "get_recommendation":
             return await _tool_get_recommendation(arguments, user_id)
+        elif tool_name == "get_current_basket":
+            return await _tool_get_current_basket(arguments, user_id)
         elif tool_name == "optimize_basket":
             return await _tool_optimize_basket(arguments, user_id)
         elif tool_name == "get_analytics":
@@ -330,6 +350,36 @@ async def _tool_get_recommendation(args: dict, user_id: str) -> dict:
         }
     except Exception as e:
         return {"error": f"Recommendation failed: {str(e)}"}
+
+
+async def _tool_get_current_basket(args: dict, user_id: str) -> dict:
+    """Get the active, user-managed basket for one category."""
+    try:
+        from bson import ObjectId
+        from app.database import get_db
+
+        category = args.get("category", "")
+        if not category:
+            return {"error": "'category' is required"}
+
+        db = get_db()
+        doc = await db.currentbaskets.find_one({
+            "userId": ObjectId(user_id),
+            "category": category,
+        })
+        items = [
+            {"query": item.get("query", ""), "quantity": item.get("quantity", 1)}
+            for item in (doc or {}).get("items", [])
+            if item.get("query", "").strip()
+        ]
+        return {
+            "category": category,
+            "item_count": len(items),
+            "is_empty": not items,
+            "items": items[:10],
+        }
+    except Exception as e:
+        return {"error": f"Current basket lookup failed: {str(e)}"}
 
 
 async def _tool_optimize_basket(args: dict, user_id: str) -> dict:
