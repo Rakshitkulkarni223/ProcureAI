@@ -151,9 +151,9 @@ The Procurement AI Assistant is a conversational interface powered by **Groq** (
 
 Watch the complete ProcureAI walkthrough covering supplier comparison, basket optimization, AI recommendations, analytics, and procurement workflows.
 
-[▶ Watch or download the product demo](demo/product-demo.mp4)
+https://github.com/user-attachments/assets/512a5b39-15e5-4242-be81-5d3d52cd9bda
 
-The video can be streamed in a compatible browser or downloaded for local playback.
+If the embedded video is unavailable, [download the product demo](demo/product-demo.mp4) and play it locally.
 
 ---
 
