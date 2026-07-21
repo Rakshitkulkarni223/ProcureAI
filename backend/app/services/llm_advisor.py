@@ -76,7 +76,10 @@ async def _ai_completion(prompt: str, max_tokens: int = 512, model: str | None =
             temperature=env.AI_TEMPERATURE,
             max_tokens=max_tokens,
         )
-        text = (response.choices[0].message.content or "").strip()
+        choice = response.choices[0]
+        if getattr(choice, "finish_reason", None) == "length":
+            return ""
+        text = (choice.message.content or "").strip()
         # Strip <think>...</think> chain-of-thought blocks (safety net)
         text = re.sub(r"<think>.*?</think>", "", text, flags=re.DOTALL).strip()
         # Strip truncated/unclosed <think> blocks (model hit max_tokens before closing)
@@ -85,6 +88,8 @@ async def _ai_completion(prompt: str, max_tokens: int = 512, model: str | None =
         text = text.replace("**", "").replace("*", "").replace("#", "").strip()
         # Strip leaked chain-of-thought reasoning (no <think> tags but visible planning)
         text = _strip_reasoning(text)
+        if text and text[-1] not in ".!?":
+            return ""
         # If primary model produced only <think> content, retry with fallback
         if not text and model is None and env.AI_FALLBACK_MODEL:
             return await _ai_completion(prompt, max_tokens, model=env.AI_FALLBACK_MODEL)
