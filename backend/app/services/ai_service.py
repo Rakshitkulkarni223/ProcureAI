@@ -38,7 +38,7 @@ def _get_client() -> AsyncOpenAI:
             _client = AsyncOpenAI(
                 api_key=env.AI_API_KEY,
                 base_url=env.AI_BASE_URL,
-                timeout=90.0,
+                timeout=30.0,
             )
         return _client
     except Exception:
@@ -50,8 +50,10 @@ def _get_client() -> AsyncOpenAI:
 # ---------------------------------------------------------------------------
 
 MAX_TOOL_ROUNDS = 3          # Max tool-call loops per user message
-MAX_RESPONSE_TOKENS = 2048   # Max tokens for final response
+MAX_RESPONSE_TOKENS = 4096   # Max tokens for final response
 TOOL_RESULT_MAX_CHARS = 3000 # Truncate tool results to keep within context
+LLM_CALL_TIMEOUT = 25        # Per-call timeout in seconds (bounds each LLM request)
+MAX_TOTAL_TIME = 45          # Total wall-clock budget before bailing out
 
 # Regex to strip <think>...</think> chain-of-thought blocks (safety net)
 _THINK_CLOSED_RE = re.compile(r"<think>.*?</think>", re.DOTALL)
@@ -171,17 +173,26 @@ async def chat(
         )
 
         for _round in range(MAX_TOOL_ROUNDS):
+            # Bail out if total time budget exceeded
+            if time.time() - start > MAX_TOTAL_TIME:
+                break
             try:
-                response = await client.chat.completions.create(
-                    model=model, messages=messages, **_llm_kwargs,
+                response = await asyncio.wait_for(
+                    client.chat.completions.create(
+                        model=model, messages=messages, **_llm_kwargs,
+                    ),
+                    timeout=LLM_CALL_TIMEOUT,
                 )
             except Exception as api_err:
-                # Try fallback model
+                # Try fallback model (including on timeout — fallback is faster)
                 if model == env.AI_PRIMARY_MODEL and env.AI_FALLBACK_MODEL:
                     model = env.AI_FALLBACK_MODEL
                     try:
-                        response = await client.chat.completions.create(
-                            model=model, messages=messages, **_llm_kwargs,
+                        response = await asyncio.wait_for(
+                            client.chat.completions.create(
+                                model=model, messages=messages, **_llm_kwargs,
+                            ),
+                            timeout=LLM_CALL_TIMEOUT,
                         )
                     except Exception:
                         raise api_err
@@ -195,20 +206,20 @@ async def chat(
             if not assistant_message.tool_calls:
                 final_text = _clean_response(assistant_message.content or "")
 
-                # If empty after stripping <think>, retry with tool_choice=none to force text
-                if not final_text:
-                    for retry_model in [model, env.AI_FALLBACK_MODEL]:
-                        if not retry_model or final_text:
-                            break
-                        try:
-                            retry = await client.chat.completions.create(
-                                model=retry_model, messages=messages,
+                # If empty after stripping <think>, retry once with fallback model
+                if not final_text and env.AI_FALLBACK_MODEL:
+                    try:
+                        retry = await asyncio.wait_for(
+                            client.chat.completions.create(
+                                model=env.AI_FALLBACK_MODEL, messages=messages,
                                 tools=TOOL_DEFINITIONS, tool_choice="none",
                                 temperature=env.AI_TEMPERATURE, max_tokens=MAX_RESPONSE_TOKENS,
-                            )
-                            final_text = _clean_response(retry.choices[0].message.content or "")
-                        except Exception:
-                            pass
+                            ),
+                            timeout=LLM_CALL_TIMEOUT,
+                        )
+                        final_text = _clean_response(retry.choices[0].message.content or "")
+                    except Exception:
+                        pass
 
                 if not final_text:
                     final_text = "I couldn't generate a response. Please try again."
@@ -246,32 +257,39 @@ async def chat(
                 tool_calls=tool_calls_serialized,
             )
 
-            # Execute each tool call
-            for tc in assistant_message.tool_calls:
+            # Execute all tool calls concurrently
+            async def _exec_tool(tc):
                 tool_name = tc.function.name
-                tools_used.append(tool_name)
-
                 try:
                     arguments = json.loads(tc.function.arguments)
                 except (json.JSONDecodeError, TypeError):
                     arguments = {}
-
                 result = await execute_tool(tool_name, arguments, user_id)
-
-                # Serialize and truncate
                 result_str = json.dumps(result, default=str, ensure_ascii=False)
                 if len(result_str) > TOOL_RESULT_MAX_CHARS:
                     result_str = result_str[:TOOL_RESULT_MAX_CHARS] + '..."}'
+                return tool_name, tc.id, result_str
 
-                # Add tool result to messages
-                tool_msg = {
+            tool_results = await asyncio.gather(
+                *[_exec_tool(tc) for tc in assistant_message.tool_calls],
+                return_exceptions=True,
+            )
+
+            for tc, res in zip(assistant_message.tool_calls, tool_results):
+                if isinstance(res, Exception):
+                    tool_name = tc.function.name
+                    tools_used.append(tool_name)
+                    result_str = json.dumps({"error": str(res)})
+                else:
+                    tool_name, tool_call_id, result_str = res
+                    tools_used.append(tool_name)
+
+                messages.append({
                     "role": "tool",
                     "tool_call_id": tc.id,
                     "content": result_str,
-                }
-                messages.append(tool_msg)
+                })
 
-                # Persist tool result
                 await ConversationMemory.add_message(
                     user_id, conversation_id, "tool",
                     content=result_str,
@@ -376,16 +394,25 @@ async def chat_stream(
 
         # ---------- Tool-calling loop (non-streaming to detect tool calls) ----------
         for _round in range(MAX_TOOL_ROUNDS):
+            # Bail out if total time budget exceeded
+            if time.time() - start > MAX_TOTAL_TIME:
+                break
             try:
-                response = await client.chat.completions.create(
-                    model=model, messages=messages, **_llm_kwargs,
+                response = await asyncio.wait_for(
+                    client.chat.completions.create(
+                        model=model, messages=messages, **_llm_kwargs,
+                    ),
+                    timeout=LLM_CALL_TIMEOUT,
                 )
             except Exception as api_err:
                 if model == env.AI_PRIMARY_MODEL and env.AI_FALLBACK_MODEL:
                     model = env.AI_FALLBACK_MODEL
                     try:
-                        response = await client.chat.completions.create(
-                            model=model, messages=messages, **_llm_kwargs,
+                        response = await asyncio.wait_for(
+                            client.chat.completions.create(
+                                model=model, messages=messages, **_llm_kwargs,
+                            ),
+                            timeout=LLM_CALL_TIMEOUT,
                         )
                     except Exception:
                         raise api_err
@@ -421,29 +448,42 @@ async def chat_stream(
                 tool_calls=tool_calls_serialized,
             )
 
+            # Yield all tool_start events first
             for tc in assistant_message.tool_calls:
+                yield _sse_event("tool_start", tc.function.name)
+
+            # Execute all tool calls concurrently
+            async def _exec_tool_stream(tc):
                 tool_name = tc.function.name
-                tools_used.append(tool_name)
-
-                yield _sse_event("tool_start", tool_name)
-
                 try:
                     arguments = json.loads(tc.function.arguments)
                 except (json.JSONDecodeError, TypeError):
                     arguments = {}
-
                 result = await execute_tool(tool_name, arguments, user_id)
-
                 result_str = json.dumps(result, default=str, ensure_ascii=False)
                 if len(result_str) > TOOL_RESULT_MAX_CHARS:
                     result_str = result_str[:TOOL_RESULT_MAX_CHARS] + '..."}'
+                return tool_name, tc.id, result_str
 
-                tool_msg = {
+            tool_results = await asyncio.gather(
+                *[_exec_tool_stream(tc) for tc in assistant_message.tool_calls],
+                return_exceptions=True,
+            )
+
+            for tc, res in zip(assistant_message.tool_calls, tool_results):
+                if isinstance(res, Exception):
+                    tool_name = tc.function.name
+                    tools_used.append(tool_name)
+                    result_str = json.dumps({"error": str(res)})
+                else:
+                    tool_name, tool_call_id, result_str = res
+                    tools_used.append(tool_name)
+
+                messages.append({
                     "role": "tool",
                     "tool_call_id": tc.id,
                     "content": result_str,
-                }
-                messages.append(tool_msg)
+                })
 
                 await ConversationMemory.add_message(
                     user_id, conversation_id, "tool",
@@ -464,27 +504,31 @@ async def chat_stream(
                 print(f"[AI-STREAM] Response was think-only ({len(raw_content)} chars). Will retry with tool_choice=none.")
 
         if final_text:
-            # Already have a clean answer — yield it in chunks with delay for typewriter effect
-            for i in range(0, len(final_text), 12):
-                yield _sse_event("token", final_text[i:i + 12])
-                await asyncio.sleep(0.018)
+            # Already have a clean answer — yield it immediately (no artificial delay)
+            yield _sse_event("token", final_text)
         else:
             # No text yet (think-only response or exhausted tool rounds).
-            # Make a streaming call with tool_choice="none" to force a text answer.
+            # Make a single streaming call with tool_choice="none" to force a text answer.
             yield _sse_event("thinking")
             raw_stream = ""
+            # Try at most 2 models (primary then fallback) with per-call timeout
             for attempt_model in [model, env.AI_FALLBACK_MODEL]:
                 if not attempt_model or final_text:
                     break
+                if time.time() - start > MAX_TOTAL_TIME:
+                    break
                 try:
-                    stream = await client.chat.completions.create(
-                        model=attempt_model,
-                        messages=messages,
-                        tools=TOOL_DEFINITIONS,
-                        temperature=env.AI_TEMPERATURE,
-                        max_tokens=MAX_RESPONSE_TOKENS,
-                        tool_choice="none",
-                        stream=True,
+                    stream = await asyncio.wait_for(
+                        client.chat.completions.create(
+                            model=attempt_model,
+                            messages=messages,
+                            tools=TOOL_DEFINITIONS,
+                            temperature=env.AI_TEMPERATURE,
+                            max_tokens=MAX_RESPONSE_TOKENS,
+                            tool_choice="none",
+                            stream=True,
+                        ),
+                        timeout=LLM_CALL_TIMEOUT,
                     )
                     async for chunk in stream:
                         delta = chunk.choices[0].delta if chunk.choices else None
@@ -504,26 +548,25 @@ async def chat_stream(
                 except Exception:
                     continue
 
-            # Last resort: non-streaming fallback
-            if not final_text:
-                for fb_model in [model, env.AI_FALLBACK_MODEL]:
-                    if not fb_model or final_text:
-                        break
-                    try:
-                        fb = await client.chat.completions.create(
-                            model=fb_model,
+            # Last resort: single non-streaming fallback with timeout
+            if not final_text and env.AI_FALLBACK_MODEL and (time.time() - start <= MAX_TOTAL_TIME):
+                try:
+                    fb = await asyncio.wait_for(
+                        client.chat.completions.create(
+                            model=env.AI_FALLBACK_MODEL,
                             messages=messages,
                             tools=TOOL_DEFINITIONS,
                             temperature=env.AI_TEMPERATURE,
                             max_tokens=MAX_RESPONSE_TOKENS,
                             tool_choice="none",
-                        )
-                        final_text = _clean_response(fb.choices[0].message.content or "").strip()
-                        if final_text:
-                            yield _sse_event("token", final_text)
-                            break
-                    except Exception:
-                        continue
+                        ),
+                        timeout=LLM_CALL_TIMEOUT,
+                    )
+                    final_text = _clean_response(fb.choices[0].message.content or "").strip()
+                    if final_text:
+                        yield _sse_event("token", final_text)
+                except Exception:
+                    pass
 
         if not final_text:
             final_text = "I couldn't generate a response. Please try again."
