@@ -54,6 +54,45 @@ MAX_RESPONSE_TOKENS = 4096   # Max tokens for final response
 TOOL_RESULT_MAX_CHARS = 3000 # Truncate tool results to keep within context
 LLM_CALL_TIMEOUT = 25        # Per-call timeout in seconds (bounds each LLM request)
 MAX_TOTAL_TIME = 45          # Total wall-clock budget before bailing out
+RETRY_503_MAX = 3            # Max retries on 503/UNAVAILABLE before falling back
+RETRY_503_BASE_DELAY = 1.0   # Base delay in seconds for exponential backoff
+
+
+def _is_503(err: Exception) -> bool:
+    """Check if an error is a 503 Service Unavailable or similar transient error."""
+    try:
+        err_str = str(err).lower()
+        return "503" in err_str or "unavailable" in err_str or "overloaded" in err_str or "capacity" in err_str
+    except Exception:
+        return False
+
+
+async def _llm_create_with_retry(
+    client: AsyncOpenAI,
+    model: str,
+    messages: list[dict],
+    **kwargs,
+):
+    """Call the LLM with exponential backoff on 503 errors.
+
+    Falls back to the fallback model if the primary model is overloaded
+    and retries are exhausted.
+    """
+    for attempt in range(RETRY_503_MAX):
+        try:
+            return await asyncio.wait_for(
+                client.chat.completions.create(
+                    model=model, messages=messages, **kwargs,
+                ),
+                timeout=LLM_CALL_TIMEOUT,
+            )
+        except Exception as err:
+            if _is_503(err) and attempt < RETRY_503_MAX - 1:
+                delay = RETRY_503_BASE_DELAY * (2 ** attempt)
+                print(f"[AI] 503 from {model}, retry {attempt + 1}/{RETRY_503_MAX} after {delay:.1f}s")
+                await asyncio.sleep(delay)
+                continue
+            raise
 
 # Regex to strip <think>...</think> chain-of-thought blocks (safety net)
 _THINK_CLOSED_RE = re.compile(r"<think>.*?</think>", re.DOTALL)
@@ -177,22 +216,17 @@ async def chat(
             if time.time() - start > MAX_TOTAL_TIME:
                 break
             try:
-                response = await asyncio.wait_for(
-                    client.chat.completions.create(
-                        model=model, messages=messages, **_llm_kwargs,
-                    ),
-                    timeout=LLM_CALL_TIMEOUT,
+                response = await _llm_create_with_retry(
+                    client, model, messages, **_llm_kwargs,
                 )
             except Exception as api_err:
-                # Try fallback model (including on timeout — fallback is faster)
+                # Try fallback model (including on 503/timeout — fallback is faster)
                 if model == env.AI_PRIMARY_MODEL and env.AI_FALLBACK_MODEL:
                     model = env.AI_FALLBACK_MODEL
+                    print(f"[AI] Primary model failed ({api_err}), switching to fallback: {model}")
                     try:
-                        response = await asyncio.wait_for(
-                            client.chat.completions.create(
-                                model=model, messages=messages, **_llm_kwargs,
-                            ),
-                            timeout=LLM_CALL_TIMEOUT,
+                        response = await _llm_create_with_retry(
+                            client, model, messages, **_llm_kwargs,
                         )
                     except Exception:
                         raise api_err
@@ -209,13 +243,10 @@ async def chat(
                 # If empty after stripping <think>, retry once with fallback model
                 if not final_text and env.AI_FALLBACK_MODEL:
                     try:
-                        retry = await asyncio.wait_for(
-                            client.chat.completions.create(
-                                model=env.AI_FALLBACK_MODEL, messages=messages,
-                                tools=TOOL_DEFINITIONS, tool_choice="none",
-                                temperature=env.AI_TEMPERATURE, max_tokens=MAX_RESPONSE_TOKENS,
-                            ),
-                            timeout=LLM_CALL_TIMEOUT,
+                        retry = await _llm_create_with_retry(
+                            client, env.AI_FALLBACK_MODEL, messages,
+                            tools=TOOL_DEFINITIONS, tool_choice="none",
+                            temperature=env.AI_TEMPERATURE, max_tokens=MAX_RESPONSE_TOKENS,
                         )
                         final_text = _clean_response(retry.choices[0].message.content or "")
                     except Exception:
@@ -398,21 +429,16 @@ async def chat_stream(
             if time.time() - start > MAX_TOTAL_TIME:
                 break
             try:
-                response = await asyncio.wait_for(
-                    client.chat.completions.create(
-                        model=model, messages=messages, **_llm_kwargs,
-                    ),
-                    timeout=LLM_CALL_TIMEOUT,
+                response = await _llm_create_with_retry(
+                    client, model, messages, **_llm_kwargs,
                 )
             except Exception as api_err:
                 if model == env.AI_PRIMARY_MODEL and env.AI_FALLBACK_MODEL:
                     model = env.AI_FALLBACK_MODEL
+                    print(f"[AI-STREAM] Primary model failed ({api_err}), switching to fallback: {model}")
                     try:
-                        response = await asyncio.wait_for(
-                            client.chat.completions.create(
-                                model=model, messages=messages, **_llm_kwargs,
-                            ),
-                            timeout=LLM_CALL_TIMEOUT,
+                        response = await _llm_create_with_retry(
+                            client, model, messages, **_llm_kwargs,
                         )
                     except Exception:
                         raise api_err
@@ -518,18 +544,27 @@ async def chat_stream(
                 if time.time() - start > MAX_TOTAL_TIME:
                     break
                 try:
-                    stream = await asyncio.wait_for(
-                        client.chat.completions.create(
-                            model=attempt_model,
-                            messages=messages,
-                            tools=TOOL_DEFINITIONS,
-                            temperature=env.AI_TEMPERATURE,
-                            max_tokens=MAX_RESPONSE_TOKENS,
-                            tool_choice="none",
-                            stream=True,
-                        ),
-                        timeout=LLM_CALL_TIMEOUT,
-                    )
+                    # Retry on 503 with backoff before opening the stream
+                    for _retry in range(RETRY_503_MAX):
+                        try:
+                            stream = await asyncio.wait_for(
+                                client.chat.completions.create(
+                                    model=attempt_model,
+                                    messages=messages,
+                                    tools=TOOL_DEFINITIONS,
+                                    temperature=env.AI_TEMPERATURE,
+                                    max_tokens=MAX_RESPONSE_TOKENS,
+                                    tool_choice="none",
+                                    stream=True,
+                                ),
+                                timeout=LLM_CALL_TIMEOUT,
+                            )
+                            break
+                        except Exception as stream_err:
+                            if _is_503(stream_err) and _retry < RETRY_503_MAX - 1:
+                                await asyncio.sleep(RETRY_503_BASE_DELAY * (2 ** _retry))
+                                continue
+                            raise
                     async for chunk in stream:
                         delta = chunk.choices[0].delta if chunk.choices else None
                         if not delta or not delta.content:
@@ -551,16 +586,10 @@ async def chat_stream(
             # Last resort: single non-streaming fallback with timeout
             if not final_text and env.AI_FALLBACK_MODEL and (time.time() - start <= MAX_TOTAL_TIME):
                 try:
-                    fb = await asyncio.wait_for(
-                        client.chat.completions.create(
-                            model=env.AI_FALLBACK_MODEL,
-                            messages=messages,
-                            tools=TOOL_DEFINITIONS,
-                            temperature=env.AI_TEMPERATURE,
-                            max_tokens=MAX_RESPONSE_TOKENS,
-                            tool_choice="none",
-                        ),
-                        timeout=LLM_CALL_TIMEOUT,
+                    fb = await _llm_create_with_retry(
+                        client, env.AI_FALLBACK_MODEL, messages,
+                        tools=TOOL_DEFINITIONS, tool_choice="none",
+                        temperature=env.AI_TEMPERATURE, max_tokens=MAX_RESPONSE_TOKENS,
                     )
                     final_text = _clean_response(fb.choices[0].message.content or "").strip()
                     if final_text:
