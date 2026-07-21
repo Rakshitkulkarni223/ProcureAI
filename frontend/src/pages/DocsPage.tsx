@@ -340,7 +340,7 @@ const GENERAL_SECTIONS: DocSection[] = [
             {[
               { title: 'Compare Suppliers', desc: '"Summarize my procurement savings and business impact"' },
               { title: 'Optimize Baskets', desc: '"Optimize my grocery basket"' },
-              { title: 'Check Savings', desc: '"What is the business impact of choosing Bharat Industrial Tools for this drill?"' },
+              { title: 'Find Local Suppliers', desc: '"Find reliable local suppliers"' },
               { title: 'Find Products', desc: '"Find the fastest delivery for office chairs"' },
               { title: 'Get Analytics', desc: '"Show my spend breakdown by category"' },
               { title: 'List Suppliers', desc: '"Which suppliers do I have in electronics?"' },

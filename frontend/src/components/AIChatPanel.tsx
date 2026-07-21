@@ -594,10 +594,10 @@ export function AIChatPanel() {
                   </p>
                   <div className="space-y-2 w-full">
                     {[
-                      'Summarize my procurement savings and business impact',
-                      'Optimize my grocery basket',
-                      'What is the business impact of choosing Bharat Industrial Tools for this drill?',
+                      'Find reliable local suppliers',
                       'Find the fastest delivery for office chairs',
+                      'Optimize my grocery basket',
+                      'Summarize my procurement savings & business impact'
                     ].map((q) => (
                       <button
                         key={q}
