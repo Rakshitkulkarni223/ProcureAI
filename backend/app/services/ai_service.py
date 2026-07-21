@@ -343,7 +343,10 @@ async def chat(
 
     except Exception as e:
         latency_ms = int((time.time() - start) * 1000) if 'start' in dir() else 0
-        error_msg = f"I'm sorry, I encountered an error: {str(e)}"
+        if _is_503(e):
+            error_msg = "The AI service is currently experiencing high demand. Please try again in a moment."
+        else:
+            error_msg = f"I'm sorry, I encountered an error: {str(e)}"
         return {
             "conversation_id": conversation_id or "",
             "response": error_msg,
@@ -613,7 +616,11 @@ async def chat_stream(
         })
 
     except Exception as e:
-        yield _sse_event("error", str(e))
+        if _is_503(e):
+            yield _sse_event("token", "The AI service is currently experiencing high demand. Please try again in a moment.")
+            yield _sse_event("done", {"tools_used": [], "model": "", "latency_ms": 0})
+        else:
+            yield _sse_event("error", str(e))
 
 
 def _sse_event(event_type: str, data: Any = None) -> str:

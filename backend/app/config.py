@@ -51,7 +51,7 @@ class Env:
     )
     AI_PRIMARY_MODEL: str = os.getenv(
         "AI_PRIMARY_MODEL",
-        "gemini-2.5-flash" if AI_PROVIDER == "gemini" else "llama-3.3-70b-versatile",
+        "gemini-3.1-flash" if AI_PROVIDER == "gemini" else "llama-3.3-70b-versatile",
     )
     AI_FALLBACK_MODEL: str = os.getenv("AI_FALLBACK_MODEL", "")
     AI_TEMPERATURE: float = float(os.getenv("AI_TEMPERATURE", "0.2"))
