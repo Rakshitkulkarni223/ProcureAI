@@ -139,7 +139,7 @@ const nav = async (page, testid) => {
       await wait(1500);
 
       const chatInput = page.locator('textarea[placeholder="Ask about procurement..."]');
-      await chatInput.fill('Compare laptop prices across suppliers');
+      await chatInput.fill('Compare UltraBook Pro 14 Laptop across different suppliers');
       await wait(500);
 
       const sendButton = page.locator('button:right-of(textarea) >> visible=true').first();

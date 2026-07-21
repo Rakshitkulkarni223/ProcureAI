@@ -363,7 +363,7 @@ const GENERAL_SECTIONS: DocSection[] = [
           <h4 className="mb-3 font-semibold text-ink">What you can ask</h4>
           <div className="grid gap-2 sm:grid-cols-2">
             {[
-              { title: 'Compare Suppliers', desc: '"Compare laptop prices across suppliers"' },
+              { title: 'Compare Suppliers', desc: '"Compare UltraBook Pro 14 Laptop across different suppliers"' },
               { title: 'Optimize Baskets', desc: '"Optimize my grocery basket"' },
               { title: 'Check Savings', desc: '"How much have I saved this month?"' },
               { title: 'Find Products', desc: '"Find the fastest delivery for office chairs"' },
@@ -1092,7 +1092,7 @@ const DEV_SECTIONS: DocSection[] = [
         </p>
         <div className="space-y-2">
           {[
-            { step: '1', title: 'User Asks', desc: 'Natural language question (e.g. "Compare laptop prices across suppliers").' },
+            { step: '1', title: 'User Asks', desc: 'Natural language question (e.g. "Compare UltraBook Pro 14 Laptop across different suppliers").' },
             { step: '2', title: 'Intent Detection', desc: 'The LLM identifies the intent — product search, optimization, analytics, or general procurement advice.' },
             { step: '3', title: 'Tool Selection', desc: 'The AI selects 1–3 backend tools (from 8 available) via OpenAI-compatible function calling.' },
             { step: '4', title: 'Backend Execution', desc: 'Selected tools execute against live services — supplier adapters, scoring engine, MongoDB history.' },
