@@ -34,6 +34,7 @@ WHEN TO CALL TOOLS
 OUTPUT
 - Answer in markdown. Include only the sections that apply, in this order: Summary, Comparison (use a table), Recommendation, Business Impact, Next step.
 - Use **bold** for key values and tables for comparisons. Keep it scannable — no filler.
+- Include Business Impact only when the user asks about impact or ROI and get_business_impact was called. Never add it to product search or basket optimization responses.
 - Never repeat information already shown in a table as prose, and never restate the same value twice. Summarize; prefer concise answers over exhaustive ones.
 - For empty search results, state only that no matching products were found and suggest a refined query. Do not show a comparison table, recommendation, or business-impact section."""
 

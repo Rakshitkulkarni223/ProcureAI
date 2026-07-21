@@ -13,6 +13,20 @@ from typing import Any
 from app.config import CATEGORIES, CATEGORY_SUPPLIERS
 
 
+DEFAULT_CURRENT_BASKETS: dict[str, list[dict[str, Any]]] = {
+    "grocery": [
+        {"query": "Premium Basmati Rice 10kg", "quantity": 1},
+        {"query": "Sunflower Cooking Oil 5L", "quantity": 2},
+        {"query": "Fresh Vegetables Combo 5kg", "quantity": 3},
+    ],
+    "office": [
+        {"query": "A4 Copier Paper (5 Reams)", "quantity": 2},
+        {"query": "Ballpoint Pens (Pack of 50)", "quantity": 1},
+        {"query": "All-in-One Inkjet Printer", "quantity": 1},
+    ],
+}
+
+
 # ---------------------------------------------------------------------------
 # Tool JSON Schema definitions (OpenAI function-calling format)
 # ---------------------------------------------------------------------------
@@ -372,16 +386,19 @@ async def _tool_get_current_basket(args: dict, user_id: str) -> dict:
             "userId": ObjectId(user_id),
             "category": category,
         })
-        items = [
+        saved_items = [
             {"query": item.get("query", ""), "quantity": item.get("quantity", 1)}
             for item in (doc or {}).get("items", [])
             if item.get("query", "").strip()
         ]
+        is_default = doc is None and category in DEFAULT_CURRENT_BASKETS
+        items = DEFAULT_CURRENT_BASKETS.get(category, []) if is_default else saved_items
         return {
             "category": category,
             "item_count": len(items),
             "is_empty": not items,
             "items": items[:10],
+            "source": "default" if is_default else "saved",
         }
     except Exception as e:
         return {"error": f"Current basket lookup failed: {str(e)}"}
