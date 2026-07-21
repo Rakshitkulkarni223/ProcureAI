@@ -28,7 +28,6 @@ import {
   Star,
   LifeBuoy,
   Lightbulb,
-  PlayCircle,
   Eye,
   Download,
   Brain,
@@ -180,31 +179,7 @@ const GENERAL_SECTIONS: DocSection[] = [
     ),
   },
 
-  /* ── 2. PRODUCT DEMO ── */
-  {
-    id: 'g-demo-video',
-    title: 'Product Demo',
-    icon: PlayCircle,
-    badge: { label: 'Watch', tone: 'accent' },
-    content: (
-      <div className="space-y-3 text-sm text-ink-soft leading-relaxed">
-        <p>
-          Watch a <strong className="text-ink">full walkthrough</strong> covering every feature —
-          login, AI search, basket optimization, business impact dashboard, analytics, and workspace settings.
-        </p>
-        <div className="overflow-hidden rounded-lg border border-line bg-bg shadow-sm">
-          <video controls playsInline preload="metadata" className="w-full" poster="">
-            <source src="/procureai-demo.webm" type="video/webm" />
-            <source src="/procureai-demo.mp4" type="video/mp4" />
-            Your browser does not support the video tag.
-          </video>
-        </div>
-        <p className="text-xs text-muted">Tip: Click the fullscreen button for the best viewing experience.</p>
-      </div>
-    ),
-  },
-
-  /* ── 3. HOW IT WORKS ── */
+  /* ── 2. HOW IT WORKS ── */
   {
     id: 'g-how-it-works',
     title: 'How It Works',
