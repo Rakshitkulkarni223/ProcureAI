@@ -67,14 +67,17 @@ async def _ai_completion(prompt: str, max_tokens: int = 512, model: str | None =
         if client is None:
             return ""
         chosen_model = model or env.AI_PRIMARY_MODEL
-        response = await client.chat.completions.create(
-            model=chosen_model,
-            messages=[
-                {"role": "system", "content": "You are a procurement advisor for ProcureAI. Be professional, concise, and use specific numbers. Never use markdown formatting. Do NOT use <think> tags or any chain-of-thought wrapper. Output ONLY the final answer — never show reasoning, planning, drafting steps, critiques, or internal notes."},
-                {"role": "user", "content": prompt},
-            ],
-            temperature=env.AI_TEMPERATURE,
-            max_tokens=max_tokens,
+        response = await asyncio.wait_for(
+            client.chat.completions.create(
+                model=chosen_model,
+                messages=[
+                    {"role": "system", "content": "You are a procurement advisor for ProcureAI. Be professional, concise, and use specific numbers. Never use markdown formatting. Do NOT use <think> tags or any chain-of-thought wrapper. Output ONLY the final answer — never show reasoning, planning, drafting steps, critiques, or internal notes."},
+                    {"role": "user", "content": prompt},
+                ],
+                temperature=env.AI_TEMPERATURE,
+                max_tokens=max_tokens,
+            ),
+            timeout=8,
         )
         choice = response.choices[0]
         if getattr(choice, "finish_reason", None) == "length":
@@ -94,6 +97,9 @@ async def _ai_completion(prompt: str, max_tokens: int = 512, model: str | None =
         if not text and model is None and env.AI_FALLBACK_MODEL:
             return await _ai_completion(prompt, max_tokens, model=env.AI_FALLBACK_MODEL)
         return text
+    except asyncio.TimeoutError:
+        print("[WARN] AI advisor completion timed out")
+        return ""
     except Exception as e:
         # If primary model fails, try fallback
         if model is None and env.AI_FALLBACK_MODEL:

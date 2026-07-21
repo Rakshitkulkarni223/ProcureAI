@@ -786,26 +786,35 @@ class SearchService:
 
             # Generate LLM-powered AI explanation (non-blocking, never fails)
             ai_explanation = ""
-            if recommendation:
-                try:
-                    from app.services.llm_advisor import generate_explanation
-                    ai_explanation = await generate_explanation(recommendation, results, mode)
-                except Exception as llm_err:
-                    print(f"[WARN] LLM advisor skipped: {llm_err}")
+            lt_explanation = ""
+            long_term = intelligence.get("longTermRecommendation")
+            advisor_tasks = []
+            try:
+                from app.services.llm_advisor import generate_explanation, generate_longterm_explanation
+                if recommendation:
+                    advisor_tasks.append(("recommendation", generate_explanation(recommendation, results, mode)))
+                if long_term:
+                    advisor_tasks.append(("long_term", generate_longterm_explanation(long_term, results)))
+                if advisor_tasks:
+                    advisor_results = await asyncio.gather(
+                        *(task for _, task in advisor_tasks),
+                        return_exceptions=True,
+                    )
+                    for (advisor_type, _), advisor_result in zip(advisor_tasks, advisor_results):
+                        if isinstance(advisor_result, Exception):
+                            print(f"[WARN] LLM {advisor_type} advisor skipped: {advisor_result}")
+                        elif advisor_type == "recommendation":
+                            ai_explanation = advisor_result
+                        else:
+                            lt_explanation = advisor_result
+            except Exception as advisor_err:
+                print(f"[WARN] LLM advisors skipped: {advisor_err}")
 
             if recommendation and ai_explanation:
                 recommendation["aiExplanation"] = ai_explanation
 
-            # Generate LLM-powered long-term recommendation explanation
-            long_term = intelligence.get("longTermRecommendation")
-            if long_term:
-                try:
-                    from app.services.llm_advisor import generate_longterm_explanation
-                    lt_explanation = await generate_longterm_explanation(long_term, results)
-                    if lt_explanation:
-                        long_term["aiExplanation"] = lt_explanation
-                except Exception as lt_err:
-                    print(f"[WARN] LLM long-term advisor skipped: {lt_err}")
+            if long_term and lt_explanation:
+                long_term["aiExplanation"] = lt_explanation
 
             return {
                 "query": query,
