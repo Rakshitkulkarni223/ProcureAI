@@ -68,6 +68,35 @@ def _clean_response(text: str) -> str:
         return text
 
 
+def _serialize_tool_call(tool_call: Any) -> dict[str, Any]:
+    """Serialize a tool call while retaining Gemini-specific metadata."""
+    try:
+        serialized: dict[str, Any] = {
+            "id": tool_call.id,
+            "type": "function",
+            "function": {
+                "name": tool_call.function.name,
+                "arguments": tool_call.function.arguments,
+            },
+        }
+        raw_extra = getattr(tool_call, "model_extra", None) or {}
+        extra_content = raw_extra.get("extra_content") or getattr(tool_call, "extra_content", None)
+        if isinstance(extra_content, dict):
+            google = extra_content.get("google")
+            if isinstance(google, dict) and google.get("thought_signature"):
+                serialized["extra_content"] = extra_content
+        return serialized
+    except Exception:
+        return {
+            "id": tool_call.id,
+            "type": "function",
+            "function": {
+                "name": tool_call.function.name,
+                "arguments": tool_call.function.arguments,
+            },
+        }
+
+
 # ---------------------------------------------------------------------------
 # Public API
 # ---------------------------------------------------------------------------
@@ -200,16 +229,9 @@ async def chat(
 
             # --- Execute tool calls ---
             # Add assistant message with tool_calls to messages
-            tool_calls_serialized = []
-            for tc in assistant_message.tool_calls:
-                tool_calls_serialized.append({
-                    "id": tc.id,
-                    "type": "function",
-                    "function": {
-                        "name": tc.function.name,
-                        "arguments": tc.function.arguments,
-                    }
-                })
+            tool_calls_serialized = [
+                _serialize_tool_call(tc) for tc in assistant_message.tool_calls
+            ]
 
             messages.append({
                 "role": "assistant",
@@ -383,16 +405,9 @@ async def chat_stream(
                 break
 
             # --- Execute tool calls ---
-            tool_calls_serialized = []
-            for tc in assistant_message.tool_calls:
-                tool_calls_serialized.append({
-                    "id": tc.id,
-                    "type": "function",
-                    "function": {
-                        "name": tc.function.name,
-                        "arguments": tc.function.arguments,
-                    }
-                })
+            tool_calls_serialized = [
+                _serialize_tool_call(tc) for tc in assistant_message.tool_calls
+            ]
 
             messages.append({
                 "role": "assistant",
