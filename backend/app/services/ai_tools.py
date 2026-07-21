@@ -257,20 +257,25 @@ async def execute_tool(tool_name: str, arguments: dict[str, Any], user_id: str) 
 async def _tool_search_products(args: dict, user_id: str) -> dict:
     """Search products via SearchService and return a concise summary."""
     try:
-        from app.services.core import SearchService
+        from app.services.core import CatalogResolver, SearchService
 
         query = args.get("query", "")
         category = args.get("category", "")
         suppliers = args.get("suppliers") or []
+        requested_category = category
         mode = args.get("recommendation_mode", "balanced")
 
         if not query or not category:
             return {"error": "Both 'query' and 'category' are required"}
 
+        inferred_category = CatalogResolver.best_matching_category(query)
+        if inferred_category:
+            category = inferred_category
+
         req = {
             "query": query,
             "category": category,
-            "suppliers": suppliers if suppliers else None,
+            "suppliers": suppliers if suppliers and category == requested_category else None,
             "recommendationMode": mode,
             "includeSupplierHub": True,
         }

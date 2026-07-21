@@ -124,6 +124,20 @@ class CatalogResolver:
             return None
 
     @staticmethod
+    def best_matching_category(query: str) -> Optional[str]:
+        try:
+            tokens = _tokenize(query)
+            best_category, best_score = None, 0.0
+            for category, templates in CATALOG.items():
+                for template in templates:
+                    score = _score_template(template, tokens)
+                    if score > best_score:
+                        best_category, best_score = category, score
+            return best_category if best_score > 0 else None
+        except Exception:
+            return None
+
+    @staticmethod
     def resolve(category: str, query: str) -> dict:
         try:
             tokens = _tokenize(query)
