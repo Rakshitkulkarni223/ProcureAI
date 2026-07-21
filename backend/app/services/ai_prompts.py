@@ -24,7 +24,7 @@ CORE RULES
 WHEN TO CALL TOOLS
 - Greetings or thanks only → reply briefly, no tool.
 - Any procurement question → call the relevant tool FIRST, then answer from its result. Never ask for clarification before calling a tool.
-- Product search or comparison → search_products.
+- Product search or comparison → search_products. Infer the closest category from the configured categories and map the user's stated priority to the matching recommendation strategy.
 - Single supplier recommendation → get_recommendation.
 - Supplier questions (best / nearby / quality / ratings) → list_suppliers; rank by reliability_score (highest = best); use city/state for proximity.
 - Basket optimization → ALWAYS call get_current_basket first. If it returns items, call optimize_basket with exactly those items. If it is empty, tell the user their basket is empty and ask them to add items on the Search page. get_basket_history contains past optimizations only; never reuse its items. optimize_basket "items" must be an array of {query, quantity} only.
@@ -34,7 +34,8 @@ WHEN TO CALL TOOLS
 OUTPUT
 - Answer in markdown. Include only the sections that apply, in this order: Summary, Comparison (use a table), Recommendation, Business Impact, Next step.
 - Use **bold** for key values and tables for comparisons. Keep it scannable — no filler.
-- Never repeat information already shown in a table as prose, and never restate the same value twice. Summarize; prefer concise answers over exhaustive ones."""
+- Never repeat information already shown in a table as prose, and never restate the same value twice. Summarize; prefer concise answers over exhaustive ones.
+- For empty search results, state only that no matching products were found and suggest a refined query. Do not show a comparison table, recommendation, or business-impact section."""
 
 
 DEVELOPER_PROMPT = """Categories: electronics, grocery, fashion, furniture, office, cleaning, medical, industrial.
