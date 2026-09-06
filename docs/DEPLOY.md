@@ -46,14 +46,16 @@ by IP is only possible on paid Render plans with a static outbound IP add-on.
 
 ## 4. Verify the deployed URLs match render.yaml's assumptions
 
-`render.yaml` hardcodes:
+`render.yaml` hardcodes `CORS_ORIGINS` and `REACT_APP_BACKEND_URL` to each
+other's expected `<service-name>.onrender.com` URL. Render assigns that
+pattern **unless the plain name is already taken globally**, in which case
+it appends a random suffix — this happened on the actual deploy of this
+project, giving:
 
-- Backend: `CORS_ORIGINS=https://procureai-frontend.onrender.com`
-- Frontend: `REACT_APP_BACKEND_URL=https://procureai-backend.onrender.com`
+- Backend: `https://procureai-backend-rfeb.onrender.com`
+- Frontend: `https://procureai-frontend-45vb.onrender.com`
 
-Render assigns `<service-name>.onrender.com` **unless that name is already
-taken globally**, in which case it appends a random suffix (e.g.
-`procureai-backend-x7k2.onrender.com`). After the first deploy:
+(`render.yaml` is kept in sync with these real values.) After any deploy:
 
 1. Open each service in the Render dashboard and check its actual URL at the
    top of the page.

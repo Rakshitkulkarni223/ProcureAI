@@ -18,7 +18,7 @@ services:
       - key: JWT_EXPIRES_IN
         value: 7d
       - key: CORS_ORIGINS
-        value: https://procureai-frontend.onrender.com
+        value: https://procureai-frontend-45vb.onrender.com
       - key: DEMO_EMAIL
         value: demo@procureai.com
       - key: DEMO_PASSWORD
@@ -44,7 +44,7 @@ services:
       - key: NODE_VERSION
         value: 18.20.4
       - key: REACT_APP_BACKEND_URL
-        value: https://procureai-backend.onrender.com
+        value: https://procureai-backend-rfeb.onrender.com
     routes:
       - type: rewrite
         source: /*
