@@ -37,7 +37,6 @@ services:
   - type: web
     name: procureai-frontend
     env: static
-    plan: free
     rootDir: frontend
     buildCommand: yarn install && yarn build
     staticPublishPath: build
