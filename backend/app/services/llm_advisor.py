@@ -17,6 +17,7 @@ from app.config import env
 # AI client (lazy initialization)
 # ---------------------------------------------------------------------------
 _ai_client: AsyncOpenAI | None = None
+_fallback_ai_client: AsyncOpenAI | None = None
 
 
 def _get_ai_client() -> AsyncOpenAI | None:
@@ -31,6 +32,22 @@ def _get_ai_client() -> AsyncOpenAI | None:
                 base_url=env.AI_BASE_URL,
             )
         return _ai_client
+    except Exception:
+        return None
+
+
+def _get_fallback_ai_client() -> AsyncOpenAI | None:
+    """Return a shared client for the fallback provider, or None if not configured."""
+    global _fallback_ai_client
+    try:
+        if not env.AI_FALLBACK_MODEL or not env.AI_FALLBACK_API_KEY:
+            return None
+        if _fallback_ai_client is None:
+            _fallback_ai_client = AsyncOpenAI(
+                api_key=env.AI_FALLBACK_API_KEY,
+                base_url=env.AI_FALLBACK_BASE_URL,
+            )
+        return _fallback_ai_client
     except Exception:
         return None
 
@@ -63,7 +80,7 @@ def _strip_reasoning(text: str) -> str:
 async def _ai_completion(prompt: str, max_tokens: int = 512, model: str | None = None) -> str:
     """Call the configured provider. Returns empty string on failure."""
     try:
-        client = _get_ai_client()
+        client = _get_fallback_ai_client() if model else _get_ai_client()
         if client is None:
             return ""
         chosen_model = model or env.AI_PRIMARY_MODEL

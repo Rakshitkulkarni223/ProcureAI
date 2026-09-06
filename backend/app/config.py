@@ -53,7 +53,18 @@ class Env:
         "AI_PRIMARY_MODEL",
         "gemini-3.1-flash" if AI_PROVIDER == "gemini" else "llama-3.3-70b-versatile",
     )
-    AI_FALLBACK_MODEL: str = os.getenv("AI_FALLBACK_MODEL", "")
+    AI_FALLBACK_MODEL: str = os.getenv(
+        "AI_FALLBACK_MODEL",
+        "openai/gpt-oss-120b" if AI_PROVIDER == "gemini" else "gemini-3.1-flash",
+    )
+    # Fallback always targets the *other* provider, so a primary-provider outage
+    # doesn't take the fallback down with it.
+    AI_FALLBACK_API_KEY: str = GROQ_API_KEY if AI_PROVIDER == "gemini" else GEMINI_API_KEY
+    AI_FALLBACK_BASE_URL: str = (
+        "https://api.groq.com/openai/v1"
+        if AI_PROVIDER == "gemini"
+        else "https://generativelanguage.googleapis.com/v1beta/openai/"
+    )
     AI_TEMPERATURE: float = float(os.getenv("AI_TEMPERATURE", "0.2"))
     AI_TOP_P: float = float(os.getenv("AI_TOP_P", "0.9"))
     AI_MAX_TOKENS: int = int(os.getenv("AI_MAX_TOKENS", "2048"))

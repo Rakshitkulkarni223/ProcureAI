@@ -25,6 +25,7 @@ from app.services.ai_memory import ConversationMemory
 # AI client (shared singleton)
 # ---------------------------------------------------------------------------
 _client: AsyncOpenAI | None = None
+_fallback_client: AsyncOpenAI | None = None
 
 
 def _get_client() -> AsyncOpenAI:
@@ -43,6 +44,23 @@ def _get_client() -> AsyncOpenAI:
         return _client
     except Exception:
         raise
+
+
+def _get_fallback_client() -> AsyncOpenAI | None:
+    """Return a shared client for the fallback provider, or None if not configured."""
+    global _fallback_client
+    try:
+        if not env.AI_FALLBACK_MODEL or not env.AI_FALLBACK_API_KEY:
+            return None
+        if _fallback_client is None:
+            _fallback_client = AsyncOpenAI(
+                api_key=env.AI_FALLBACK_API_KEY,
+                base_url=env.AI_FALLBACK_BASE_URL,
+                timeout=30.0,
+            )
+        return _fallback_client
+    except Exception:
+        return None
 
 
 # ---------------------------------------------------------------------------
@@ -221,8 +239,10 @@ async def chat(
                 )
             except Exception as api_err:
                 # Try fallback model (including on 503/timeout — fallback is faster)
-                if model == env.AI_PRIMARY_MODEL and env.AI_FALLBACK_MODEL:
+                fallback_client = _get_fallback_client()
+                if model == env.AI_PRIMARY_MODEL and env.AI_FALLBACK_MODEL and fallback_client:
                     model = env.AI_FALLBACK_MODEL
+                    client = fallback_client
                     print(f"[AI] Primary model failed ({api_err}), switching to fallback: {model}")
                     try:
                         response = await _llm_create_with_retry(
@@ -242,15 +262,17 @@ async def chat(
 
                 # If empty after stripping <think>, retry once with fallback model
                 if not final_text and env.AI_FALLBACK_MODEL:
-                    try:
-                        retry = await _llm_create_with_retry(
-                            client, env.AI_FALLBACK_MODEL, messages,
-                            tools=TOOL_DEFINITIONS, tool_choice="none",
-                            temperature=env.AI_TEMPERATURE, max_tokens=MAX_RESPONSE_TOKENS,
-                        )
-                        final_text = _clean_response(retry.choices[0].message.content or "")
-                    except Exception:
-                        pass
+                    fallback_client = _get_fallback_client()
+                    if fallback_client:
+                        try:
+                            retry = await _llm_create_with_retry(
+                                fallback_client, env.AI_FALLBACK_MODEL, messages,
+                                tools=TOOL_DEFINITIONS, tool_choice="none",
+                                temperature=env.AI_TEMPERATURE, max_tokens=MAX_RESPONSE_TOKENS,
+                            )
+                            final_text = _clean_response(retry.choices[0].message.content or "")
+                        except Exception:
+                            pass
 
                 if not final_text:
                     final_text = "I couldn't generate a response. Please try again."
@@ -436,8 +458,10 @@ async def chat_stream(
                     client, model, messages, **_llm_kwargs,
                 )
             except Exception as api_err:
-                if model == env.AI_PRIMARY_MODEL and env.AI_FALLBACK_MODEL:
+                fallback_client = _get_fallback_client()
+                if model == env.AI_PRIMARY_MODEL and env.AI_FALLBACK_MODEL and fallback_client:
                     model = env.AI_FALLBACK_MODEL
+                    client = fallback_client
                     print(f"[AI-STREAM] Primary model failed ({api_err}), switching to fallback: {model}")
                     try:
                         response = await _llm_create_with_retry(
@@ -540,8 +564,13 @@ async def chat_stream(
             # Make a single streaming call with tool_choice="none" to force a text answer.
             yield _sse_event("thinking")
             raw_stream = ""
-            # Try at most 2 models (primary then fallback) with per-call timeout
-            for attempt_model in [model, env.AI_FALLBACK_MODEL]:
+            # Try at most 2 (client, model) attempts: primary then fallback provider
+            attempts = [(client, model)]
+            fallback_client = _get_fallback_client()
+            if env.AI_FALLBACK_MODEL and fallback_client:
+                attempts.append((fallback_client, env.AI_FALLBACK_MODEL))
+
+            for attempt_client, attempt_model in attempts:
                 if not attempt_model or final_text:
                     break
                 if time.time() - start > MAX_TOTAL_TIME:
@@ -551,7 +580,7 @@ async def chat_stream(
                     for _retry in range(RETRY_503_MAX):
                         try:
                             stream = await asyncio.wait_for(
-                                client.chat.completions.create(
+                                attempt_client.chat.completions.create(
                                     model=attempt_model,
                                     messages=messages,
                                     tools=TOOL_DEFINITIONS,
@@ -588,17 +617,19 @@ async def chat_stream(
 
             # Last resort: single non-streaming fallback with timeout
             if not final_text and env.AI_FALLBACK_MODEL and (time.time() - start <= MAX_TOTAL_TIME):
-                try:
-                    fb = await _llm_create_with_retry(
-                        client, env.AI_FALLBACK_MODEL, messages,
-                        tools=TOOL_DEFINITIONS, tool_choice="none",
-                        temperature=env.AI_TEMPERATURE, max_tokens=MAX_RESPONSE_TOKENS,
-                    )
-                    final_text = _clean_response(fb.choices[0].message.content or "").strip()
-                    if final_text:
-                        yield _sse_event("token", final_text)
-                except Exception:
-                    pass
+                fallback_client = _get_fallback_client()
+                if fallback_client:
+                    try:
+                        fb = await _llm_create_with_retry(
+                            fallback_client, env.AI_FALLBACK_MODEL, messages,
+                            tools=TOOL_DEFINITIONS, tool_choice="none",
+                            temperature=env.AI_TEMPERATURE, max_tokens=MAX_RESPONSE_TOKENS,
+                        )
+                        final_text = _clean_response(fb.choices[0].message.content or "").strip()
+                        if final_text:
+                            yield _sse_event("token", final_text)
+                    except Exception:
+                        pass
 
         if not final_text:
             final_text = "I couldn't generate a response. Please try again."
