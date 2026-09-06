@@ -8,12 +8,12 @@
 > Procurement platform that combines an **explainable multi-factor decision engine** with an **AI procurement assistant** to help businesses make faster and smarter purchasing decisions.
 
 - ✅ **Multi-factor Recommendation Engine** — 7 scoring dimensions, 6 procurement strategies, confidence scores
-- ✅ **Procurement AI Assistant** — Conversational interface with backend function calling via Groq
+- ✅ **Procurement AI Assistant** — Conversational interface with backend function calling via Gemini (automatic Groq fallback)
 - ✅ Compare online + offline suppliers in one search
 - ✅ Split-cart basket optimization across all suppliers
 - ✅ Build and manage a private Supplier Network
 - ✅ Track procurement ROI with Business Impact Dashboard
-- ✅ Natural-language explanations generated using Groq (Llama 3.3-70B)
+- ✅ Natural-language explanations generated using Gemini, with automatic fallback to Groq
 
 [![GitHub](https://img.shields.io/badge/GitHub-Rakshitkulkarni223%2FProcureAI-blue?logo=github)](https://github.com/Rakshitkulkarni223/ProcureAI)
 
@@ -35,7 +35,7 @@ This allows buyers to interact with procurement data using natural language whil
 
 | Decision Engine | AI Assistant |
 |---|---|
-| Multi-factor weighted scoring | Groq (Llama 3.3-70B) |
+| Multi-factor weighted scoring | Gemini, with automatic Groq fallback |
 | Deterministic & explainable | Conversational interface |
 | Calculates supplier rankings | Explains recommendations |
 | Produces confidence margins | Uses backend tool calling |
@@ -49,10 +49,12 @@ This allows buyers to interact with procurement data using natural language whil
 
 | | |
 |---|---|
-| **Production** | [https://buywise-compare-1.emergent.host](https://buywise-compare-1.emergent.host) |
-| **Preview** | [https://buywise-compare-1.preview.emergentagent.com](https://buywise-compare-1.preview.emergentagent.com) |
+| **App** | [https://procureai-frontend-45vb.onrender.com](https://procureai-frontend-45vb.onrender.com) |
+| **API** | [https://procureai-backend-rfeb.onrender.com](https://procureai-backend-rfeb.onrender.com) |
 | **Email** | `demo@procureai.com` |
 | **Password** | `Demo@123` |
+
+> Hosted on Render's free tier — the backend spins down after 15 minutes of inactivity, so the first request after idle may take ~30–60s to wake up.
 
 ---
 
@@ -64,7 +66,7 @@ This allows buyers to interact with procurement data using natural language whil
 | **Supplier Network** | Register private suppliers and maintain their products, pricing, delivery, reliability, and commercial details. Network products appear alongside marketplace results. |
 | **Basket Optimization** | Build a multi-item list, set an optional delivery cost per supplier, and compare split-cart and consolidation plans. |
 | **Procurement AI Assistant** | Conversational AI panel on every page — ask questions, compare suppliers, optimize baskets, check savings via natural language |
-| **Explanation Panel** | Radar chart + scoreboard + business reasoning for every recommendation — natural-language explanations generated using Groq |
+| **Explanation Panel** | Radar chart + scoreboard + business reasoning for every recommendation — natural-language explanations generated using Gemini (Groq fallback) |
 | **6 Recommendation Modes** | Balanced, Lowest Cost, Lowest Risk, Fastest Delivery, Highest Reliability, Best Long-Term Value |
 | **Location-Aware Delivery** | Same city → 1 day, same state → 2 days, different state → 4–5 days |
 | **Business Impact Dashboard** | Savings, hours saved, efficiency score, projected annual savings — with date range filtering |
@@ -126,7 +128,7 @@ This allows buyers to interact with procurement data using natural language whil
 
 ## 🤖 AI Assistant
 
-The Procurement AI Assistant is a conversational interface powered by **Groq** (Llama 3.3-70B / Llama 3.1-8B) with backend function calling. It accesses live procurement data through 8 tools:
+The Procurement AI Assistant is a conversational interface powered by **Gemini** with backend function calling. If the Gemini API errors or is unavailable, requests automatically fail over to **Groq** on a separate client/API key — a genuine cross-provider fallback, not just a different model on the same connection. It accesses live procurement data through 8 tools:
 
 | Tool | What It Does |
 |---|---|
@@ -179,9 +181,9 @@ If the embedded video is unavailable, [download the product demo](demo/product-d
 │  └───────┬───┘ └─────┬──────┘           │
 │          │           │                   │
 │  ┌───────┴───┐ ┌─────┴──────┐           │
-│  │  SerpAPI  │ │ Groq LLM   │           │
-│  │ Adapter   │ │(Llama 3.3/ │           │
-│  │(optional) │ │ Llama 3.1) │           │
+│  │  SerpAPI  │ │ Gemini LLM │           │
+│  │ Adapter   │ │ (Groq      │           │
+│  │(optional) │ │ fallback)  │           │
 │  └───────────┘ └────────────┘           │
 │                                          │
 │   ┌───────────────────────────┐      │
@@ -221,11 +223,11 @@ The recommendation engine and AI assistant are intentionally separated. Procurem
 | Layer | Technology |
 |-------|-----------|
 | **Frontend** | React 18, TypeScript, TailwindCSS, React Router v6, Recharts, Framer Motion, Lucide |
-| **Backend** | Python 3.13, FastAPI, Pydantic, Uvicorn |
+| **Backend** | Python 3.11+, FastAPI, Pydantic, Uvicorn |
 | **Database** | MongoDB with Motor (async driver) |
 | **Auth** | JWT (PyJWT) + bcrypt |
 | **Decision Engine** | Multi-factor weighted scoring (7 dimensions, 6 configurable strategies) |
-| **AI Assistant** | Groq (Llama 3.3-70B) with automatic fallback to Llama 3.1-8B |
+| **AI Assistant** | Gemini (gemini-3.1-flash) primary, with automatic cross-provider fallback to Groq (openai/gpt-oss-120b) |
 | **Tool Calling** | OpenAI-compatible function calling — 8 procurement tools |
 | **Conversation Memory** | MongoDB-persisted per-user chat history |
 | **Grounding** | Backend procurement tools — AI never generates data independently |
@@ -264,7 +266,7 @@ The recommendation engine and AI assistant are intentionally separated. Procurem
 - **Location-aware delivery estimation** — city/state distance-based delivery days
 - Async aggregation with **error isolation** — one failing supplier doesn't break the search
 - **Procurement AI Assistant** with backend function calling — 8 tools, multi-turn conversations, grounded responses
-- Groq LLM integration (Llama 3.3-70B) with automatic fallback to Llama 3.1-8B, then rule-based explanations
+- Gemini LLM integration with automatic cross-provider fallback to Groq (a separate client/API key, not just a different model), then rule-based explanations
 - **Conversation memory** persisted in MongoDB with per-user scoping and auto-cleanup
 - Separation of **deterministic scoring** (decision engine) from **generative AI** (explanations + chat)
 
@@ -287,10 +289,13 @@ cd ProcureAI
 cd backend && pip install -r requirements.txt
 
 # Frontend
-cd ../frontend && npm install
+cd ../frontend && yarn install
 ```
 
 ### Environment Variables
+
+Copy `backend/.env.example` to `backend/.env` and `frontend/.env.example` to
+`frontend/.env`, then fill in real values. Reference:
 
 ```env
 # backend/.env
@@ -304,11 +309,12 @@ DEMO_PASSWORD=Demo@123
 DEMO_NAME=Demo User
 CORS_ORIGINS=*
 SERPAPI_KEY=                    # Optional — live Google Shopping (free: serpapi.com)
-GROQ_API_KEY=                  # AI Assistant — free at https://console.groq.com
-AI_PRIMARY_MODEL=llama-3.3-70b-versatile    # Optional — default: llama-3.3-70b-versatile
-AI_FALLBACK_MODEL=llama-3.1-8b-instant     # Optional — default: llama-3.1-8b-instant
-AI_TEMPERATURE=0.3             # Optional — default: 0.3
-AI_MAX_TOKENS=1024             # Optional — default: 1024
+AI_PROVIDER=gemini              # "gemini" or "groq" — fallback always targets the other one
+GEMINI_API_KEY=                 # Free at https://aistudio.google.com
+GROQ_API_KEY=                   # Free at https://console.groq.com — used as fallback (or primary if AI_PROVIDER=groq)
+AI_FALLBACK_MODEL=              # Optional override — defaults to openai/gpt-oss-120b (groq) or gemini-3.1-flash (gemini)
+AI_TEMPERATURE=0.2              # Optional — default: 0.2
+AI_MAX_TOKENS=2048              # Optional — default: 2048
 
 # frontend/.env
 REACT_APP_BACKEND_URL=http://localhost:8001
@@ -321,7 +327,7 @@ REACT_APP_BACKEND_URL=http://localhost:8001
 cd backend && uvicorn server:app --host 0.0.0.0 --port 8001 --reload
 
 # Frontend
-cd frontend && npm start
+cd frontend && yarn start
 ```
 
 ### Tests
@@ -330,13 +336,19 @@ cd frontend && npm start
 cd backend && python -m pytest tests/backend_test.py -v
 ```
 
+### Deployment
+
+See [docs/DEPLOY.md](docs/DEPLOY.md) for deploying to Render via the
+`render.yaml` Blueprint in this repo (backend as a Python web service,
+frontend as a static site, MongoDB Atlas for the database).
+
 ---
 
 ## 🗺️ Future Roadmap
 
 | Phase | Feature |
 |-------|---------|
-| **✅ Done** | AI Chat Assistant (Groq) · Function calling with 8 tools · Conversation memory · Anti-hallucination guardrails |
+| **✅ Done** | AI Chat Assistant (Gemini + Groq fallback) · Function calling with 8 tools · Conversation memory · Anti-hallucination guardrails · Render deployment |
 | **✅ Available (Optional)** | Live Google Shopping prices via SerpAPI |
 | **P1** | Amazon/Udaan/Metro APIs · Live Supplier Quotes · ERP Integration · WhatsApp Quotes |
 | **P2** | Invoice OCR · AI Negotiation · Approval Workflows · Predictive Procurement using historical purchasing trends |
@@ -374,6 +386,7 @@ cd backend && python -m pytest tests/backend_test.py -v
 | [docs/API.md](docs/API.md) | Full API reference — all endpoints with auth requirements |
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | System design, scoring pipeline, recommendation modes, workflow diagrams |
 | [docs/DESIGN.md](docs/DESIGN.md) | Project structure, design decisions, conventions, data model |
+| [docs/DEPLOY.md](docs/DEPLOY.md) | Deploying to Render — Blueprint setup, env vars, MongoDB Atlas config |
 
 ---
 
