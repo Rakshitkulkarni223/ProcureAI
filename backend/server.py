@@ -2,7 +2,7 @@
 ProcureAI — FastAPI Backend
 
 Native Python/FastAPI backend that replaces the previous Node.js/Express +
-reverse-proxy architecture. Runs on port 8001 (Emergent platform ingress).
+reverse-proxy architecture. Runs on port 8001.
 """
 from contextlib import asynccontextmanager
 
